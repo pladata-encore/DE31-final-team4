@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load static %} <!-- static 태그 로드 -->
+
+{% block content %}
+<section class="hero-section text-center text-white py-5" style="background-image: url('{% static 'images/maltese.jpg' %}'); background-size: cover; background-position: center; background-repeat: no-repeat; width: 100vw; margin-left: calc(-50vw + 50%); margin-top: 0;">
+    <div class="container">
+        <h1 class="display-3">Welcome to ANTS</h1>
+        <p class="lead">Asset Navigation Trading Strategy</p>
+        <a href="#" class="btn btn-primary btn-lg">Get Started</a>
+    </div>
+</section>
+{% endblock %}

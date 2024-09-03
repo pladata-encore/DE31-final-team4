@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Option 2</title>
+    <!-- Static 파일 사용을 위한 태그 로드 -->
+    {% load static %}
+    <!-- CSS 파일 추가 -->
+    <link rel="stylesheet" href="{% static 'css/custom_style.css' %}">
+</head>
+<body>
+    <div class="custom-test-container">
+        <div class="custom-question">Q1.</div>  <!-- 질문 번호 표시 -->
+        <p class="custom-question-text">사람들과 어울리는 것을 좋아하나요?</p>  <!-- 질문 텍스트 표시 -->
+        <div class="custom-button-wrap"></div>  <!-- 답변 버튼이 표시될 영역 -->
+    </div>
+
+    <!-- JavaScript 파일 연결 -->
+    <script src="{% static 'js/testPage.js' %}"></script>
+    <script>
+        // JSON 데이터 (예시)
+        const testData = {
+            type: 'point',
+            data: [
+                {
+                    "question": "사람들과 어울리는 것을 좋아하나요?",
+                    "answerList": [
+                        {
+                            "answer": "😀 네, 좋아해요!",
+                            "point": 1
+                        },
+                        {
+                            "answer": "😐 별로 좋아하지 않아요.",
+                            "point": 2
+                        }
+                    ]
+                },
+                {
+                    "question": "새로운 사람들과 친해지는 것을 좋아하나요??",
+                    "answerList": [
+                        {
+                            "answer": "😘 아주 좋아해요!",
+                            "point": 1
+                        },
+                        {
+                            "answer": "😑 별로 좋아하지 않아요.",
+                            "point": 2
+                        }
+                    ]
+                }
+            ],
+            result: [
+                {
+                    "minPoint": 1,
+                    "maxPoint": 2,
+                    "title": "Result A",
+                    "description": "당신은 외향적인 사람입니다."
+                },
+                {
+                    "minPoint": 3,
+                    "maxPoint": 4,
+                    "title": "Result B",
+                    "description": "당신은 내향적인 사람입니다."
+                }
+            ]
+        };
+
+        // 테스트 페이지 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            const testPage = new TestPage(testData);
+        });
+    </script>
+</body>
+</html>

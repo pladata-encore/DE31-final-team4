@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load socialaccount %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6">
+            <div class="card shadow-lg p-4 mb-5 bg-white rounded">
+                <div class="card-body">
+                    <h3 class="text-center mb-4">Login to Your Account</h3>
+
+                    <!-- Login Form -->
+                    <form method="post" action="{% url 'account_login' %}">
+                        {% csrf_token %}
+                        {{ form.non_field_errors }}
+                        
+                        <!-- Email Field -->
+                        <div class="mb-3">
+                            <label for="id_login" class="form-label">{% trans "Email address" %}</label>
+                            <input type="email" name="login" id="id_login" class="form-control" required>
+                        </div>
+
+                        <!-- Password Field -->
+                        <div class="mb-3">
+                            <label for="id_password" class="form-label">{% trans "Password" %}</label>
+                            <input type="password" name="password" id="id_password" class="form-control" required>
+                        </div>
+
+                        <!-- Remember Me Checkbox -->
+                        <div class="form-check mb-3">
+                            <input type="checkbox" name="remember" id="id_remember" class="form-check-input">
+                            <label class="form-check-label" for="id_remember">{% trans "Remember me" %}</label>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-block">{% trans "Login" %}</button>
+                        </div>
+                    </form>
+
+                    <!-- Forgot Password & Sign Up -->
+                    <div class="text-center mt-3">
+                        <a href="{% url 'account_reset_password' %}">{% trans "Forgot your password?" %}</a>
+                    </div>
+                    <div class="text-center mt-2">
+                        <a href="{% url 'account_signup' %}">{% trans "Don't have an account? Sign up here" %}</a>
+                    </div>
+
+                    <hr>
+
+                    <!-- Social Login Buttons -->
+                    <div class="text-center">
+                        <p>{% trans "Or login with:" %}</p>
+                        <a href="{% provider_login_url 'google' process='redirect' %}" class="btn btn-danger btn-block mb-2">
+                            <i class="fab fa-google"></i> Google
+                        </a>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

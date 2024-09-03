@@ -1,0 +1,33 @@
+[2024-08-26 23:28:37 +0900] [3512383] [INFO] Starting gunicorn 23.0.0
+[2024-08-26 23:28:37 +0900] [3512383] [INFO] Listening at: unix:/home/ants/django/ants_final/ants_final.sock (3512383)
+[2024-08-26 23:28:37 +0900] [3512383] [INFO] Using worker: sync
+[2024-08-26 23:28:37 +0900] [3512386] [INFO] Booting worker with pid: 3512386
+[2024-08-26 23:28:37 +0900] [3512387] [INFO] Booting worker with pid: 3512387
+[2024-08-26 23:28:37 +0900] [3512388] [INFO] Booting worker with pid: 3512388
+[2024-08-26 23:28:54 +0900] [3512383] [INFO] Handling signal: int
+[2024-08-26 14:28:54 +0000] [3512388] [INFO] Worker exiting (pid: 3512388)
+[2024-08-26 14:28:54 +0000] [3512387] [INFO] Worker exiting (pid: 3512387)
+[2024-08-26 14:28:54 +0000] [3512386] [INFO] Worker exiting (pid: 3512386)
+[2024-08-26 23:28:54 +0900] [3512383] [INFO] Shutting down: Master
+[2024-08-26 23:29:39 +0900] [3512856] [INFO] Starting gunicorn 23.0.0
+[2024-08-26 23:29:39 +0900] [3512856] [INFO] Listening at: unix:/home/ants/django/ants_final/ants_final.sock (3512856)
+[2024-08-26 23:29:39 +0900] [3512856] [INFO] Using worker: sync
+[2024-08-26 23:29:39 +0900] [3512857] [INFO] Booting worker with pid: 3512857
+[2024-08-26 23:29:39 +0900] [3512858] [INFO] Booting worker with pid: 3512858
+[2024-08-26 23:29:39 +0900] [3512859] [INFO] Booting worker with pid: 3512859
+[2024-08-26 23:31:14 +0900] [3512856] [INFO] Handling signal: int
+[2024-08-26 14:31:14 +0000] [3512858] [INFO] Worker exiting (pid: 3512858)
+[2024-08-26 14:31:14 +0000] [3512859] [INFO] Worker exiting (pid: 3512859)
+[2024-08-26 14:31:14 +0000] [3512857] [INFO] Worker exiting (pid: 3512857)
+[2024-08-26 23:31:14 +0900] [3512856] [INFO] Shutting down: Master
+[2024-08-26 23:39:23 +0900] [3517244] [INFO] Starting gunicorn 23.0.0
+[2024-08-26 23:39:23 +0900] [3517244] [INFO] Listening at: unix:/home/ants/django/ants_final/ants_final.sock (3517244)
+[2024-08-26 23:39:23 +0900] [3517244] [INFO] Using worker: sync
+[2024-08-26 23:39:23 +0900] [3517245] [INFO] Booting worker with pid: 3517245
+[2024-08-26 23:39:23 +0900] [3517246] [INFO] Booting worker with pid: 3517246
+[2024-08-26 23:39:23 +0900] [3517247] [INFO] Booting worker with pid: 3517247
+[2024-08-26 23:42:32 +0900] [3517244] [INFO] Handling signal: int
+[2024-08-26 14:42:32 +0000] [3517246] [INFO] Worker exiting (pid: 3517246)
+[2024-08-26 14:42:32 +0000] [3517245] [INFO] Worker exiting (pid: 3517245)
+[2024-08-26 14:42:32 +0000] [3517247] [INFO] Worker exiting (pid: 3517247)
+[2024-08-26 23:42:33 +0900] [3517244] [INFO] Shutting down: Master
