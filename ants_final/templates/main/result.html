@@ -1,0 +1,6 @@
+<h1>Your Results</h1>
+<ul>
+    {% for answer in selected_answers %}
+        <li>{{ answer.question.text }}: {{ answer.text }}</li>
+    {% endfor %}
+</ul>
