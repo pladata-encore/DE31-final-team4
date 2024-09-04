@@ -11,7 +11,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv
 
+load_dotenv('/home/ants/django/.env')
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -135,10 +137,10 @@ WSGI_APPLICATION = 'ants_final.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'datawarehouse',
-        'USER': 'ants',
-        'PASSWORD': 'ants1234',
-        'HOST': 'antsdb.ctci2u4c45u3.ap-northeast-2.rds.amazonaws.com',
+        'NAME': os.environ['RDS_NAME'],
+        'USER': os.environ['RDS_USER'],
+        'PASSWORD': os.environ['RDS_PASSWORD'],
+        'HOST': os.environ['RDS_HOST'],
         'PORT': '3306',
         'OPTIONS': {
             'charset': 'utf8',
