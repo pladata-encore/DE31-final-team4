@@ -58,25 +58,44 @@
 
 
 
+<!-- Chart Section -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page - Stock Dashboard</title>
+</head>
+<body>
+    <section id="section3" class="py-5 text-center" style="min-height: 100vh; background-attachment: fixed;">
+        <div class="container">
+            <h2 class="display-4 mb-5">Stock Dashboard</h2>
+            <div class="row justify-content-center">
+                <!-- KOSPI 그래프 -->
+                <div class="col-md-6 text-center">
+                    <h3>KOSPI Current Point</h3>
+                    <img src="data:image/png;base64,{{ graphic1 }}" alt="KOSPI Graph" class="img-fluid">
+                </div>
 
-<!-- Stock Dashboard Section -->
-<section id="section3" class="py-5 text-center" style="min-height: 100vh; background-attachment: fixed;">
-    <div class="container">
-        <h2 class="display-4 mb-5">Stock Dashboard</h2>
-        <div class="row justify-content-center">
-            <div class="col-md-12 text-center">
-                <!-- Streamlit App Embedding -->
-                <iframe
-                    width="960"
-                    height="720"
-                    src="http://54.181.1.178:8501"
-                    frameborder="0"
-                    allowfullscreen="true">
-                </iframe>
+                <!-- KOSDAQ 그래프 -->
+                <div class="col-md-6 text-center">
+                    <h3>KOSDAQ Current Point</h3>
+                    <img src="data:image/png;base64,{{ graphic2 }}" alt="KOSDAQ Graph" class="img-fluid">
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
 
 
 
