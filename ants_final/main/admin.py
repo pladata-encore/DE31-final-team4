@@ -10,7 +10,7 @@ admin.site.register(Answer)
 
 
 # 관심종목
-from .models import Stock, UserStock
+from .models import RealTimeStock,UserStock
 
-admin.site.register(Stock)
+admin.site.register(RealTimeStock)
 admin.site.register(UserStock)

@@ -113,18 +113,38 @@ def search_datawarehouse(request):
     return render(request, 'base.html', {'results': results, 'message': message, 'query': query})
 
 
-# views.py
+# 관심종목
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Stock, UserStock
+from .models import RealTimeStock, UserStock
+from datetime import date
 
 @login_required
-def add_favorite_list(request, stock_id):
-    stock = get_object_or_404(Stock, id=stock_id)
-    UserStock.objects.get_or_create(user=request.user, stock=stock)
-    return redirect('my_watchlist')
+def add_favorite_list(request, stock_code):
+    today = date.today()
+    # stock = get_object_or_404(RealTimeStock, stock_code=stock_code)
+    latest_stock = RealTimeStock.objects.filter(stock_code=stock_code).order_by('-id').first()
+    UserStock.objects.get_or_create(user=request.user, stock=latest_stock)
+    return redirect('my_favorite_list')
 
+
+# real_time table 정보 가져오기
 @login_required
 def my_favorite_list(request):
     user_stocks = UserStock.objects.filter(user=request.user)
-    return render(request, 'my_watchlist.html', {'user_stocks': user_stocks})
+    stock_info = []
+
+    for user_stock in user_stocks:
+        # 실시간 정보를 가져오기
+        real_time_stock = get_object_or_404(RealTimeStock, stock_code=user_stock.stock.stock_code)
+        stock_info.append({
+            'stock_code': real_time_stock.stock_code,
+            'name': real_time_stock.name,
+            'current_price': real_time_stock.current_price,
+            'UpDownRate': real_time_stock.UpDownRate,
+            'UpDownPoint': real_time_stock.UpDownPoint,
+            "id":real_time_stock.id,
+        })
+
+    return render(request, 'mypage/mypage.html', {'stock_info': stock_info})
+
