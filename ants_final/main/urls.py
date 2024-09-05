@@ -10,12 +10,12 @@ urlpatterns = [
    
 
     # 구글 소셜 로그인
-    path("google/login/", views.google_login, name="google_login"),
-    path("google/callback/", views.google_callback, name="google_callback"),
-    path("google/login/finish/", views.GoogleLogin.as_view(), name="google_login_finish"),
-    # path('accounts/google/login/', oauth2_login, name='google_login'),  # 구글 로그인 URL
-    # path('accounts/google/callback/', oauth2_callback, name='google_callback'),  # 구글 콜백 URL
-    # path('accounts/google/login/finish/', views.GoogleLogin.as_view(), name='google_login_finish'),  # 만약 필요한 경우 추가 뷰
+    # path("google/login/", views.google_login, name="google_login"),
+    # path("google/callback/", views.google_callback, name="google_callback"),
+    # path("google/login/finish/", views.GoogleLogin.as_view(), name="google_login_finish"),
+    path('accounts/google/login/', oauth2_login, name='google_login'),  # 구글 로그인 URL
+    path('accounts/google/callback/', oauth2_callback, name='google_callback'),  # 구글 콜백 URL
+    path('accounts/google/login/finish/', views.GoogleLogin.as_view(), name='google_login_finish'),  # 만약 필요한 경우 추가 뷰
 
    
    
