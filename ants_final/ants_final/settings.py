@@ -62,8 +62,13 @@ AUTHENTICATION_BACKENDS = [
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 
+ACCOUNT_AUTHENTICATION_METHOD = 'email'  # 이메일을 통한 로그인 허용
+
+
 # 로그인 후 리디렉션될 URL
 LOGIN_REDIRECT_URL = '/'
+# 로그아웃 후 리디렉션될 URL
+LOGOUT_REDIRECT_URL = '/' 
 
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
@@ -80,7 +85,7 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 # 브라우저가 닫힐 때 세션을 만료시키는 설정
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
 # 세션 쿠키의 수명을 설정 (기본값: 2주)
 SESSION_COOKIE_AGE = 1209600  # 2 weeks in seconds
