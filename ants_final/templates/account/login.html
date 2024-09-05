@@ -54,7 +54,9 @@
                 <!-- Social Login Buttons -->
                 <div class="text-center">
                     <p>{% trans "Or login with:" %}</p>
-                    <a href="http://localhost:8000/accounts/google/login/" class="btn btn-danger btn-block mb-2">
+                    <!--<a href="http://localhost:8000/accounts/google/login/" class="btn btn-danger btn-block mb-2">-->
+                    <a href="{% url 'google_login' %}" class="btn btn-danger btn-block mb-2">
+
                         <i class="fab fa-google"></i> Google
                     </a>
                 </div>
