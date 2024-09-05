@@ -8,7 +8,7 @@ def home(request):
 
 def custom_logout(request):
     logout(request)
-    request.session.flush()
+    # request.session.flush() 
     return redirect('home')
 
 def economic_awareness_test(request):
@@ -16,27 +16,27 @@ def economic_awareness_test(request):
 
 # 추가된 뷰 함수들
 
-def google_login(request):
-    # Google 로그인 처리 로직을 여기에 추가
-    return redirect('home')  # 로그인 후 홈 페이지로 리디렉션
+# def google_login(request):
+#     # Google 로그인 처리 로직을 여기에 추가
+#     return redirect('home')  # 로그인 후 홈 페이지로 리디렉션
 
-def google_callback(request):
-    # Google 로그인 콜백 처리 로직을 여기에 추가
-    return redirect('home')  # 콜백 처리 후 홈 페이지로 리디렉션
+# def google_callback(request):
+#     # Google 로그인 콜백 처리 로직을 여기에 추가
+#     return redirect('home')  # 콜백 처리 후 홈 페이지로 리디렉션
 
-class GoogleLogin(SocialLoginView):
-    adapter_class = GoogleOAuth2Adapter  # Google OAuth 어댑터를 사용하여 로그인 처리
+# class GoogleLogin(SocialLoginView):
+#     adapter_class = GoogleOAuth2Adapter  # Google OAuth 어댑터를 사용하여 로그인 처리
 
 
 
-def test_option_1(request):
-    return render(request, 'main/test_option_1.html')
+# def test_option_1(request):
+#     return render(request, 'main/test_option_1.html')
 
-def test_option_2(request):
-    return render(request, 'main/test_option_2.html')
+# def test_option_2(request):
+#     return render(request, 'main/test_option_2.html')
 
-def test_option_3(request):
-    return render(request, 'main/test_option_3.html')
+# def test_option_3(request):
+#     return render(request, 'main/test_option_3.html')
 
 
 from .models import TestOption, Question, Answer
