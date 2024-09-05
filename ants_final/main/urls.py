@@ -6,9 +6,9 @@ urlpatterns = [
     path('economic-awareness-test/', views.economic_awareness_test, name='economic_awareness_test'),
     
     # 구글 소셜 로그인
-    path("google/login/", views.google_login, name="google_login"),
-    path("google/callback/", views.google_callback, name="google_callback"),
-    path("google/login/finish/", views.GoogleLogin.as_view(), name="google_login_todjango"),
+    # path("google/login/", views.google_login, name="google_login"),
+    # path("google/callback/", views.google_callback, name="google_callback"),
+    # path("google/login/finish/", views.GoogleLogin.as_view(), name="google_login_todjango"),
 
     path('logout/', views.custom_logout, name='custom_logout'),
 
