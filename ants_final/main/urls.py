@@ -18,4 +18,8 @@ urlpatterns = [
     path('test-option-3/', views.test_option_3, name='test_option_3'),
 
     path('search/', views.search_datawarehouse, name='search_datawarehouse'),
+
+    #관심종목
+    path('add_favorite_list/<int:stock_id>/', views.add_favorite_list, name='add_favorite_list'),
+    path('my_favorite_list/', views.my_favorite_list, name='my_favorite_list'),
 ]

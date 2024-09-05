@@ -113,3 +113,18 @@ def search_datawarehouse(request):
     return render(request, 'base.html', {'results': results, 'message': message, 'query': query})
 
 
+# views.py
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import Stock, UserStock
+
+@login_required
+def add_favorite_list(request, stock_id):
+    stock = get_object_or_404(Stock, id=stock_id)
+    UserStock.objects.get_or_create(user=request.user, stock=stock)
+    return redirect('my_watchlist')
+
+@login_required
+def my_favorite_list(request):
+    user_stocks = UserStock.objects.filter(user=request.user)
+    return render(request, 'my_watchlist.html', {'user_stocks': user_stocks})
