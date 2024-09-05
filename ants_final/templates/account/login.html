@@ -51,17 +51,18 @@
 
                     <hr>
 
-                    <!-- Social Login Buttons -->
-                    <div class="text-center">
-                        <p>{% trans "Or login with:" %}</p>
-                        <a href="{% provider_login_url 'google' process='redirect' %}" class="btn btn-danger btn-block mb-2">
-                            <i class="fab fa-google"></i> Google
-                        </a>
-                        
-                    </div>
+                <!-- Social Login Buttons -->
+                <div class="text-center">
+                    <p>{% trans "Or login with:" %}</p>
+                    <a href="http://localhost:8000/accounts/google/login/" class="btn btn-danger btn-block mb-2">
+                        <i class="fab fa-google"></i> Google
+                    </a>
+                </div>
+
                 </div>
             </div>
         </div>
     </div>
 </div>
 {% endblock %}
+
