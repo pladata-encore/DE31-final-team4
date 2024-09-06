@@ -17,11 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from main import views
+from django.urls import include, path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('main.urls')),  # main 앱의 URL을 메인으로 연결
     path('accounts/', include('allauth.urls')),  # allauth를 통한 계정 관리
-    
+    path('survey/', include('survey.urls')), # survey앱 urls
 
 ]
