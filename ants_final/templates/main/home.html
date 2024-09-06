@@ -59,6 +59,7 @@
 
 
 <!-- Chart Section -->
+<!-- Chart Section -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -75,18 +76,23 @@
                 <div class="col-md-6 text-center">
                     <h3>KOSPI Current Point</h3>
                     <img src="data:image/png;base64,{{ graphic1 }}" alt="KOSPI Graph" class="img-fluid">
+                    <p>UpDown Point: {{ KOSPI_UpDownPoint }}</p>
+                    <p>UpDown Rate: {{ KOSPI_UpDownRate }}</p>
                 </div>
 
                 <!-- KOSDAQ 그래프 -->
                 <div class="col-md-6 text-center">
                     <h3>KOSDAQ Current Point</h3>
                     <img src="data:image/png;base64,{{ graphic2 }}" alt="KOSDAQ Graph" class="img-fluid">
+                    <p>UpDown Point: {{ KOSDAQ_UpDownPoint }}</p> <!-- 수정된 변수명 -->
+                    <p>UpDown Rate: {{ KOSDAQ_UpDownRate }}</p> <!-- 수정된 변수명 -->
                 </div>
             </div>
         </div>
     </section>
 </body>
 </html>
+
 
 
 

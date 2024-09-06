@@ -126,28 +126,36 @@ from datetime import datetime
 # 그래프를 생성하고 base64로 인코딩하는 함수
 def add_graphs():
     # 오늘 날짜의 시작 시간과 끝 시간 설정
-    today_start = datetime.combine(timezone.now().date(), datetime.min.time())
-    today_end = datetime.combine(timezone.now().date(), datetime.max.time())
+    today_start = timezone.now().replace(hour=9, minute=0, second=0, microsecond=0)
+    # 오늘 시작 시간 (오전 9시 0분 0초)을 가져옴
+    today_end = timezone.now().replace(hour=16, minute=0, second=0, microsecond=0)
+    # 오늘 종료 시간 (오후 4시 0분 0초)을 가져옴
 
     # KOSPI 및 KOSDAQ 데이터 중 오늘 날짜의 데이터만 가져옴
-    kospi_data = Market.objects.filter(stock_name="KOSPI", price_time__range=[today_start, today_end])
-    kosdaq_data = Market.objects.filter(stock_name="KOSDAQ", price_time__range=[today_start, today_end])
+    kospi_data = Market.objects.filter(StockName="KOSPI", price_time__range=[today_start, today_end])
+    kosdaq_data = Market.objects.filter(StockName="KOSDAQ", price_time__range=[today_start, today_end])
 
-    # KOSPI 그래프 생성 (X축, Y축 제거)
+    # 데이터가 없을 때 대비 (빈 그래프 생성)
+    if not kospi_data.exists():
+        kospi_data = Market.objects.filter(StockName="KOSPI").order_by('-price_time')[:10]
+    if not kosdaq_data.exists():
+        kosdaq_data = Market.objects.filter(StockName="KOSDAQ").order_by('-price_time')[:10]
+
+    # KOSPI 그래프 생성
     fig1, ax1 = plt.subplots(figsize=(8, 6))
-    ax1.plot(kospi_data.values_list('price_time', flat=True), kospi_data.values_list('current_point', flat=True), label="KOSPI", color="blue")
+    ax1.plot(kospi_data.values_list('price_time', flat=True), kospi_data.values_list('CurrentPoint', flat=True), label="KOSPI", color="blue")
     ax1.set_title("KOSPI (Today)")
-    ax1.xaxis.set_visible(False)  # X축 숨김
-    ax1.yaxis.set_visible(False)  # Y축 숨김
-    ax1.legend()
+    ax1.xaxis.set_visible(False)  # X축 숨김 (필요 시 표시 가능)
+    ax1.yaxis.set_visible(False)  # Y축 숨김 (필요 시 표시 가능)
+    # ax1.legend()
 
-    # KOSDAQ 그래프 생성 (X축, Y축 제거)
+    # KOSDAQ 그래프 생성
     fig2, ax2 = plt.subplots(figsize=(8, 6))
-    ax2.plot(kosdaq_data.values_list('price_time', flat=True), kosdaq_data.values_list('current_point', flat=True), label="KOSDAQ", color="green")
+    ax2.plot(kosdaq_data.values_list('price_time', flat=True), kosdaq_data.values_list('CurrentPoint', flat=True), label="KOSDAQ", color="green")
     ax2.set_title("KOSDAQ (Today)")
-    ax2.xaxis.set_visible(False)  # X축 숨김
-    ax2.yaxis.set_visible(False)  # Y축 숨김
-    ax2.legend()
+    ax2.xaxis.set_visible(False)  # X축 숨김 (필요 시 표시 가능)
+    ax2.yaxis.set_visible(False)  # Y축 숨김 (필요 시 표시 가능)
+    # ax2.legend()
 
     # KOSPI 그래프를 base64로 인코딩
     buffer1 = BytesIO()
@@ -171,5 +179,20 @@ def home(request):
     # 그래프 데이터 생성
     graphic1, graphic2 = add_graphs()
 
-    # 그래프 데이터를 템플릿으로 전달
-    return render(request, 'main/home.html', {'graphic1': graphic1, 'graphic2': graphic2})
+    # 가장 최근의 KOSPI 및 KOSDAQ 데이터 가져오기
+    kospi = Market.objects.filter(StockName='KOSPI').order_by('-price_time').first()
+    kosdaq = Market.objects.filter(StockName='KOSDAQ').order_by('-price_time').first()
+
+    # 템플릿에 전달할 값 설정
+    context = {
+        'graphic1': graphic1,
+        'graphic2': graphic2,
+        'KOSPI_UpDownPoint': kospi.UpDownPoint if kospi else 'N/A',
+        'KOSPI_UpDownRate': kospi.UpDownRate if kospi else 'N/A',
+        'KOSDAQ_UpDownPoint': kosdaq.UpDownPoint if kosdaq else 'N/A',
+        'KOSDAQ_UpDownRate': kosdaq.UpDownRate if kosdaq else 'N/A',
+    }
+
+    # 템플릿 렌더링
+    return render(request, 'main/home.html', context)
+
