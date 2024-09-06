@@ -25,7 +25,7 @@ end_date = st.sidebar.date_input("End Date (OnceTime)", datetime.today())
 st.sidebar.header("Market Data Input")
 
 # 고정된 KOSPI와 KOSDAQ만 선택 가능하게 설정
-stock_name = st.sidebar.selectbox("Select StockName (Market)", ["KOSPI", "KOSDAQ"])
+StockName = st.sidebar.selectbox("Select StockName (Market)", ["KOSPI", "KOSDAQ"])
 
 # 사이드바에서 날짜 입력
 yesterday = datetime.today() - timedelta(days=1)
@@ -41,9 +41,9 @@ def load_oncetime_data(ticker, start, end):
     return pd.DataFrame(list(data))
 
 # Market 데이터를 불러오는 함수
-def load_market_data(stock_name, start, end):
+def load_market_data(StockName, start, end):
     data = Market.objects.filter(
-        stock_name=stock_name,
+        StockName=StockName,
         price_time__range=[start, end]
     ).values('price_time', 'current_point', 'up_down_point', 'up_down_rate')
     return pd.DataFrame(list(data))
@@ -85,10 +85,10 @@ else:
     st.error("No data available for the selected period.")
 
 # Market 데이터 그래프 (여전히 Matplotlib 사용)
-st.subheader(f"{stock_name} Current Point (Market Data)")
+st.subheader(f"{StockName} Current Point (Market Data)")
 if not market_data.empty:
     fig3, ax3 = plt.subplots(figsize=(12, 6))
-    ax3.plot(market_data['price_time'], market_data['current_point'], label=f'{stock_name} Current Point', color='blue')
+    ax3.plot(market_data['price_time'], market_data['current_point'], label=f'{StockName} Current Point', color='blue')
     ax3.set_xlabel("Time")
     ax3.set_ylabel("Current Point")
     ax3.legend()
