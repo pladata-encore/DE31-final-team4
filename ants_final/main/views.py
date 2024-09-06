@@ -16,17 +16,31 @@ def economic_awareness_test(request):
 
 # 추가된 뷰 함수들
 
-# def google_login(request):
-#     # Google 로그인 처리 로직을 여기에 추가
-#     return redirect('home')  # 로그인 후 홈 페이지로 리디렉션
+def google_login(request):
+    # Google 로그인 처리 로직을 여기에 추가
+    return redirect('home')  # 로그인 후 홈 페이지로 리디렉션
 
-# def google_callback(request):
-#     # Google 로그인 콜백 처리 로직을 여기에 추가
-#     return redirect('home')  # 콜백 처리 후 홈 페이지로 리디렉션
+def google_callback(request):
+    # Google 로그인 콜백 처리 로직을 여기에 추가
+    return redirect('home')  # 콜백 처리 후 홈 페이지로 리디렉션
 
-# class GoogleLogin(SocialLoginView):
-#     adapter_class = GoogleOAuth2Adapter  # Google OAuth 어댑터를 사용하여 로그인 처리
+class GoogleLogin(SocialLoginView):
+    adapter_class = GoogleOAuth2Adapter  # Google OAuth 어댑터를 사용하여 로그인 처리
 
+from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
+
+# @login_required
+# def post_login_redirect(request):
+#     """
+#     사용자가 로그인한 후 소셜 로그인인지 일반 로그인인지 확인하고 리다이렉션.
+#     """
+#     if request.user.socialaccount_set.exists():
+#         # 사용자가 소셜 로그인을 했다면
+#         return redirect('/accounts/google/login/')
+#     else:
+#         # 일반 로그인이라면
+#         return redirect('/accounts/login/')
 
 
 # def test_option_1(request):
