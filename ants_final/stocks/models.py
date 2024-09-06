@@ -19,3 +19,30 @@ class OnceTime(models.Model):
 
     def __str__(self):
         return f"{self.stock_code} - {self.date}"
+
+
+
+
+
+class Market(models.Model):
+    StockName = models.CharField(max_length=255, db_column='StockName', primary_key=True)
+    CurrentPoint = models.TextField(null=True, blank=True, db_column='CurrentPoint')
+    UpDownPoint = models.TextField(null=True, blank=True, db_column='UpDownPoint')
+    UpDownRate = models.TextField(null=True, blank=True, db_column='UpDownRate')
+    UpDownFlag = models.TextField(null=True, blank=True, db_column='UpDownFlag')
+    price_time = models.DateTimeField(db_column='price_time')
+
+    class Meta:
+        db_table = 'market'
+        ordering = ['-price_time']
+        unique_together = (('StockName', 'price_time'),)
+
+    
+
+
+
+
+
+        
+
+
