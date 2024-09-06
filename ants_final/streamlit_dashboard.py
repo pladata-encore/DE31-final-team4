@@ -40,19 +40,19 @@ def load_oncetime_data(ticker, start, end):
     ).values('date', 'closing_price', 'hts_total', 'prev_trading', 'MA5', 'MA20', 'MA60', 'MA120')
     return pd.DataFrame(list(data))
 
-# Market 데이터를 불러오는 함수
-def load_market_data(StockName, start, end):
-    data = Market.objects.filter(
-        StockName=StockName,
-        price_time__range=[start, end]
-    ).values('price_time', 'CurrentPoint', 'UpDownPoint', 'UpDownRate')
-    return pd.DataFrame(list(data))
+# # Market 데이터를 불러오는 함수
+# def load_market_data(StockName, start, end):
+#     data = Market.objects.filter(
+#         StockName=StockName,
+#         price_time__range=[start, end]
+#     ).values('price_time', 'CurrentPoint', 'UpDownPoint', 'UpDownRate')
+#     return pd.DataFrame(list(data))
 
 # OnceTime 데이터 로드
 oncetime_data = load_oncetime_data(ticker_symbol, start_date, end_date)
 
 # Market 데이터 로드
-market_data = load_market_data(StockName, start_date_market, end_date_market)
+# market_data = load_market_data(StockName, start_date_market, end_date_market)
 
 # OnceTime 데이터 그래프: Closing Price (반응형 Plotly 그래프 사용)
 st.subheader(f"{ticker_symbol} Closing Price (OnceTime Data)")
