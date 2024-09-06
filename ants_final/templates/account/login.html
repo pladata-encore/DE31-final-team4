@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load socialaccount %}
+{% load static %}  <!-- static 태그 로드 -->
 
-{% block title %}Login{% endblock %}
+{% block title %}로그인{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -10,55 +11,59 @@
         <div class="col-md-6">
             <div class="card shadow-lg p-4 mb-5 bg-white rounded">
                 <div class="card-body">
-                    <h3 class="text-center mb-4">Login to Your Account</h3>
 
-                    <!-- Login Form -->
+                    <!-- 로고 이미지 추가 -->
+                    <div class="text-center mb-4">
+                        <img src="{% static 'images/logo.png' %}" alt="Logo" style="max-width: 150px;">
+                    </div>
+
+                    <!-- 로그인 폼 -->
                     <form method="post" action="{% url 'account_login' %}">
                         {% csrf_token %}
                         {{ form.non_field_errors }}
                         
-                        <!-- Email Field -->
+                        <!-- 이메일 필드 -->
                         <div class="mb-3">
-                            <label for="id_login" class="form-label">{% trans "Email address" %}</label>
+                            <label for="id_login" class="form-label">이메일 주소</label>
                             <input type="email" name="login" id="id_login" class="form-control" required>
                         </div>
 
-                        <!-- Password Field -->
+                        <!-- 비밀번호 필드 -->
                         <div class="mb-3">
-                            <label for="id_password" class="form-label">{% trans "Password" %}</label>
+                            <label for="id_password" class="form-label">비밀번호</label>
                             <input type="password" name="password" id="id_password" class="form-control" required>
                         </div>
 
-                        <!-- Remember Me Checkbox -->
+                        <!-- 자동 로그인 체크박스 -->
                         <div class="form-check mb-3">
                             <input type="checkbox" name="remember" id="id_remember" class="form-check-input">
-                            <label class="form-check-label" for="id_remember">{% trans "Remember me" %}</label>
+                            <label class="form-check-label" for="id_remember">자동 로그인</label>
                         </div>
 
-                        <!-- Submit Button -->
+                        <!-- 로그인 버튼 -->
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-block">{% trans "Login" %}</button>
+                            <button type="submit" class="btn btn-success btn-block">로그인</button>
                         </div>
                     </form>
 
-                    <!-- Forgot Password & Sign Up -->
+                    <!-- 비밀번호 찾기 및 회원가입 -->
                     <div class="text-center mt-3">
-                        <a href="{% url 'account_reset_password' %}">{% trans "Forgot your password?" %}</a>
+                        <a href="{% url 'account_reset_password' %}">비밀번호를 잊으셨나요?</a>
                     </div>
                     <div class="text-center mt-2">
-                        <a href="{% url 'account_signup' %}">{% trans "Don't have an account? Sign up here" %}</a>
+                        <a href="{% url 'account_signup' %}">계정이 없으신가요? 회원가입</a>
                     </div>
 
                     <hr>
 
-                    <!-- Social Login Buttons -->
+                    <!-- 소셜 로그인 버튼 -->
                     <div class="text-center">
-                        <p>{% trans "Or login with:" %}</p>
-                        <a href="{% provider_login_url 'google' process='redirect' %}" class="btn btn-danger btn-block mb-2">
+                        <p>소셜 계정으로 로그인</p>
+                        <a href="{% url 'google_login' %}" class="btn btn-primary btn-block mb-2">
                             <i class="fab fa-google"></i> Google
                         </a>
-                        
                     </div>
+
                 </div>
             </div>
         </div>

@@ -8,7 +8,7 @@ def home(request):
 
 def custom_logout(request):
     logout(request)
-    request.session.flush()
+    # request.session.flush() 
     return redirect('home')
 
 def economic_awareness_test(request):
@@ -27,16 +27,30 @@ def google_callback(request):
 class GoogleLogin(SocialLoginView):
     adapter_class = GoogleOAuth2Adapter  # Google OAuth 어댑터를 사용하여 로그인 처리
 
+from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
+
+# @login_required
+# def post_login_redirect(request):
+#     """
+#     사용자가 로그인한 후 소셜 로그인인지 일반 로그인인지 확인하고 리다이렉션.
+#     """
+#     if request.user.socialaccount_set.exists():
+#         # 사용자가 소셜 로그인을 했다면
+#         return redirect('/accounts/google/login/')
+#     else:
+#         # 일반 로그인이라면
+#         return redirect('/accounts/login/')
 
 
-def test_option_1(request):
-    return render(request, 'main/test_option_1.html')
+# def test_option_1(request):
+#     return render(request, 'main/test_option_1.html')
 
-def test_option_2(request):
-    return render(request, 'main/test_option_2.html')
+# def test_option_2(request):
+#     return render(request, 'main/test_option_2.html')
 
-def test_option_3(request):
-    return render(request, 'main/test_option_3.html')
+# def test_option_3(request):
+#     return render(request, 'main/test_option_3.html')
 
 
 from .models import TestOption, Question, Answer
@@ -94,7 +108,6 @@ def test_option_3(request):
 
 
 #서칭
-from django.shortcuts import render
 from .models import DataWarehouse
 from django.db.models import Q
 
@@ -198,6 +211,7 @@ def add_graphs():
     return graphic1, graphic2
 
 def home(request):
+
     # 그래프 데이터 생성
     graphic1, graphic2 = add_graphs()
 
@@ -217,3 +231,6 @@ def home(request):
 
     # 템플릿 렌더링
     return render(request, 'main/home.html', context)
+
+def about(request):
+    return render(request, 'main/about.html')
