@@ -13,9 +13,14 @@ urlpatterns = [
     path('logout/', views.custom_logout, name='custom_logout'),
 
 
+    # 테스트 페이지
     path('test-option-1/', views.test_option_1, name='test_option_1'),
     path('test-option-2/', views.test_option_2, name='test_option_2'),
     path('test-option-3/', views.test_option_3, name='test_option_3'),
-
+    
+    # 검색
     path('search/', views.search_datawarehouse, name='search_datawarehouse'),
+
+    # about 페이지
+    path('about/', views.about, name='about'),
 ]

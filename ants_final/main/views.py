@@ -94,7 +94,6 @@ def test_option_3(request):
 
 
 #서칭
-from django.shortcuts import render
 from .models import DataWarehouse
 from django.db.models import Q
 
@@ -112,4 +111,8 @@ def search_datawarehouse(request):
     
     return render(request, 'base.html', {'results': results, 'message': message, 'query': query})
 
+
+# about
+def about(request):
+    return render(request, 'main/about.html')
 
