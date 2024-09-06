@@ -45,7 +45,7 @@ def load_market_data(StockName, start, end):
     data = Market.objects.filter(
         StockName=StockName,
         price_time__range=[start, end]
-    ).values('price_time', 'current_point', 'up_down_point', 'up_down_rate')
+    ).values('price_time', 'CurrentPoint', 'UpDownPoint', 'UpDownRate')
     return pd.DataFrame(list(data))
 
 # OnceTime 데이터 로드
@@ -88,7 +88,7 @@ else:
 st.subheader(f"{StockName} Current Point (Market Data)")
 if not market_data.empty:
     fig3, ax3 = plt.subplots(figsize=(12, 6))
-    ax3.plot(market_data['price_time'], market_data['current_point'], label=f'{StockName} Current Point', color='blue')
+    ax3.plot(market_data['price_time'], market_data['CurrentPoint'], label=f'{StockName} Current Point', color='blue')
     ax3.set_xlabel("Time")
     ax3.set_ylabel("Current Point")
     ax3.legend()
