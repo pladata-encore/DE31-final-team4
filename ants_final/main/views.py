@@ -218,17 +218,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import RealTimeStock, UserStock
 
-# @login_required
-# def add_favorite_list(request, stock_code):
-#     # stock = get_object_or_404(RealTimeStock, stock_code=stock_code)
-#     latest_stock = RealTimeStock.objects.filter(stock_code=stock_code).order_by('-id').first()
-#     if latest_stock is not None:
-#         # UserStock에 해당 유저의 관심종목으로 추가
-#         UserStock.objects.get_or_create(user=request.user, stock_code=latest_stock)
-#         return redirect('my_favorite_list')
-#     else:
-#         # 만약 stock_code가 존재하지 않으면 처리 (에러 페이지나 다른 동작을 정의할 수 있음)
-#         return redirect('error_page')
 @login_required
 def add_favorite_list(request, stock_code):
     latest_stock = RealTimeStock.objects.filter(stock_code=stock_code).order_by('-id').first()
@@ -243,30 +232,6 @@ def add_favorite_list(request, stock_code):
     else:
         # 만약 stock_code가 존재하지 않으면 처리
         return redirect('error_page')
-
-
-# real_time table 정보 가져오기
-# @login_required
-# def my_favorite_list(request):
-#     user_stocks = UserStock.objects.filter(user=request.user)
-#     stock_info = []
-
-#     for user_stock in user_stocks:
-
-#         real_time_stocks = RealTimeStock.objects.filter(stock_code=user_stock.stock_id.stock_id)
-        
-#         if real_time_stocks.exists():
-#             # 여러 객체 중에서 가장 최신 객체를 선택 (예: 가장 높은 id를 가진 객체)
-#             latest_stock = real_time_stocks.order_by('-id').first()
-#             stock_info.append({
-#                 'stock_code': latest_stock.stock_code,
-#                 'name': latest_stock.name,
-#                 'current_price': latest_stock.current_price,
-#                 'UpDownRate': latest_stock.UpDownRate,
-#                 'UpDownPoint': latest_stock.UpDownPoint,
-#                 "id": latest_stock.id,
-#             })
-#     return render(request, 'mypage/mypage.html', {'stock_info': stock_info})
 
 def my_favorite_list(request):
     user_stocks = UserStock.objects.filter(user=request.user).select_related('stock_id')

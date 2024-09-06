@@ -30,6 +30,6 @@ urlpatterns = [
 
     #관심종목
     path('add_favorite_list/<str:stock_code>/', views.add_favorite_list, name='add_favorite_list'),
-    path('my_favorite_list/', views.my_favorite_list, name='my_favorite_list'),
+    path('mypage/', views.my_favorite_list, name='mypage'),
     # path('stock_/', views.my_favorite_list, name='my_favorite_list'),
 ]
