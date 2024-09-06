@@ -17,7 +17,7 @@ from decouple import config
 RDS_NAME = config('RDS_NAME', default='datawarehouse')
 
 
-load_dotenv('/home/jeong/django/.env')
+load_dotenv('/home/jeong/django/django/.env')
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -51,7 +51,6 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',  # 구글 로그인 추가
     'rest_framework.authtoken',
     'stocks',  # stocks 앱 추가
-    'survey',  # survey 앱 추가
 ]
 
 # 사이트 ID 설정
@@ -204,7 +203,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': '/home/jeong/django/ants_final/logs/django.log',
+            'filename': '/home/jeong/django/django/ants_final/logs/django.log',
         },
     },
     'loggers': {
