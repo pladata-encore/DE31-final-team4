@@ -121,7 +121,6 @@ from datetime import date
 
 @login_required
 def add_favorite_list(request, stock_code):
-    today = date.today()
     # stock = get_object_or_404(RealTimeStock, stock_code=stock_code)
     latest_stock = RealTimeStock.objects.filter(stock_code=stock_code).order_by('-id').first()
     UserStock.objects.get_or_create(user=request.user, stock=latest_stock)
