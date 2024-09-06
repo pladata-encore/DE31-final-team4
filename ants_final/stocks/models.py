@@ -22,17 +22,25 @@ class OnceTime(models.Model):
 
 
 
+
+
 class Market(models.Model):
-    stock_name = models.TextField(db_column='StockName')  # 'StockName'과 매핑
-    current_point = models.TextField(null=True, blank=True, db_column='CurrentPoint')
-    up_down_point = models.TextField(null=True, blank=True, db_column='UpDownPoint')
-    up_down_rate = models.TextField(null=True, blank=True, db_column='UpDownRate')
-    up_down_flag = models.TextField(null=True, blank=True, db_column='UpDownFlag')
-    price_time = models.DateTimeField(db_column='price_time')  # 이미 일치
+    StockName = models.CharField(max_length=255, db_column='StockName', primary_key=True)
+    CurrentPoint = models.TextField(null=True, blank=True, db_column='CurrentPoint')
+    UpDownPoint = models.TextField(null=True, blank=True, db_column='UpDownPoint')
+    UpDownRate = models.TextField(null=True, blank=True, db_column='UpDownRate')
+    UpDownFlag = models.TextField(null=True, blank=True, db_column='UpDownFlag')
+    price_time = models.DateTimeField(db_column='price_time')
 
     class Meta:
         db_table = 'market'
         ordering = ['-price_time']
+        unique_together = (('StockName', 'price_time'),)
+
+
+
+
+
         
 
 
