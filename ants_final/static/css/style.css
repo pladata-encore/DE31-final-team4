@@ -63,5 +63,9 @@ html {
     scroll-behavior: smooth;
 }
 
-
+.sector-icon-size {
+    display: block;
+    height: 50px;
+    width: 50px;
+}
 
