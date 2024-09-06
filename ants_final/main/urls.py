@@ -17,13 +17,16 @@ urlpatterns = [
     path('accounts/google/callback/', oauth2_callback, name='google_callback'),  # 구글 콜백 URL
     path('accounts/google/login/finish/', views.GoogleLogin.as_view(), name='google_login_finish'),  # 만약 필요한 경우 추가 뷰
 
-   
-   
+    # 테스트 페이지
     path('test-option-1/', views.test_option_1, name='test_option_1'),
     path('test-option-2/', views.test_option_2, name='test_option_2'),
     path('test-option-3/', views.test_option_3, name='test_option_3'),
-
+    
+    # 검색
     path('search/', views.search_datawarehouse, name='search_datawarehouse'),
+
+    # about 페이지
+    path('about/', views.about, name='about'),
 
     #관심종목
     path('add_favorite_list/<str:stock_code>/', views.add_favorite_list, name='add_favorite_list'),

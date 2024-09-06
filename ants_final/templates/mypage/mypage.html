@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내 관심종목 리스트</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-top: 20px;
+        }
+
+        .stock-list {
+            list-style: none;
+            padding: 0;
+            margin: 20px auto;
+            max-width: 600px;
+        }
+
+        .stock-list li {
+            background-color: #fff;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stock-list li:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+        }
+
+        .stock-code {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #007bff;
+        }
+
+        .stock-price {
+            font-size: 1.1em;
+            color: #28a745;
+        }
+
+        .stock-rate {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+
+<h1>내 관심종목 리스트</h1>
+<ul class="stock-list">
+    {% for stock in stock_info %}
+    <li>
+        <span class="stock-code">{{ stock.stock_code }} - {{ stock.name }}</span>
+        <span class="stock-price">{{ stock.current_price }}원</span>
+        <span class="stock-rate">{{ stock.UpDownRate }}% ({{ stock.UpDownPoint }})</span>
+    </li>
+    {% endfor %}
+</ul>
+
+</body>
+</html>

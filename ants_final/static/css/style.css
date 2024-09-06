@@ -29,6 +29,12 @@ h1, h2, h3 {
     font-size: 5rem;
 }
 
+.sector-icon-size {
+    display: block;
+    height: 50px;
+    width: 50px;
+}
+
 /* About Section */
 #section2 {
     padding: 50px 0;
