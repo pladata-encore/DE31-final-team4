@@ -1,34 +1,124 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block content %}
 <div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-6">
+        <div class="col-lg-6 col-md-7 col-sm-9">
             <div class="card shadow-lg p-4 mb-5 bg-white rounded">
                 <div class="card-body">
-                    <h3 class="text-center mb-4">계정을 생성하세요</h3>
+                    <!-- 로고 이미지 추가 -->
+                    <div class="text-center mb-4">
+                        <img src="{% static 'images/logo.png' %}" alt="Logo" style="max-width: 150px;">
+                    </div>
+
+                    <!-- 에러 메시지 표시 -->
+                    {% if form.errors %}
+                        <div class="alert alert-danger">
+                            <ul>
+                                {% for field, errors in form.errors.items %}
+                                    <li><strong>{{ field }}:</strong>
+                                        <ul>
+                                            {% for error in errors %}
+                                                <li>{{ error }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
 
                     <!-- Sign Up Form -->
                     <form method="post">
                         {% csrf_token %}
                         {{ form.non_field_errors }}
 
-                        <!-- Form Fields -->
-                        {{ form.as_p }}
+                        <!-- 이메일 필드 -->
+                        <div class="mb-3">
+                            <label for="id_email" class="form-label">이메일(아이디):</label>
+                            <input type="email" name="email" id="id_email" class="form-control" required>
+                        </div>
+
+                        <!-- 아이디 필드 -->
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label">이름:</label>
+                            <input type="text" name="username" id="id_username" class="form-control" required>
+                        </div>
+
+                        <!-- 비밀번호 필드 -->
+                        <div class="mb-3 position-relative">
+                            <label for="id_password1" class="form-label">비밀번호:</label>
+                            <input type="password" name="password1" id="id_password1" class="form-control" required
+                                   onfocus="showPasswordPopup()" onblur="hidePasswordPopup()">
+                            <!-- 비밀번호 조건 팝업 (비밀번호 필드 아래에 팝업) -->
+                            <div id="passwordPopup" class="password-popup">
+                                <ul>
+                                    <li>비밀번호는 최소 8자 이상이어야 합니다.</li>
+                                    <li>비밀번호는 숫자, 문자, 특수 문자를 포함해야 합니다.</li>
+                                    <li>비밀번호는 공통적으로 사용되는 비밀번호가 아니어야 합니다.</li>
+                                    <li>비밀번호는 숫자로만 구성될 수 없습니다.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- 비밀번호 확인 필드 -->
+                        <div class="mb-3">
+                            <label for="id_password2" class="form-label">비밀번호 (확인):</label>
+                            <input type="password" name="password2" id="id_password2" class="form-control" required>
+                        </div>
 
                         <!-- Submit Button -->
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">Sign Up</button>
+                            <button type="submit" class="btn btn-success btn-block">회원가입</button>
                         </div>
                     </form>
 
                     <!-- Already have an account -->
                     <div class="text-center mt-4">
-                        <p>이미 계정이 있으신가요? <a href="{% url 'account_login' %}">Login here</a></p>
+                        <p>이미 계정이 있으신가요? <a href="{% url 'account_login' %}">로그인</a></p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- 팝업 표시 및 숨기기 스크립트 -->
+<script>
+    function showPasswordPopup() {
+        document.getElementById("passwordPopup").style.display = "block";
+    }
+
+    function hidePasswordPopup() {
+        document.getElementById("passwordPopup").style.display = "none";
+    }
+</script>
+
+<!-- CSS 스타일링 -->
+<style>
+    .password-popup {
+        display: none;
+        position: absolute;
+        background-color: white;
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-top: 5px;
+        width: 100%;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        z-index: 1000;
+    }
+
+    .password-popup ul {
+        list-style-type: none;
+        padding-left: 0;
+        margin-bottom: 0;
+    }
+
+    .password-popup ul li {
+        font-size: 0.9rem;
+        margin-bottom: 5px;
+    }
+</style>
 {% endblock content %}
