@@ -4,55 +4,21 @@
 {% block title %}ANTS{% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
-<section id="section1" style="height: 100vh; background: url('{% static 'images/back.png' %}') no-repeat center center fixed; background-size: cover; display: flex; align-items: center; justify-content: center; color: white;">
-    <div class="text-center">
-        <p style="font-size: 24px; font-weight: 300;">Asset Navigation Trading Strategy</p>
-        <h1 class="display-1" style="font-size: 130px; font-weight: bold;">ANTS</h1>
-        <h1 class="display-1" style="font-size: 50px; font-weight: bold;">The Perfect Stock Investment Platform for Beginners</h1>
-        <a href="#section2" class="btn btn-primary btn-lg mt-4" style="background-color: #007bff; border-color: #007bff;">Let's START</a>
-    </div>
-</section>
 
-
-
-<!-- About Section -->
-<section id="section2" class="py-5 text-center" style="background-color: #f8f9fa; background-attachment: fixed;">
-    <div class="container">
-        <h2 class="display-4">About Us</h2>
-        <p class="lead">주린이를 위한 친절한 투자 가이드, 든든한 경제 파트너</p>
-        <div class="row">
-            <div class="col-md-4">
-                <img src="{% static 'images/chart.png' %}" class="mb-2" style="width: 180px; height: 180px;">
-                <h5>실시간 주식 차트</h5>
-                <p>시장의 흐름을 한눈에</p>
-            </div>
-            <div class="col-md-4">
-                <img src="{% static 'images/recommendation.png' %}" class="mb-2" style="width: 180px; height: 180px;">
-                <h5>스마트 종목 추천</h5>
-                <p>맞춤형 투자 솔루션</p>
-            </div>
-            <div class="col-md-4">
-                <img src="{% static 'images/test.png' %}" class="mb-2" style="width: 180px; height: 180px;">
-                <h5>경제 성향 테스트</h5>
-                <p>당신의 투자 성향을 진단하다</p>
-            </div>
+<div class='container'>
+    <h1>주가지수</h1>
+    <div class="row">
+        <div class="col-6">
+            <h2 class="test">코스피</h2>
+            <span class="border border-2 mt-3">코스피 차트 추가해주세요</span>
         </div>
-        
-        <!-- 추가된 섹션 -->
-        <div class="py-5 text-center">
-            <h1 class="display-4" style="font-weight: bold;">Everywhere invest in seoul.</h1>
-            <p class="lead mt-4" style="font-size: 18px;">
-                우리의 서비스는 주식 투자에 열정이 있는 모든 이들을 위해 설계된 혁신적인 플랫폼입니다.<br> 매달 한 번씩 정기 업데이트를 통해 'Welcome to ANTS'로 모든 투자자들이 자유롭게 자신의 투자 전략을 펼칠 수 있도록 지원합니다.
-            </p>
-            <p class="lead" style="font-size: 18px;">
-                투자자들이 다양한 방식으로 금융시장을 탐구하자는 취지로,<br> 어떤 날은 주요 경제 지표를 심층 분석하고,<br> 또 어떤 날은 실시간으로 주식 차트를 탐색하며 시장의 흐름을 파악합니다. <br>'Insightful Hour'라는 이벤트에서는 특정 주식 종목과 분석 방법을 미리 정해두고, <br>이 시간 동안 다양한 투자자들과 아이디어를 교환하며 미래의 투자 기회를 탐색하는 기회를 제공합니다.
-            </p>
-            <p class="lead" style="font-size: 18px;">
-                우리는 글로벌 금융 시장을 탐험하며, 투자자들이 보다 풍부한 경험을 할 수 있도록 돕습니다.
-            </p>
+        <div class="col-6">
+            <h2>코스닥</h2>
+            <span class="border border-2 mt-3">코스닥 차트 추가해주세요</span>
+
         </div>
     </div>
+<<<<<<< HEAD
 </section>
 
 
@@ -130,97 +96,39 @@
                     <a href="{% url 'economic_awareness_test' %}" class="btn btn-primary btn-lg" style="background-color: #f8c6d1; border-color: #f8c6d1;">START</a>
                 </div>
             </div>
+=======
+</div>
+<div class='container mt-3'>
+    <h1>실시간 차트</h1>
+    <div class="row">
+        <div class="col-8">
+            <input type="button" class="btn btn-secondary" value="급상승">
+            <input type="button" class="btn btn-secondary" value="급하락">
+            <h2></h2>
+            <span class="border border-2 mt-3">실시간 차트 추가해주세요</span>
+        </div>
+        <div class="col-4">
+            <a href="{% url 'economic_awareness_test' %}">
+                <img src="{% static 'images/test_image.png' %}">
+            </a>
+>>>>>>> origin/feature/template
         </div>
     </div>
-</section>
-
-
-
-<!-- Developers Section -->
-<section id="section5" class="py-5 text-center" style="background-color: #ffffff; background-attachment: fixed;">
-    <div class="container mt-5">
-        <h2 class="text-center mb-5 display-4">Meet the Developers</h2>
-
-        <div class="row justify-content-center text-center">
-            <!-- 첫 번째 행 -->
-            <div class="col-md-4 mb-5">
-                <div class="d-flex justify-content-center">
-                    <img src="{% static 'images/developer1.jpg' %}" class="img-fluid rounded-circle" alt="Developer 1" style="width: 200px; height: 200px;">
-                </div>
-                <h3 class="mt-3">차민혁</h3>
-                <p class="text-muted">Data Engineer & System Engineer</p>
-                <p>Expertise: Python, Django, JavaScript</p>
-                <a href="#" class="btn btn-outline-primary">Contact</a>
-            </div>
-
-            <div class="col-md-4 mb-5">
-                <div class="d-flex justify-content-center">
-                    <img src="{% static 'images/developer2.jpg' %}" class="img-fluid rounded-circle" alt="Developer 2" style="width: 200px; height: 200px;">
-                </div>
-                <h3 class="mt-3">김예송</h3>
-                <p class="text-muted">Web Development Manager & System Engineer</p>
-                <p>Expertise: Django, PostgreSQL, Docker</p>
-                <a href="#" class="btn btn-outline-primary">Contact</a>
-            </div>
-
-            <div class="col-md-4 mb-5">
-                <div class="d-flex justify-content-center">
-                    <img src="{% static 'images/developer3.jpg' %}" class="img-fluid rounded-circle" alt="Developer 3" style="width: 200px; height: 200px;">
-                </div>
-                <h3 class="mt-3">원정인</h3>
-                <p class="text-muted">Project Manager & Data Analyst</p>
-                <p>Expertise: HTML, CSS, JavaScript, React</p>
-                <a href="#" class="btn btn-outline-primary">Contact</a>
+</div>
+<div class='container mt-3'>
+    <h1>지금 뜨는 분야</h1>
+    <div class="row">
+        <div class="col-4">
+            <div class="container">
+                <img src="{% static 'images/electric_car_icon.png' %}" class="d-block sector-icon-size">
+                <img src="{% static 'images/biology_icon.png' %}" class="d-block sector-icon-size">
+                <img src="{% static 'images/semiconductor_icon.png' %}" class="d-block sector-icon-size">
             </div>
         </div>
+        <div class="col-8">
 
-        <div class="row justify-content-center text-center">
-            <!-- 두 번째 행 -->
-            <div class="col-md-4 mb-5">
-                <div class="d-flex justify-content-center">
-                    <img src="{% static 'images/developer4.jpg' %}" class="img-fluid rounded-circle" alt="Developer 4" style="width: 200px; height: 200px;">
-                </div>
-                <h3 class="mt-3">조명아</h3>
-                <p class="text-muted">Docker Manager & Data Engineer</p>
-                <p>Expertise: Kotlin, Swift, Flutter</p>
-                <a href="#" class="btn btn-outline-primary">Contact</a>
-            </div>
-
-            <div class="col-md-4 mb-5">
-                <div class="d-flex justify-content-center">
-                    <img src="{% static 'images/developer5.jpg' %}" class="img-fluid rounded-circle" alt="Developer 5" style="width: 200px; height: 200px;">
-                </div>
-                <h3 class="mt-3">최태성</h3>
-                <p class="text-muted">AWS Manager & Data Analyst</p>
-                <p>Expertise: AWS, Docker, Kubernetes</p>
-                <a href="#" class="btn btn-outline-primary">Contact</a>
-            </div>
         </div>
     </div>
-</section>
+</div>
 {% endblock %}
 
-<script>
-function submitTest() {
-    var score = 0;
-
-    for (var i = 1; i <= 4; i++) {
-        var answer = document.getElementById('q' + i).value;
-        if (answer === "yes") {
-            score += 1;
-        }
-    }
-
-    var resultText = "";
-    if (score <= 2) {
-        resultText = "You have a conservative approach towards money. You value savings and are cautious about spending.";
-    } else if (score <= 3) {
-        resultText = "You have a balanced approach to finances, neither too cautious nor too reckless.";
-    } else {
-        resultText = "You tend to take risks with money and may have a more spontaneous approach to spending and saving.";
-    }
-
-    document.getElementById("testResult").innerText = resultText;
-    document.getElementById("result").style.display = "block";
-}
-</script>
