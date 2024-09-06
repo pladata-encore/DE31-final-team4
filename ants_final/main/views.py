@@ -8,7 +8,7 @@ def home(request):
 
 def custom_logout(request):
     logout(request)
-    request.session.flush()
+    # request.session.flush() 
     return redirect('home')
 
 def economic_awareness_test(request):
@@ -27,16 +27,30 @@ def google_callback(request):
 class GoogleLogin(SocialLoginView):
     adapter_class = GoogleOAuth2Adapter  # Google OAuth 어댑터를 사용하여 로그인 처리
 
+from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
+
+# @login_required
+# def post_login_redirect(request):
+#     """
+#     사용자가 로그인한 후 소셜 로그인인지 일반 로그인인지 확인하고 리다이렉션.
+#     """
+#     if request.user.socialaccount_set.exists():
+#         # 사용자가 소셜 로그인을 했다면
+#         return redirect('/accounts/google/login/')
+#     else:
+#         # 일반 로그인이라면
+#         return redirect('/accounts/login/')
 
 
-def test_option_1(request):
-    return render(request, 'main/test_option_1.html')
+# def test_option_1(request):
+#     return render(request, 'main/test_option_1.html')
 
-def test_option_2(request):
-    return render(request, 'main/test_option_2.html')
+# def test_option_2(request):
+#     return render(request, 'main/test_option_2.html')
 
-def test_option_3(request):
-    return render(request, 'main/test_option_3.html')
+# def test_option_3(request):
+#     return render(request, 'main/test_option_3.html')
 
 
 from .models import TestOption, Question, Answer
@@ -112,7 +126,63 @@ def search_datawarehouse(request):
     return render(request, 'base.html', {'results': results, 'message': message, 'query': query})
 
 
-# about
-def about(request):
-    return render(request, 'main/about.html')
 
+
+import matplotlib.pyplot as plt
+from io import BytesIO
+import base64
+from django.utils import timezone
+from django.shortcuts import render
+from stocks.models import Market  # stocks 앱에서 Market 모델을 임포트
+from datetime import datetime
+
+# 그래프를 생성하고 base64로 인코딩하는 함수
+def add_graphs():
+    # 오늘 날짜의 시작 시간과 끝 시간 설정
+    today_start = datetime.combine(timezone.now().date(), datetime.min.time())
+    today_end = datetime.combine(timezone.now().date(), datetime.max.time())
+
+    # KOSPI 및 KOSDAQ 데이터 중 오늘 날짜의 데이터만 가져옴
+    kospi_data = Market.objects.filter(stock_name="KOSPI", price_time__range=[today_start, today_end])
+    kosdaq_data = Market.objects.filter(stock_name="KOSDAQ", price_time__range=[today_start, today_end])
+
+    # KOSPI 그래프 생성 (X축, Y축 제거)
+    fig1, ax1 = plt.subplots(figsize=(8, 6))
+    ax1.plot(kospi_data.values_list('price_time', flat=True), kospi_data.values_list('current_point', flat=True), label="KOSPI", color="blue")
+    ax1.set_title("KOSPI (Today)")
+    ax1.xaxis.set_visible(False)  # X축 숨김
+    ax1.yaxis.set_visible(False)  # Y축 숨김
+    ax1.legend()
+
+    # KOSDAQ 그래프 생성 (X축, Y축 제거)
+    fig2, ax2 = plt.subplots(figsize=(8, 6))
+    ax2.plot(kosdaq_data.values_list('price_time', flat=True), kosdaq_data.values_list('current_point', flat=True), label="KOSDAQ", color="green")
+    ax2.set_title("KOSDAQ (Today)")
+    ax2.xaxis.set_visible(False)  # X축 숨김
+    ax2.yaxis.set_visible(False)  # Y축 숨김
+    ax2.legend()
+
+    # KOSPI 그래프를 base64로 인코딩
+    buffer1 = BytesIO()
+    fig1.savefig(buffer1, format="png")
+    buffer1.seek(0)
+    image_png1 = buffer1.getvalue()
+    buffer1.close()
+    graphic1 = base64.b64encode(image_png1).decode('utf-8')
+
+    # KOSDAQ 그래프를 base64로 인코딩
+    buffer2 = BytesIO()
+    fig2.savefig(buffer2, format="png")
+    buffer2.seek(0)
+    image_png2 = buffer2.getvalue()
+    buffer2.close()
+    graphic2 = base64.b64encode(image_png2).decode('utf-8')
+
+    return graphic1, graphic2
+
+def home(request):
+    # 그래프 데이터 생성
+    graphic1, graphic2 = add_graphs()
+
+    # 그래프 데이터를 템플릿으로 전달
+    return render(request, 'main/home.html', {'graphic1': graphic1, 'graphic2': graphic2})
