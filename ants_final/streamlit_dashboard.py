@@ -52,7 +52,7 @@ def load_market_data(stock_name, start, end):
 oncetime_data = load_oncetime_data(ticker_symbol, start_date, end_date)
 
 # Market 데이터 로드
-market_data = load_market_data(stock_name, start_date_market, end_date_market)
+market_data = load_market_data(StockName, start_date_market, end_date_market)
 
 # OnceTime 데이터 그래프: Closing Price (반응형 Plotly 그래프 사용)
 st.subheader(f"{ticker_symbol} Closing Price (OnceTime Data)")
