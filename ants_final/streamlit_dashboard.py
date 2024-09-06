@@ -25,7 +25,7 @@ end_date = st.sidebar.date_input("End Date (OnceTime)", datetime.today())
 st.sidebar.header("Market Data Input")
 
 # 고정된 KOSPI와 KOSDAQ만 선택 가능하게 설정
-stock_name = st.sidebar.selectbox("Select Stock Name (Market)", ["KOSPI", "KOSDAQ"])
+stock_name = st.sidebar.selectbox("Select StockName (Market)", ["KOSPI", "KOSDAQ"])
 
 # 사이드바에서 날짜 입력
 yesterday = datetime.today() - timedelta(days=1)
