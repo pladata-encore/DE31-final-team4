@@ -21,16 +21,16 @@ ticker_symbol = st.sidebar.text_input("Ticker Symbol (OnceTime)", "000020")  # �
 start_date = st.sidebar.date_input("Start Date (OnceTime)", pd.to_datetime("2014-01-01"))
 end_date = st.sidebar.date_input("End Date (OnceTime)", datetime.today())
 
-# 사용자 입력: 주식 이름과 기간 선택 (Market 데이터)
-st.sidebar.header("Market Data Input")
+# # 사용자 입력: 주식 이름과 기간 선택 (Market 데이터)
+# st.sidebar.header("Market Data Input")
 
-# 고정된 KOSPI와 KOSDAQ만 선택 가능하게 설정
-StockName = st.sidebar.selectbox("Select StockName (Market)", ["KOSPI", "KOSDAQ"])
+# # 고정된 KOSPI와 KOSDAQ만 선택 가능하게 설정
+# StockName = st.sidebar.selectbox("Select StockName (Market)", ["KOSPI", "KOSDAQ"])
 
-# 사이드바에서 날짜 입력
-yesterday = datetime.today() - timedelta(days=1)
-start_date_market = st.sidebar.date_input("Market Start Date", yesterday)
-end_date_market = st.sidebar.date_input("Market End Date", datetime.today())  # 오늘 날짜로 기본값 설정
+# # 사이드바에서 날짜 입력
+# yesterday = datetime.today() - timedelta(days=1)
+# start_date_market = st.sidebar.date_input("Market Start Date", yesterday)
+# end_date_market = st.sidebar.date_input("Market End Date", datetime.today())  # 오늘 날짜로 기본값 설정
 
 # OnceTime 데이터를 불러오는 함수
 def load_oncetime_data(ticker, start, end):
