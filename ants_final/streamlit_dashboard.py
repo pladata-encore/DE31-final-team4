@@ -84,16 +84,16 @@ if not oncetime_data.empty:
 else:
     st.error("No data available for the selected period.")
 
-# Market 데이터 그래프 (여전히 Matplotlib 사용)
-st.subheader(f"{StockName} Current Point (Market Data)")
-if not market_data.empty:
-    fig3, ax3 = plt.subplots(figsize=(12, 6))
-    ax3.plot(market_data['price_time'], market_data['CurrentPoint'], label=f'{StockName} Current Point', color='blue')
-    ax3.set_xlabel("Time")
-    ax3.set_ylabel("Current Point")
-    ax3.legend()
-    plt.xticks(rotation=45)
-    plt.tight_layout()
-    st.pyplot(fig3)
-else:
-    st.error("No data found for the selected period.")
+# # Market 데이터 그래프 (여전히 Matplotlib 사용)
+# st.subheader(f"{StockName} Current Point (Market Data)")
+# if not market_data.empty:
+#     fig3, ax3 = plt.subplots(figsize=(12, 6))
+#     ax3.plot(market_data['price_time'], market_data['CurrentPoint'], label=f'{StockName} Current Point', color='blue')
+#     ax3.set_xlabel("Time")
+#     ax3.set_ylabel("Current Point")
+#     ax3.legend()
+#     plt.xticks(rotation=45)
+#     plt.tight_layout()
+#     st.pyplot(fig3)
+# else:
+#     st.error("No data found for the selected period.")
