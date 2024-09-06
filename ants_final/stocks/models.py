@@ -37,6 +37,8 @@ class Market(models.Model):
         ordering = ['-price_time']
         unique_together = (('StockName', 'price_time'),)
 
+    
+
 
 
 

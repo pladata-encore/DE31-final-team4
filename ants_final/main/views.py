@@ -120,16 +120,15 @@ from io import BytesIO
 import base64
 from django.utils import timezone
 from django.shortcuts import render
-from stocks.models import Market  # stocks 앱에서 Market 모델을 임포트
+from stocks.models import Market
 from datetime import datetime
+import pandas as pd
 
 # 그래프를 생성하고 base64로 인코딩하는 함수
 def add_graphs():
-    # 오늘 날짜의 시작 시간과 끝 시간 설정
+    # 오늘 날짜의 시작 시간과 끝 시간 설정 (오전 9시 ~ 오후 4시)
     today_start = timezone.now().replace(hour=9, minute=0, second=0, microsecond=0)
-    # 오늘 시작 시간 (오전 9시 0분 0초)을 가져옴
     today_end = timezone.now().replace(hour=16, minute=0, second=0, microsecond=0)
-    # 오늘 종료 시간 (오후 4시 0분 0초)을 가져옴
 
     # KOSPI 및 KOSDAQ 데이터 중 오늘 날짜의 데이터만 가져옴
     kospi_data = Market.objects.filter(StockName="KOSPI", price_time__range=[today_start, today_end])
@@ -141,21 +140,44 @@ def add_graphs():
     if not kosdaq_data.exists():
         kosdaq_data = Market.objects.filter(StockName="KOSDAQ").order_by('-price_time')[:10]
 
+    # 데이터를 pandas DataFrame으로 변환 (시간 순으로 정렬)
+    kospi_df = pd.DataFrame(list(kospi_data.values('price_time', 'CurrentPoint')))
+    kosdaq_df = pd.DataFrame(list(kosdaq_data.values('price_time', 'CurrentPoint')))
+
+    # 쉼표 제거 후 숫자로 변환
+    kospi_df['CurrentPoint'] = kospi_df['CurrentPoint'].str.replace(',', '')
+    kospi_df['CurrentPoint'] = pd.to_numeric(kospi_df['CurrentPoint'], errors='coerce')
+
+    kosdaq_df['CurrentPoint'] = kosdaq_df['CurrentPoint'].str.replace(',', '')
+    kosdaq_df['CurrentPoint'] = pd.to_numeric(kosdaq_df['CurrentPoint'], errors='coerce')
+
+    # 선형 보간 적용 (결측값을 선형으로 보간)
+    kospi_df['CurrentPoint'] = kospi_df['CurrentPoint'].interpolate(method='linear')
+    kosdaq_df['CurrentPoint'] = kosdaq_df['CurrentPoint'].interpolate(method='linear')
+
+    kospi_df['price_time'] = pd.to_datetime(kospi_df['price_time'])
+    kosdaq_df['price_time'] = pd.to_datetime(kosdaq_df['price_time'])
+
+    kospi_df = kospi_df.sort_values(by='price_time')
+    kosdaq_df = kosdaq_df.sort_values(by='price_time')
+
     # KOSPI 그래프 생성
     fig1, ax1 = plt.subplots(figsize=(8, 6))
-    ax1.plot(kospi_data.values_list('price_time', flat=True), kospi_data.values_list('CurrentPoint', flat=True), label="KOSPI", color="blue")
+    ax1.plot(kospi_df['price_time'], kospi_df['CurrentPoint'], label="KOSPI", color="blue")
     ax1.set_title("KOSPI (Today)")
-    ax1.xaxis.set_visible(False)  # X축 숨김 (필요 시 표시 가능)
-    ax1.yaxis.set_visible(False)  # Y축 숨김 (필요 시 표시 가능)
-    # ax1.legend()
+    ax1.xaxis.set_visible(True)  # 시간 축 표시
+    ax1.yaxis.set_visible(True)  # 값 축 표시
+    ax1.set_xlabel("Time")  # X축 레이블 설정
+    ax1.set_ylabel("CurrentPoint")  # Y축 레이블 설정
 
     # KOSDAQ 그래프 생성
     fig2, ax2 = plt.subplots(figsize=(8, 6))
-    ax2.plot(kosdaq_data.values_list('price_time', flat=True), kosdaq_data.values_list('CurrentPoint', flat=True), label="KOSDAQ", color="green")
+    ax2.plot(kosdaq_df['price_time'], kosdaq_df['CurrentPoint'], label="KOSDAQ", color="green")
     ax2.set_title("KOSDAQ (Today)")
-    ax2.xaxis.set_visible(False)  # X축 숨김 (필요 시 표시 가능)
-    ax2.yaxis.set_visible(False)  # Y축 숨김 (필요 시 표시 가능)
-    # ax2.legend()
+    ax2.xaxis.set_visible(True)  # 시간 축 표시
+    ax2.yaxis.set_visible(True)  # 값 축 표시
+    ax2.set_xlabel("Time")  # X축 레이블 설정
+    ax2.set_ylabel("CurrentPoint")  # Y축 레이블 설정
 
     # KOSPI 그래프를 base64로 인코딩
     buffer1 = BytesIO()
@@ -195,4 +217,3 @@ def home(request):
 
     # 템플릿 렌더링
     return render(request, 'main/home.html', context)
-
