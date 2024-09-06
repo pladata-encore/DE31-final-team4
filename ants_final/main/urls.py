@@ -26,6 +26,7 @@ urlpatterns = [
     path('search/', views.search_datawarehouse, name='search_datawarehouse'),
 
     #관심종목
-    path('add_favorite_list/<int:stock_code>/', views.add_favorite_list, name='add_favorite_list'),
+    path('add_favorite_list/<str:stock_code>/', views.add_favorite_list, name='add_favorite_list'),
     path('my_favorite_list/', views.my_favorite_list, name='my_favorite_list'),
+    # path('stock_/', views.my_favorite_list, name='my_favorite_list'),
 ]
