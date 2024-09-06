@@ -186,3 +186,6 @@ def home(request):
 
     # 그래프 데이터를 템플릿으로 전달
     return render(request, 'main/home.html', {'graphic1': graphic1, 'graphic2': graphic2})
+
+def about(request):
+    return render(request, 'main/about.html')
