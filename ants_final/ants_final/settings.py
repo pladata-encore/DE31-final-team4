@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from dotenv import load_dotenv
+import os 
+
 
 load_dotenv('/home/ants/django/.env')
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -62,28 +64,41 @@ AUTHENTICATION_BACKENDS = [
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 
+ACCOUNT_AUTHENTICATION_METHOD = 'email'  # 이메일을 통한 로그인 허용
+ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
+
+
 # 로그인 후 리디렉션될 URL
 LOGIN_REDIRECT_URL = '/'
+# 로그아웃 후 리디렉션될 URL
+LOGOUT_REDIRECT_URL = '/' 
+
+# SOCIALACCOUNT_ADAPTER = 'ants_final.adapters.CustomSocialAccountAdapter'
+
 
 SOCIALACCOUNT_LOGIN_ON_GET = True
+
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'SCOPE': [
-            'profile', 
-            'email', 
+            'profile',
+            'email',
         ],
         'AUTH_PARAMS': {
-            'access_type': 'online'
-        }
+            'access_type': 'online',
+        },
+    
     }
 }
 
-# 브라우저가 닫힐 때 세션을 만료시키는 설정
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
-# 세션 쿠키의 수명을 설정 (기본값: 2주)
-SESSION_COOKIE_AGE = 1209600  # 2 weeks in seconds
+
+
+SESSION_COOKIE_SECURE = False  # 개발 환경에서 False로 설정
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # 브라우저 종료 시 세션 만료 X
+SESSION_COOKIE_AGE = 1209600  # 2주간 유지
+# SESSION_SAVE_EVERY_REQUEST = True  # 매 요청마다 세션 갱신
 
 # 세션 엔진 설정
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
@@ -172,11 +187,12 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ko'
 
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
+USE_L10N = True 
 
 USE_TZ = True
 
