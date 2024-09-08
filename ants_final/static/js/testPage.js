@@ -62,24 +62,27 @@ class TestPage {
         buttonWrap.innerHTML = ''; // 결과 화면에서 버튼 제거
     }
 }
-
 // 설문조사 데이터 정의
 const surveyData = {
     data: [
         {
-            question: '당신이 가장 좋아하는 색은 무엇인가요?',
+            question: '당신의 연령대는 어떻게 됩니까?',
             answerList: [
-                { answer: '빨간색', point: 10 },
-                { answer: '파란색', point: 20 },
-                { answer: '초록색', point: 30 }
+                { answer: '19세 이하', point: 12.5 },
+                { answer: '20세 ~ 40세', point: 12.5 },
+                { answer: '41세 ~ 50세', point: 9.3 },
+                { answer: '51세 ~ 60세', point: 6.2 },
+                { answer: '61세 이상', point: 3.1 }
             ]
         },
         {
-            question: '당신이 가장 좋아하는 동물은 무엇인가요?',
+            question: '투자하고자 하는 자금의 투자 가능 기간은 얼마나 됩니까?',
             answerList: [
-                { answer: '강아지', point: 10 },
-                { answer: '고양이', point: 20 },
-                { answer: '새', point: 30 }
+                { answer: '6개월 이내', point: 3.1 },
+                { answer: '6개월 이상 ~ 1년 이내', point: 6.2 },
+                { answer: '1년 이상 ~ 2년 이내', point: 9.3 },
+                { answer: '2년 이상 ~ 3년 이내', point: 12.5 },
+                { answer: '3년 이상', point: 15.6 }
             ]
         }
     ],
@@ -91,3 +94,4 @@ const surveyData = {
 };
 // TestPage 클래스를 인스턴스화하여 사용
 const testPage = new TestPage(surveyData);
+
