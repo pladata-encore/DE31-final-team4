@@ -12,8 +12,6 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from dotenv import load_dotenv
-import os 
-
 
 load_dotenv('/home/ants/django/.env')
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -215,7 +213,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': '/home/ants/django/ants_final/logs/django.log',
+            'filename': '/home/jeong/django/django/ants_final/logs/django.log',
         },
     },
     'loggers': {
