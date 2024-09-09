@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from dj_rest_auth.registration.views import SocialLoginView
+from django.db.models import OuterRef, Subquery
 
 def home(request):
     return render(request, 'main/home.html')
@@ -29,29 +30,6 @@ class GoogleLogin(SocialLoginView):
 
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
-
-# @login_required
-# def post_login_redirect(request):
-#     """
-#     사용자가 로그인한 후 소셜 로그인인지 일반 로그인인지 확인하고 리다이렉션.
-#     """
-#     if request.user.socialaccount_set.exists():
-#         # 사용자가 소셜 로그인을 했다면
-#         return redirect('/accounts/google/login/')
-#     else:
-#         # 일반 로그인이라면
-#         return redirect('/accounts/login/')
-
-
-# def test_option_1(request):
-#     return render(request, 'main/test_option_1.html')
-
-# def test_option_2(request):
-#     return render(request, 'main/test_option_2.html')
-
-# def test_option_3(request):
-#     return render(request, 'main/test_option_3.html')
-
 
 from .models import TestOption, Question, Answer
 
@@ -234,3 +212,49 @@ def home(request):
 
 def about(request):
     return render(request, 'main/about.html')
+
+# 관심종목
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import RealTimeStock, UserStock
+
+@login_required
+def add_favorite_list(request, stock_code):
+    latest_stock = RealTimeStock.objects.filter(stock_code=stock_code).order_by('-id').first()
+    if latest_stock is not None:
+        # UserStock에 해당 유저의 관심종목으로 추가
+        UserStock.objects.get_or_create(
+            user=request.user, 
+            stock_id=latest_stock,  # 외래키로 RealTimeStock 객체를 저장
+            stock_code=latest_stock.stock_code  # stock_code 필드에 텍스트로 저장
+        )
+        return redirect('my_favorite_list')
+    else:
+        # 만약 stock_code가 존재하지 않으면 처리
+        return redirect('error_page')
+
+def my_favorite_list(request):
+    user_stocks = UserStock.objects.filter(user=request.user).select_related('stock_id')
+    stock_info = {}
+    
+    # 각 stock_code의 최신 RealTimeStock 객체를 선택합니다.
+    for user_stock in user_stocks:
+        stock_code = user_stock.stock_id.stock_code
+        # 최신 RealTimeStock 객체를 가져옵니다.
+        latest_stock = RealTimeStock.objects.filter(stock_code=stock_code).order_by('-id').first()
+        if latest_stock:
+            if stock_code not in stock_info or latest_stock.id > stock_info[stock_code]['id']:
+                stock_info[stock_code] = {
+                    'stock_code': latest_stock.stock_code,
+                    'name': latest_stock.name,
+                    'current_price': latest_stock.current_price,
+                    'UpDownRate': latest_stock.UpDownRate,
+                    'UpDownPoint': latest_stock.UpDownPoint,
+                    'id': latest_stock.id
+                }
+    
+    # stock_info의 값을 리스트로 변환하고, id 기준으로 정렬합니다.
+    stock_info_list = list(stock_info.values())
+    stock_info_list.sort(key=lambda x: x['id'], reverse=True)
+    
+    return render(request, 'mypage/mypage.html', {'stock_info': stock_info_list})

@@ -44,6 +44,11 @@
                     {% else %}
                         <li class="nav-item"><a class="nav-link" href="{% url 'account_login' %}">Login</a></li>
                     {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'mypage' %}">
+                            <img src="{% static 'images/member.jpg' %}" alt="My Page" width="10%">
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>
