@@ -213,7 +213,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': '/home/jeong/django/django/ants_final/logs/django.log',
+            'filename': '/home/ants/django/ants_final/logs/django.log',
         },
     },
     'loggers': {
