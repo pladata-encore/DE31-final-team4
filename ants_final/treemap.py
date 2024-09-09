@@ -35,7 +35,6 @@ def load_stock_data():
                'PlusMinus', 'UpDownPoint', 'opening_price', 'high_price', 'low_price', 'price_time', 'per',
                'pbr', 'stockcount', 'id', 'hts_total', 'closing_price']
 
-    
     df = pd.DataFrame(rows, columns=columns)
     
     # 변동률 계산
@@ -49,19 +48,15 @@ st.title("Stock Market Treemap")
 # 데이터 불러오기
 df = load_stock_data()
 
-# st.dataframe(df[:10])
-
-
 # Streamlit 세션 상태로 마켓 선택 상태 유지
 if 'selected_market' not in st.session_state:
     st.session_state.selected_market = None
 
 # 가로로 배치하는 layout 설정
-col0, col1, col2, col3 = st.columns([2,2,2,2])
+col0, col1, col2, col3 = st.columns([2, 2, 2, 2])
 
 # 마켓 선택과 기간 선택을 가로로 배치
 with col1:
-    # 마켓 선택 버튼을 가로로 배치
     st.subheader("Select a Market")
     
     col_market1, col_market2 = st.columns([1, 1])
@@ -74,9 +69,8 @@ with col1:
             st.session_state.selected_market = 'KOSDAQ'
 
 with col2:
-    # 기간 선택
     st.subheader("Select a Time Period")
-    time_options = ['1 Day', '1 Week', '1 Month', '3 Months']
+    time_options = ['1 Day', '1 Week', '1 Month', '3 Months', '6 Months', '1 year']
     selected_time_period = st.selectbox("Time Period", options=time_options)
 
 # 데이터 필터링 함수
@@ -91,6 +85,10 @@ def filter_by_time_period(df, period):
         time_threshold = current_time - timedelta(days=30)
     elif period == '3 Months':
         time_threshold = current_time - timedelta(days=90)
+    elif period == '6 Months':
+        time_threshold = current_time - timedelta(days=180)
+    elif period == '1 year':
+        time_threshold = current_time - timedelta(days=365)
     
     return df[df['price_time'] >= time_threshold]
 
@@ -98,55 +96,53 @@ def filter_by_time_period(df, period):
 selected_market = st.session_state.selected_market
 
 if selected_market:
-    # 선택된 마켓에 따라 데이터 필터링
     filtered_df = df[df['market'] == selected_market]
+
+    # 시가총액 기준으로 내림차순 정렬하여 상위 100개 데이터만 선택
+    filtered_df = filtered_df.sort_values(by='hts_total', ascending=False).head(100)
 
     # 선택된 기간에 따라 데이터 필터링
     filtered_df = filter_by_time_period(filtered_df, selected_time_period)
-    # 변동률 값 확인
-    st.write("변동률 (Change Rate %):")
-    st.dataframe(filtered_df[['name', 'UpDownPoint', 'Change Rate (%)']])
 
-       # 트리맵 그리기
     if not filtered_df.empty:
+        st.write("변동률 (Change Rate %):")
+        st.dataframe(filtered_df[['name', 'UpDownPoint', 'Change Rate (%)']])
+
+        # 트리맵 그리기
         if selected_time_period == '1 Day':
-            # 1일 기준 트리맵 (UpDownPoint 사용)
             fig = px.treemap(
                 filtered_df,
-                path=['sector', 'name'],               # 트리맵에서 섹터와 이름을 경로로 설정
-                values='hts_total',                    # 시가총액을 크기로 설정
-                color='UpDownPoint',                   # 1일 변동률(UpDownPoint)을 색상으로 설정
-                color_continuous_scale='RdBu',          # 변동률에 따른 색상 스케일을 자동으로 설정 (빨강-파랑)
+                path=['sector', 'name'],
+                values='hts_total',
+                color='UpDownPoint',
+                color_continuous_scale='RdBu',
                 title=f"Treemap of {selected_market} Market - 1 Day Change"
             )
         else:
-            # 1주, 1달, 3달 트리맵 (Change Rate 사용)
             fig = px.treemap(
                 filtered_df,
-                path=['sector', 'name'],               # 트리맵에서 섹터와 이름을 경로로 설정
-                values='hts_total',                    # 시가총액을 크기로 설정
-                color='Change Rate (%)',               # 변동률(Change Rate)을 색상으로 설정
-                color_continuous_scale='RdBu',          # 변동률에 따른 색상 스케일을 자동으로 설정 (빨강-파랑)
+                path=['sector', 'name'],
+                values='hts_total',
+                color='Change Rate (%)',
+                color_continuous_scale='RdBu',
                 title=f"Treemap of {selected_market} Market - {selected_time_period} Change"
             )
 
-        # 텍스트 크기 조정 및 트리맵 크기 조정
         fig.update_traces(
             textinfo='label+value+percent entry',
-            textfont=dict(size=14),                    # 텍스트 크기 조정
-            hoverinfo='label+value+percent parent',    # 마우스 오버 시 정보 표시
-            insidetextfont=dict(size=14)               # 내부 텍스트 크기
+            textfont=dict(size=14),
+            hoverinfo='label+value+percent parent',
+            insidetextfont=dict(size=14)
         )
 
-        # 트리맵의 비율 조정
         fig.update_layout(
             autosize=False,
-            height=800,  # 높이 조정
-            width=800,   # 너비 조정
+            height=800,
+            width=800,
             margin=dict(t=50, l=25, r=25, b=25)
         )
         
-        st.plotly_chart(fig, use_container_width=True, height=1000)  # 트리맵 높이 확대
+        st.plotly_chart(fig, use_container_width=True, height=1000)
     else:
         st.write(f"No data available for {selected_market} Market.")
 else:
