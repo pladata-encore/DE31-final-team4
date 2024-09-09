@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+{% load static %}
 <head>
-    {% load static %}
+    <!-- {% load static %} -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Website Template{% endblock %}</title>
@@ -12,10 +13,10 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
-<body>
+<body style="font-family: Lobster;">
     <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg bg-body-tertiary fixed-top">
-        <div class="container-fluid">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary fixed-top" style="padding-top: 10px; padding-bottom: 0px;" >
+        <div class="container-fluid" style="margin-top: 3px;">
             <a class="navbar-brand" href="{% url 'home' %}">
                 <img src="{% static 'images/logo.png' %}" alt="ANTS Logo" style="height: 25px;">
             </a>
@@ -45,8 +46,8 @@
                         <li class="nav-item"><a class="nav-link" href="{% url 'account_login' %}">Login</a></li>
                     {% endif %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'mypage' %}">
-                            <img src="{% static 'images/member.jpg' %}" alt="My Page" width="10%">
+                        <a href="{% url 'mypage' %}" style="margin-left: 10px;">
+                            <img src="{% static 'images/member.jpg' %}" alt="My Page" width="13%" style="margin-top: 2%;">
                         </a>
                     </li>
                 </ul>

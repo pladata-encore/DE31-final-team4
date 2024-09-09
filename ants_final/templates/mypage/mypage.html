@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+{% load static %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -34,6 +35,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: relative;
+            overflow: hidden; /* 내용이 벗어나지 않도록 설정 */
         }
 
         .stock-list li:hover {
@@ -56,6 +59,18 @@
         .stock-rate {
             color: #dc3545;
         }
+
+        .stock-remove {
+            position: absolute;
+            right: 20px; /* 위치 조정 */
+            top: 50%; /* 중앙 정렬 */
+            transform: translateY(-50%);
+        }
+
+        .stock-remove img {
+            width: 24px; /* 크기 조정 */
+            height: 24px; /* 크기 조정 */
+        }
     </style>
 </head>
 <body>
@@ -64,9 +79,15 @@
 <ul class="stock-list">
     {% for stock in stock_info %}
     <li>
-        <span class="stock-code">{{ stock.stock_code }} - {{ stock.name }}</span>
-        <span class="stock-price">{{ stock.current_price }}원</span>
-        <span class="stock-rate">{{ stock.UpDownRate }}% ({{ stock.UpDownPoint }})</span>
+        <div class="stock-details">
+            <span class="stock-code">{{ stock.stock_code }} - {{ stock.name }}</span>
+            <span class="stock-price">{{ stock.current_price }}원</span>
+            <span class="stock-rate">{{ stock.UpDownRate }}% ({{ stock.UpDownPoint }})</span>
+        </div>
+        <!-- 클릭 시 관심 종목에서 제거하는 버튼 -->
+        <a href="{% url 'remove_stock' stock.stock_code %}" class="stock-remove">
+          <img src="{% static 'images/star.png' %}" alt="Remove"/>
+        </a>
     </li>
     {% endfor %}
 </ul>

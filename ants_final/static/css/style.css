@@ -69,3 +69,16 @@ html {
     width: 50px;
 }
 
+@font-face {
+    font-family: 'Lobster';  /* 폰트 이름 설정 */
+    src: url('/static/fonts/Lobster-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'NanumSquareRoundB';  /* 폰트 이름 설정 */
+    src: url('/static/fonts/NanumSquareRoundB.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}

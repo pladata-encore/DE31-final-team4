@@ -220,19 +220,23 @@ from .models import RealTimeStock, UserStock
 
 @login_required
 def add_favorite_list(request, stock_code):
+    # 가장 최신의 stock 정보를 real_time 테이블에서 가져오기
     latest_stock = RealTimeStock.objects.filter(stock_code=stock_code).order_by('-id').first()
+
     if latest_stock is not None:
         # UserStock에 해당 유저의 관심종목으로 추가
         UserStock.objects.get_or_create(
-            user=request.user, 
-            stock_id=latest_stock,  # 외래키로 RealTimeStock 객체를 저장
-            stock_code=latest_stock.stock_code  # stock_code 필드에 텍스트로 저장
+            user=request.user,
+            stock_id=latest_stock,
+            defaults={'stock_code': latest_stock.stock_code}  # stock_code도 추가
         )
-        return redirect('my_favorite_list')
+        return redirect('mypage')
     else:
-        # 만약 stock_code가 존재하지 않으면 처리
-        return redirect('error_page')
+        # 만약 stock_code가 존재하지 않으면 처리 (에러 페이지나 다른 동작을 정의할 수 있음)
+        return redirect('mypage')  # 에러 페이지로 리디렉션
 
+    
+@login_required
 def my_favorite_list(request):
     user_stocks = UserStock.objects.filter(user=request.user).select_related('stock_id')
     stock_info = {}
@@ -258,3 +262,17 @@ def my_favorite_list(request):
     stock_info_list.sort(key=lambda x: x['id'], reverse=True)
     
     return render(request, 'mypage/mypage.html', {'stock_info': stock_info_list})
+
+from django.shortcuts import redirect, get_object_or_404
+from .models import UserStock
+
+def remove_stock(request, stock_code):
+    # 사용자와 일치하는 모든 UserStock 객체를 가져옵니다.
+    user_stocks = UserStock.objects.filter(stock_code=stock_code, user=request.user)
+    
+    # 가져온 모든 객체를 삭제합니다.
+    for user_stock in user_stocks:
+        user_stock.delete()
+
+    # 원래 페이지로 리디렉션
+    return redirect('mypage')

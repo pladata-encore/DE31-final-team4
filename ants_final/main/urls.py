@@ -32,4 +32,5 @@ urlpatterns = [
     path('add_favorite_list/<str:stock_code>/', views.add_favorite_list, name='add_favorite_list'),
     path('mypage/', views.my_favorite_list, name='mypage'),
     # path('stock_/', views.my_favorite_list, name='my_favorite_list'),
+    path('remove_stock/<str:stock_code>/', views.remove_stock, name='remove_stock'),
 ]
