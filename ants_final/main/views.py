@@ -234,3 +234,75 @@ def home(request):
 
 def about(request):
     return render(request, 'main/about.html')
+
+#트리맵 만들기 위해 필요한 데이터 가져오는 함수
+
+from django.shortcuts import render
+import pandas as pd
+import json
+from django.db import connection
+from django.views.decorators.cache import cache_page
+from decimal import Decimal
+
+
+# 주식 데이터를 불러오는 함수 정의
+def load_stock_data(selected_market, selected_time_period):
+    query = '''
+        SELECT rt.stock_code, rt.name, rt.sector, rt.market, rt.current_price, rt.stockcount, rt.UpDownRate, ot.closing_price
+        FROM real_time rt
+        LEFT JOIN once_time ot
+        ON rt.stock_code = ot.stock_code
+        AND DATE(rt.price_time) = ot.date
+        WHERE rt.market = %s
+    '''
+    
+    # Raw SQL을 실행하여 데이터를 Pandas DataFrame으로 변환
+    with connection.cursor() as cursor:
+        cursor.execute(query, [selected_market])
+        rows = cursor.fetchall()
+
+    # 컬럼 이름을 지정하여 DataFrame 생성
+    columns = ['stock_code', 'name', 'sector', 'market', 'current_price', 'UpDownRate', 'stockcount', 'closing_price']
+
+    df = pd.DataFrame(rows, columns=columns)
+
+    # Decimal 타입을 float으로 변환
+    df = df.apply(lambda col: col.map(lambda x: float(x) if isinstance(x, Decimal) else x))
+
+    # NaN 값을 None 또는 0으로 대체 (NaN 값을 안전하게 JSON으로 변환하기 위해 처리)
+    df = df.fillna(0)
+
+    df['sector'] = df['sector'].fillna('Unknown')
+
+    if selected_time_period == '1 Day':
+        df['Change Rate (%)'] = df['UpDownRate']
+    else:
+        df['Change Rate (%)'] = (df['current_price'] - df['closing_price']) / df['closing_price'] * 100
+
+    df['total'] = df['current_price'] * df['stockcount']
+
+    return df
+
+
+@cache_page(60 * 15)
+def map_view(request):
+    # 선택된 마켓과 기간을 GET 요청으로 가져옵니다.
+    selected_market = request.GET.get('market', 'KOSPI200')
+    selected_time_period = request.GET.get('time_period', '1 Day')
+
+    # 주식 데이터를 불러옵니다.
+    df = load_stock_data(selected_market, selected_time_period)
+    print(df.head())
+
+
+    # 필요한 데이터만 추출하여 JSON으로 변환
+    tree_data = df[['name', 'sector', 'total', 'Change Rate (%)']].to_dict(orient='records')
+    stock_data_json = json.dumps(tree_data)
+    
+    # 템플릿 렌더링
+    return render(request, 'main/map.html', {
+        'stock_data_json': stock_data_json, 
+        'selected_market': selected_market, 
+        'selected_time_period': selected_time_period
+    })
+    

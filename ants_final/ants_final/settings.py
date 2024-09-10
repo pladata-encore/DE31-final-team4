@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',  # 구글 로그인 추가
     'rest_framework.authtoken',
     'stocks',  # stocks 앱 추가
+    'django_plotly_dash' # 앱추가
 ]
 
 # 사이트 ID 설정

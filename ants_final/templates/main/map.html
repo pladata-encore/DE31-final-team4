@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>주식 트리맵</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <style>
+        .node {
+            font: 12px sans-serif;
+            line-height: 1.5em;
+            text-align: center;
+            border: solid 1px white;
+            overflow: hidden;
+        }
+        .node text {
+            pointer-events: none;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ selected_market }} 시장 트리맵</h1>
+    <p>기간: {{ selected_time_period }}</p>
+
+    <!-- 마켓 및 기간 선택 폼 -->
+    <form method="GET" action="">
+        <label for="market">마켓 선택:</label>
+        <select id="market" name="market">
+            <option value="KOSPI200" {% if selected_market == 'KOSPI200' %}selected{% endif %}>KOSPI200</option>
+            <option value="KOSDAQ" {% if selected_market == 'KOSDAQ' %}selected{% endif %}>KOSDAQ</option>
+        </select>
+
+        <label for="time_period">기간 선택:</label>
+        <select id="time_period" name="time_period">
+            <option value="1 Day" {% if selected_time_period == '1 Day' %}selected{% endif %}>1일</option>
+            <option value="1 Week" {% if selected_time_period == '1 Week' %}selected{% endif %}>1주</option>
+            <option value="1 Month" {% if selected_time_period == '1 Month' %}selected{% endif %}>1개월</option>
+            <option value="3 Months" {% if selected_time_period == '3 Months' %}selected{% endif %}>3개월</option>
+            <option value="6 Months" {% if selected_time_period == '6 Months' %}selected{% endif %}>6개월</option>
+            <option value="1 Year" {% if selected_time_period == '1 Year' %}selected{% endif %}>1년</option>
+        </select>
+
+        <button type="submit">적용</button>
+    </form>
+
+    <div id="treemap" style="width: 100%; height: 800px;"></div>
+
+    <script>
+        const stockData = {{ stock_data_json|safe }};
+
+        const width = 960;
+        const height = 800;
+
+        const svg = d3.select("#treemap")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        const format = d3.format(",d");
+
+        const color = d3.scaleSequential([0, 5], d3.interpolateRdBu);
+
+        const treemap = d3.treemap()
+            .size([width, height])
+            .paddingInner(1);
+
+        const root = d3.hierarchy({children: stockData})
+            .sum(d => d.total)
+            .sort((a, b) => b.total - a.total);
+
+        treemap(root);
+
+        const cell = svg.selectAll("g")
+            .data(root.leaves())
+            .enter().append("g")
+            .attr("transform", d => `translate(${d.x0},${d.y0})`);
+
+        cell.append("rect")
+            .attr("id", d => d.name)
+            .attr("width", d => d.x1 - d.x0)
+            .attr("height", d => d.y1 - d.y0)
+            .attr("fill", d => color(d.data['Change Rate (%)']));
+
+        cell.append("clipPath")
+            .attr("id", d => "clip-" + d.name)
+            .append("use")
+            .attr("xlink:href", d => "#" + d.name);
+
+        cell.append("text")
+            .attr("clip-path", d => "url(#clip-" + d.name + ")")
+            .selectAll("tspan")
+            .data(d => [d.data.name, d.data['Change Rate (%)'] + "%"])
+            .enter().append("tspan")
+            .attr("x", 5)
+            .attr("y", (d, i) => 13 + i * 10)
+            .text(d => d);
+
+        cell.append("title")
+            .text(d => `${d.data.name}\n변동률: ${d.data['Change Rate (%)']}%\n총액: ${format(d.data.total)}`);
+    </script>
+</body>
+</html>
