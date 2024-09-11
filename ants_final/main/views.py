@@ -33,6 +33,7 @@ from django.contrib.auth.decorators import login_required
 
 from .models import TestOption, Question, Answer
 
+@login_required
 def test_option_1(request):
     test_option = get_object_or_404(TestOption, name="Test Option 1")
     questions = Question.objects.filter(test_option=test_option)
@@ -50,6 +51,7 @@ def test_option_1(request):
 
     return render(request, 'main/test_option_1.html', {'questions': questions})
 
+@login_required
 def test_option_2(request):
     test_option = get_object_or_404(TestOption, name="Test Option 2")
     questions = Question.objects.filter(test_option=test_option)
@@ -67,6 +69,7 @@ def test_option_2(request):
 
     return render(request, 'main/test_option_2.html', {'questions': questions})
 
+@login_required
 def test_option_3(request):
     test_option = get_object_or_404(TestOption, name="Test Option 3")
     questions = Question.objects.filter(test_option=test_option)
