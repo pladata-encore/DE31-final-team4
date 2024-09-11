@@ -273,7 +273,7 @@ def stock_detail_page(request, stock_code="005930"):
     stock_mbti = get_object_or_404(Mbti, stock_code=stock_code)
 
     # news 정보 가져오기
-    news_list = News.objects.filter(stock_code=stock_code).order_by('pubDate')[:3]
+    news_list = News.objects.filter(stock_code=stock_code).order_by('-pubDate')[:3]
     
     # 날짜 및 종가 데이터를 JSON 형태로 변환
     dates = [str(x.date) for x in stock_data]
@@ -302,10 +302,9 @@ def load_news(request):
     page_size = 3
     start = (page - 1) * page_size
     end = start + page_size
-    news_list = News.objects.filter(stock_code=stock_code)[start:end]
-    
+    news_list = News.objects.filter(stock_code=stock_code).order_by('-pubDate')[start:end]
     data = {
-        'news_list': [{'title': news.title, 'description': news.description} for news in news_list]
+        'news_list': [{'title': news.title, 'description': news.description, 'pubDate': str(news.pubDate)} for news in news_list]
     }
     
     return JsonResponse(data)

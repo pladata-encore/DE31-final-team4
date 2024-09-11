@@ -102,17 +102,35 @@
     const nextBtn = document.getElementById('nextBtn');
     const newsWrapper = document.getElementById('newsWrapper');
 
+    
+
     function loadNews(page) {
-        fetch(`/load-news/?stock_code={{ stock_code }}&page=${page}`)
+        fetch(`/load-news/?stock_code=${stock_code}&page=${page}`)
             .then(response => response.json())
             .then(data => {
-                newsWrapper.innerHTML = '';
+                console.log(data.news_list);  // 뉴스 리스트 데이터를 콘솔에 출력하여 확인
+                newsWrapper.innerHTML = '';  // 기존 뉴스 항목 삭제
+    
                 data.news_list.forEach(news => {
                     const newsItem = document.createElement('div');
                     newsItem.classList.add('news-item');
-                    newsItem.innerHTML = `<h4>${news.title}</h4><p>${news.description}</p>`;
+    
+                    // pubDate가 undefined로 나오는 문제를 해결하기 위해 데이터 확인
+                    const formattedDate = news.pubDate ? news.pubDate.slice(0, 16) : '날짜 정보 없음';
+    
+                    newsItem.innerHTML = `
+                        <a href="${news.originallink}" style="color: black; text-decoration: none;">
+                            <h4>${news.title}</h4>
+                            <p>${news.description}</p>
+                        </a>
+                        <p>${formattedDate}</p>
+                    `;
+                    
                     newsWrapper.appendChild(newsItem);
                 });
+            })
+            .catch(error => {
+                console.error('Error fetching news:', error);
             });
     }
 
