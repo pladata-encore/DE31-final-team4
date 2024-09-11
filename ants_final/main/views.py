@@ -216,7 +216,7 @@ def about(request):
 # 관심종목
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import RealTimeStock, UserStock
+from .models import RealTimeStock, UserStock, Mbti, TestResult
 
 @login_required
 def add_favorite_list(request, stock_code):
@@ -224,16 +224,16 @@ def add_favorite_list(request, stock_code):
     latest_stock = RealTimeStock.objects.filter(stock_code=stock_code).order_by('-id').first()
 
     if latest_stock is not None:
-        # UserStock에 해당 유저의 관심종목으로 추가
+        stock_mbti = Mbti.objects.filter(stock_code=stock_code).first()
+
         UserStock.objects.get_or_create(
             user=request.user,
             stock_id=latest_stock,
-            defaults={'stock_code': latest_stock.stock_code}  # stock_code도 추가
+            defaults={'stock_code': latest_stock.stock_code, 'mbti': stock_mbti}
         )
         return redirect('mypage')
     else:
-        # 만약 stock_code가 존재하지 않으면 처리 (에러 페이지나 다른 동작을 정의할 수 있음)
-        return redirect('mypage')  # 에러 페이지로 리디렉션
+        return redirect('mypage')
 
     
 @login_required
@@ -247,6 +247,8 @@ def my_favorite_list(request):
         # 최신 RealTimeStock 객체를 가져옵니다.
         latest_stock = RealTimeStock.objects.filter(stock_code=stock_code).order_by('-id').first()
         if latest_stock:
+            stock_mbti = Mbti.objects.filter(stock_code=stock_code).first()
+            mbti_value = stock_mbti.mbti if stock_mbti else None
             if stock_code not in stock_info or latest_stock.id > stock_info[stock_code]['id']:
                 stock_info[stock_code] = {
                     'stock_code': latest_stock.stock_code,
@@ -254,7 +256,8 @@ def my_favorite_list(request):
                     'current_price': latest_stock.current_price,
                     'UpDownRate': latest_stock.UpDownRate,
                     'UpDownPoint': latest_stock.UpDownPoint,
-                    'id': latest_stock.id
+                    'id': latest_stock.id,
+                    'mbti': mbti_value
                 }
     
     # stock_info의 값을 리스트로 변환하고, id 기준으로 정렬합니다.
@@ -266,6 +269,7 @@ def my_favorite_list(request):
 from django.shortcuts import redirect, get_object_or_404
 from .models import UserStock
 
+@login_required
 def remove_stock(request, stock_code):
     # 사용자와 일치하는 모든 UserStock 객체를 가져옵니다.
     user_stocks = UserStock.objects.filter(stock_code=stock_code, user=request.user)
@@ -276,3 +280,13 @@ def remove_stock(request, stock_code):
 
     # 원래 페이지로 리디렉션
     return redirect('mypage')
+
+@login_required
+def user_test_results(request):
+    test_results = TestResult.objects.filter(user=request.user).first()
+    
+    context = {
+        'test_results': test_results
+    }
+
+    return render(request, 'mypage/mypage.html', context)

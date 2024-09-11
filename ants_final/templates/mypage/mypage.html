@@ -3,144 +3,72 @@
 <!DOCTYPE html>
 <html lang="ko">
 {% load static %}
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% block title %}마이 뻬이보릿 스탁~❤️{% endblock %}
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
+    
+{% block title %}마이 뻬이보릿 스탁~❤️{% endblock %}
 
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-top: 20px;
-        }
-
-        .stock-list {
-            list-style: none;
-            padding: 0;
-            margin: 20px auto;
-            max-width: 600px;
-        }
-
-        .stock-list li {
-            background-color: #fff;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: left;
-            position: relative;
-            overflow: hidden; /* 내용이 벗어나지 않도록 설정 */
-        }
-
-        .stock-list li:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            transform: translateY(-2px);
-            transition: all 0.3s ease;
-        }
-
-        .stock-info {
-            display: flex;
-            align-items: left;
-            width: 100%;
-            justify-content: space-between; /* 텍스트와 이미지를 양쪽으로 정렬 */
-        }
-        .stock-details {
-            display: flex;
-            flex-direction: column;
-            margin-right: 20px; /* 이미지와 텍스트 사이의 여백 */
-        }
-
-        .stock-remove {
-            display: flex;
-            align-items: center;
-        }
-        .container {
-            width: 50%;
-            height: 400px; /* 고정된 높이 */
-            margin: 20px auto;
-            padding: 5%;
-            background-color: rgba(255, 208, 224, 0.8);
-            border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            overflow-y: auto; /* 세로 방향으로 스크롤 활성화 */
-        }
-
-        .content {
-            width: 500px; /* 내용 영역의 너비 */
-            height: 500px; /* 내용 영역의 높이 */
-            background: #f0f0f0; /* 배경색 */
-            /* 추가적인 스타일 필요에 따라 추가 */
-        }
-    </style>
-</head>
 {% block content %}
-<body style="font-family: NanumSquareRoundB;">
-    <div class="container">
-        <div class="content">
-            <div style="width: 50%; margin: 0 auto; background-color: rgba(255, 208, 224, 0.8); padding: 5%; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); margin: 10px;">
-                <h1 style="margin-top: 5%;">My 관심종목</h1>
-                <table style="width: 100%; border-collapse: collapse; font-size: 20px;">
-                    <thead>
-                        <tr style="border-bottom: 2px solid black;">
-                            <th style="text-align: center;">종목명</th>
-                            <th style="text-align: center;">현재가</th>
-                            <th style="text-align: center;">등락률</th>
-                            <th style="text-align: center;">관심</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for stock in stock_info %}
-                        <tr style="border-bottom: 1px solid #ddd; text-align: right;">
-                            <td>{{ stock.name }}</td>
-                            <td>{{ stock.current_price }}원</td>
-                            <td>
-                                {% if stock.UpDownRate > 0 %}
-                                    <span style="color: red;">{{ stock.UpDownRate }}%</span>
-                                {% elif stock.UpDownRate == 0 %}
-                                    <span>{{ stock.UpDownRate }}%</span>
-                                {% else %}
-                                    <span style="color: blue;">{{ stock.UpDownRate }}%</span>
-                                {% endif %}
-                            </td>
-                            <td style="text-align: center;">
-                                <a href="{% url 'remove_stock' stock.stock_code %}">
-                                  <img src="{% static 'images/star.png' %}" alt="Remove" style="width: 25px; margin-top: 5px;"/>
-                                </a>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+<div class="container-leri">
+    <div class="left">
+        <h1 class="title">My 관심종목</h1>
+        <div class="container-fvl">
+            <table class="table-stockinfo">
+                <thead style="font-size: 20px;">
+                    <tr style="border-bottom: 2px solid black;">
+                        <th style="text-align: left;">종목명</th>
+                        <th style="text-align: center;">MBTI</th>
+                        <th style="text-align: right;">현재가</th>
+                        <th style="text-align: right;">등락률</th>
+                        <th style="text-align: center;">관심</th>
+                    </tr>
+                </thead>
+                <tbody style="font-size: 15px;">
+                    {% for stock in stock_info %}
+                    <tr style="border-bottom: 1px solid rgb(0, 0, 0);">
+                        <td style="text-align: left;">{{ stock.name }}</td>
+                        <td>{{ stock.mbti }}</td>
+                        <td style="text-align: right;">{{ stock.current_price }}원</td>
+                        <td style="text-align: right;">
+                            {% if stock.UpDownRate > 0 %}
+                                <span style="color: red;">{{ stock.UpDownPoint }} ({{ stock.UpDownRate }}%)</span>
+                            {% elif stock.UpDownRate == 0 %}
+                                <span>{{ stock.UpDownPoint }} ({{ stock.UpDownRate }}%)</span>
+                            {% else %}
+                                <span style="color: blue;">{{ stock.UpDownPoint }} ({{ stock.UpDownRate }}%)</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'remove_stock' stock.stock_code %}">
+                              <img src="{% static 'images/star.png' %}" alt="Remove" style="width: 25px; margin-top: 5px;"/>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
-    <script>
-        function formatNumber(number) {
-            return number.toLocaleString('ko-KR') + '원';
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const elements = document.querySelectorAll('.price');
-            elements.forEach(element => {
-                let rawValue = element.textContent.trim();
-                // 콘솔 로그로 값 확인
-                console.log('Original Value:', rawValue);
-                rawValue = parseFloat(rawValue.replace(/[^0-9.]/g, ''));
-                console.log('Parsed Value:', rawValue);
-                element.textContent = formatNumber(rawValue);
-            });
-        });
-    </script>
-</body>
-
+    <div class="right">
+        <div class="small-box" style="background-color: rgb(202, 230, 255); font-size: 20px;">
+            {% if test_results.result1 %}
+                <p> {{ request.user.first_name }}님은 {{ test_results.result1 }} 이시군요! </p>
+            {% else %}
+                <p> {{ request.user.first_name }}님은 아직 테스트 전이시네요! </p>
+                <a href="{% url 'test_option_1' %}" style="background-color: black; color: white; text-align: center; border-radius: 15px; padding: 10px; padding-bottom: 0; font-size: 25px;">
+                    <p>나의 투자성향은?<br><span style="font-weight: bold !important;">테스트 하러 가기 >></span></p>
+                </a>
+            {% endif %}
+        </div>
+        <div class="small-box" style="background-color: rgb(232, 207, 255); font-size: 20px;">
+            {% if test_results.result2 %}
+                <p> {{ request.user.first_name }}님은 {{ test_results.result2 }} 이시군요! </p>
+            {% else %}
+                <p> {{ request.user.first_name }}님은 아직 테스트 전이시네요! </p>
+                <a href="{% url 'test_option_2' %}" style="background-color: black; color: white; text-align: center; border-radius: 15px; padding: 10px; padding-bottom: 0; font-size: 25px;">
+                    <p>나의 투자지식은 어느정도일까? <br><span style="font-weight: bold !important; ">테스트 하러 가기 >></span></p>
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
 {% endblock %}
 </html>

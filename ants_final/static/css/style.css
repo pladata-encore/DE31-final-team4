@@ -46,11 +46,11 @@ h1, h2, h3 {
     padding: 50px 0;
 }
 
-img {
+/* img {
     max-width: 100%;
     height: auto;
     margin-bottom: 20px;
-}
+} */
 
 /* Contact Section */
 #section5 {
@@ -81,4 +81,101 @@ html {
     src: url('/static/fonts/NanumSquareRoundB.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
+}
+
+.title {
+    background-color: bisque; /* 제목 배경색 */
+    text-align: right; /* 제목을 오른쪽 정렬 */
+    margin: 10px; /* 기본 마진 제거 */
+    padding: 10px; /* 내부 여백 설정 */
+    box-sizing: border-box;
+}
+
+.stock-info {
+    display: flex;
+    align-items: left;
+    width: 100%;
+    justify-content: space-between; /* 텍스트와 이미지를 양쪽으로 정렬 */
+}
+.stock-details {
+    display: flex;
+    flex-direction: column;
+    margin-right: 20px; /* 이미지와 텍스트 사이의 여백 */
+}
+
+.stock-remove {
+    display: flex;
+    align-items: center;
+}
+.container-fvl {
+    width: 80%;
+    height: 80vh; /* 고정된 높이 */
+    margin: 10px;
+    margin-top: 0;
+    padding: 5%;
+    background-color: rgba(255, 208, 224, 0.8);
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    overflow-y: auto; /* 세로 방향으로 스크롤 활성화 */
+    display: flex;
+    align-items: top;
+    justify-content: center;
+}
+
+th, td {
+    border: 1px solid #ddd; /* 셀의 경계선 설정 */
+    padding: 8px; /* 셀의 패딩 설정 */
+    text-align: center; /* 중앙 정렬 */
+    border-left: none;
+    border-right: none;
+}
+th {
+    background-color: #f4f4f4; /* 헤더의 배경색 설정 */
+}
+
+.container-knt {
+    display: flex;
+}
+
+
+.container-leri {
+    display: flex;
+    height: 90vh; /* 뷰포트 높이에 맞게 설정 */
+}
+
+.left {
+    flex: 1; /* 왼쪽 영역이 전체 너비의 1/2 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'NanumSquareRoundB';
+    flex-direction: column;
+}
+
+.right {
+    flex: 1; /* 오른쪽 영역이 전체 너비의 1/2 */
+    display: flex;
+    flex-direction: column; /* 세로로 배치 */
+    justify-content: space-between; /* 두 개의 작은 영역을 세로로 균등하게 배치 */
+    font-family: 'NanumSquareRoundB';
+}
+
+
+.small-box {
+    flex: 1; /* 오른쪽 영역 내에서 1/2의 너비를 가짐 */
+    margin: 10px; /* 작은 영역 간의 간격 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50%; /* 오른쪽 영역의 1/2 높이 */
+    box-sizing: border-box;
+    width: 80%;
+    border-radius: 15px;
+    flex-direction: column;
+}
+
+.table-stockinfo {
+    width: 100%;
+    border-collapse: collapse;
+    /* font-size: 20px; */
 }
