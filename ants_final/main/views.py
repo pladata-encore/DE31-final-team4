@@ -309,3 +309,16 @@ def load_news(request):
     }
     
     return JsonResponse(data)
+
+def stock_search(request):
+    stock_query = request.GET.get('stock_query', '')
+
+    # 종목 코드 또는 종목명으로 검색
+    stock = RealTimeStock.objects.filter(Q(stock_code=stock_query) | Q(name=stock_query)).first()  # 종목 코드 혹은 종목명으로 검색
+    print(stock)
+    # 검색 성공 시 해당 주식 상세 페이지로 리디렉션
+    if stock is not None:
+        return redirect('stock', stock_code=stock.stock_code)
+    return render(request, 'main/no_results.html', {'stock_query': stock_query})
+    
+    
