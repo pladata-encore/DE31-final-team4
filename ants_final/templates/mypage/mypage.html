@@ -1,10 +1,12 @@
+{% extends 'base.html' %}
+
 <!DOCTYPE html>
 <html lang="ko">
 {% load static %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>내 관심종목 리스트</title>
+    {% block title %}마이 뻬이보릿 스탁~❤️{% endblock %}
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -34,7 +36,7 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: left;
             position: relative;
             overflow: hidden; /* 내용이 벗어나지 않도록 설정 */
         }
@@ -45,52 +47,100 @@
             transition: all 0.3s ease;
         }
 
-        .stock-code {
-            font-weight: bold;
-            font-size: 1.2em;
-            color: #007bff;
+        .stock-info {
+            display: flex;
+            align-items: left;
+            width: 100%;
+            justify-content: space-between; /* 텍스트와 이미지를 양쪽으로 정렬 */
         }
-
-        .stock-price {
-            font-size: 1.1em;
-            color: #28a745;
-        }
-
-        .stock-rate {
-            color: #dc3545;
+        .stock-details {
+            display: flex;
+            flex-direction: column;
+            margin-right: 20px; /* 이미지와 텍스트 사이의 여백 */
         }
 
         .stock-remove {
-            position: absolute;
-            right: 20px; /* 위치 조정 */
-            top: 50%; /* 중앙 정렬 */
-            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+        }
+        .container {
+            width: 50%;
+            height: 400px; /* 고정된 높이 */
+            margin: 20px auto;
+            padding: 5%;
+            background-color: rgba(255, 208, 224, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            overflow-y: auto; /* 세로 방향으로 스크롤 활성화 */
         }
 
-        .stock-remove img {
-            width: 24px; /* 크기 조정 */
-            height: 24px; /* 크기 조정 */
+        .content {
+            width: 500px; /* 내용 영역의 너비 */
+            height: 500px; /* 내용 영역의 높이 */
+            background: #f0f0f0; /* 배경색 */
+            /* 추가적인 스타일 필요에 따라 추가 */
         }
     </style>
 </head>
-<body>
-
-<h1>내 관심종목 리스트</h1>
-<ul class="stock-list">
-    {% for stock in stock_info %}
-    <li>
-        <div class="stock-details">
-            <span class="stock-code">{{ stock.stock_code }} - {{ stock.name }}</span>
-            <span class="stock-price">{{ stock.current_price }}원</span>
-            <span class="stock-rate">{{ stock.UpDownRate }}% ({{ stock.UpDownPoint }})</span>
+{% block content %}
+<body style="font-family: NanumSquareRoundB;">
+    <div class="container">
+        <div class="content">
+            <div style="width: 50%; margin: 0 auto; background-color: rgba(255, 208, 224, 0.8); padding: 5%; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); margin: 10px;">
+                <h1 style="margin-top: 5%;">My 관심종목</h1>
+                <table style="width: 100%; border-collapse: collapse; font-size: 20px;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid black;">
+                            <th style="text-align: center;">종목명</th>
+                            <th style="text-align: center;">현재가</th>
+                            <th style="text-align: center;">등락률</th>
+                            <th style="text-align: center;">관심</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stock in stock_info %}
+                        <tr style="border-bottom: 1px solid #ddd; text-align: right;">
+                            <td>{{ stock.name }}</td>
+                            <td>{{ stock.current_price }}원</td>
+                            <td>
+                                {% if stock.UpDownRate > 0 %}
+                                    <span style="color: red;">{{ stock.UpDownRate }}%</span>
+                                {% elif stock.UpDownRate == 0 %}
+                                    <span>{{ stock.UpDownRate }}%</span>
+                                {% else %}
+                                    <span style="color: blue;">{{ stock.UpDownRate }}%</span>
+                                {% endif %}
+                            </td>
+                            <td style="text-align: center;">
+                                <a href="{% url 'remove_stock' stock.stock_code %}">
+                                  <img src="{% static 'images/star.png' %}" alt="Remove" style="width: 25px; margin-top: 5px;"/>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <!-- 클릭 시 관심 종목에서 제거하는 버튼 -->
-        <a href="{% url 'remove_stock' stock.stock_code %}" class="stock-remove">
-          <img src="{% static 'images/star.png' %}" alt="Remove"/>
-        </a>
-    </li>
-    {% endfor %}
-</ul>
+    </div>
+    <script>
+        function formatNumber(number) {
+            return number.toLocaleString('ko-KR') + '원';
+        }
 
+        document.addEventListener('DOMContentLoaded', () => {
+            const elements = document.querySelectorAll('.price');
+            elements.forEach(element => {
+                let rawValue = element.textContent.trim();
+                // 콘솔 로그로 값 확인
+                console.log('Original Value:', rawValue);
+                rawValue = parseFloat(rawValue.replace(/[^0-9.]/g, ''));
+                console.log('Parsed Value:', rawValue);
+                element.textContent = formatNumber(rawValue);
+            });
+        });
+    </script>
 </body>
+
+{% endblock %}
 </html>

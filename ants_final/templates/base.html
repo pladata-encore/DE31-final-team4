@@ -5,7 +5,7 @@
     <!-- {% load static %} -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Website Template{% endblock %}</title>
+    <title>{% block title %}{% endblock %}</title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -13,9 +13,9 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
-<body style="font-family: Lobster;">
+<body>
     <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg bg-body-tertiary fixed-top" style="padding-top: 10px; padding-bottom: 0px;" >
+    <nav class="navbar navbar-expand-lg bg-body-tertiary fixed-top" style="padding-top: 10px; padding-bottom: 0px; font-family: Lobster;" >
         <div class="container-fluid" style="margin-top: 3px;">
             <a class="navbar-brand" href="{% url 'home' %}">
                 <img src="{% static 'images/logo.png' %}" alt="ANTS Logo" style="height: 25px;">
