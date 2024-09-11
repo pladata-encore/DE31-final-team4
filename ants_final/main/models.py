@@ -97,3 +97,36 @@ class UserStock(models.Model):
         db_table = 'favorite_list'
         unique_together = ('user', 'stock_code')
 
+
+class DividendVolatility(models.Model):
+    stock_code = models.CharField(max_length=6, primary_key=True)  # 종목코드는 문자열, 기본적으로 6자리
+    prev_dividend_rate = models.FloatField()  # 전년도 배당률
+    pred_dividend_rate = models.FloatField()  # 예측 배당률
+    dividend_stability = models.CharField(max_length=1)  # 배당성 (A, B, C 같은 문자)
+    volatility = models.CharField(max_length=1)  # 변동성
+    year = models.IntegerField()  # 연도
+    stock_name = models.CharField(max_length=100)  # 종목명
+    
+    def __str__(self):
+        return f"{self.stock_name} ({self.stock_code})"
+    class Meta:
+        db_table = 'dividend_volatility'  # 테이블 이름을 명시적으로 설정
+
+
+class Mbti(models.Model):
+    stock_code = models.CharField(max_length=6, primary_key=True)  # 종목코드는 문자열, 기본적으로 6자리
+    mbti = models.CharField(max_length=6)
+
+    class Meta:
+        db_table = 'mbti'  # 테이블 이름을 명시적으로 설정
+
+class News(models.Model):
+    stock_code = models.CharField(max_length=6)  # 종목코드는 문자열, 기본적으로 6자리
+    name = models.CharField(max_length=100)
+    pubDate = models.DateTimeField(max_length=30)
+    title = models.TextField()
+    description = models.TextField()
+    originallink = models.TextField(primary_key=True)
+
+    class Meta:
+        db_table = 'news'  # 테이블 이름을 명시적으로 설정

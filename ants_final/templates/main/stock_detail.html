@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}ANTS{% endblock %}
+
+{% block content %}
+<div class="container">
+        <div class="row justify-content-center">
+        <div class="col-lg-6 p-3">
+            <h2 class="text-center"><strong>{{ name }}</strong>({{ stock_code }})</h2>
+            <canvas id="stockChart"></canvas> <!-- 차트를 그릴 캔버스 -->
+        </div>
+        <div class="col-lg-6 p-3">
+            <h2 class="text-center">주식 종목 정보</h2>            
+            <p class="text-center">주식 MBTI : 
+                {% if mbti %}
+                    {{ mbti }}
+                {% else %}
+                    정보 없음
+                {% endif %}
+            </p>
+            <p class="text-center">배당성 : {{ dividend_stability }}</p>
+            <p class="text-center">변동성 : {{ volatility }}</p>
+            <p class="text-center">전년도 배당률 : {{ prev_dividend_rate }}</p>
+            <p class="text-center">예측 배당률 : {{ pred_dividend_rate }}</p>
+            
+        </div>
+    </div>
+</div>
+<div class="news-section">
+    <h3 class="text-center">주요 뉴스</h3>
+    <div class="news-carousel">
+        <button id="prevBtn">&lt;</button>
+        <div id="newsWrapper">
+            {% for news in news_list %}
+                <div class="news-item">
+                    <a href="{{ news.originallink}}" style="color: black; text-decoration: none;">
+                        <h4>{{ news.title|safe }}</h4>
+                        <p>{{ news.description|safe }}</p>
+                    </a>
+                    <p>{{ news.pubDate|safe }}</p>
+                </div>
+            {% endfor %}
+        </div>
+        <button id="nextBtn">&gt;</button>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // 장고에서 전달된 데이터를 JavaScript에서 사용
+    const dates = {{ dates|safe }};
+    const closingPrices = {{ closing_prices|safe }};
+    const stock_code = "{{ stock_code }}";  // Django 템플릿에서 전달받은 stock_code를 JavaScript 변수로 저장
+
+    // Chart.js로 그래프 그리기
+    const ctx = document.getElementById('stockChart').getContext('2d');
+    const stockChart = new Chart(ctx, {
+        type: 'line',  // 라인 차트 타입
+        data: {
+            labels: dates,  // x축에 날짜 데이터
+            datasets: [{
+                label: '종가',
+                data: closingPrices,  // y축에 주가 데이터
+                borderColor: 'rgba(75, 192, 192, 1)',  // 선 색상
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',  // 배경 색상
+                borderWidth: 1,
+                pointRadius: 2,  // 포인터 크기를 줄임
+                pointHoverRadius: 4,  // 포인터에 마우스를 올렸을 때 크기
+                pointBorderColor: 'rgba(75, 192, 192, 1)',  // 포인터 테두리 색상
+                pointBackgroundColor: 'rgba(75, 192, 192, 0.5)'  // 포인터 배경 색상
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: '날짜'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: '가격 (원)'
+                    },
+                    beginAtZero: false  // 주가에 맞게 0부터 시작하지 않도록
+                }
+            }
+        }
+    });
+
+    let currentPage = 1;
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const newsWrapper = document.getElementById('newsWrapper');
+
+    function loadNews(page) {
+        fetch(`/load-news/?stock_code={{ stock_code }}&page=${page}`)
+            .then(response => response.json())
+            .then(data => {
+                newsWrapper.innerHTML = '';
+                data.news_list.forEach(news => {
+                    const newsItem = document.createElement('div');
+                    newsItem.classList.add('news-item');
+                    newsItem.innerHTML = `<h4>${news.title}</h4><p>${news.description}</p>`;
+                    newsWrapper.appendChild(newsItem);
+                });
+            });
+    }
+
+    prevBtn.addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            loadNews(currentPage);
+        }
+    });
+
+    nextBtn.addEventListener('click', () => {
+        currentPage++;
+        loadNews(currentPage);
+    });
+</script>
+{% endblock %}

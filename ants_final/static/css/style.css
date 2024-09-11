@@ -69,3 +69,32 @@ html {
     width: 50px;
 }
 
+/* News Style*/
+.news-section {
+    margin-top: 20px;
+}
+
+.news-carousel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#newsWrapper {
+    display: flex;
+    overflow: hidden;
+    width: 80%;
+    justify-content: space-around;
+}
+
+.news-item {
+    width: 30%;
+    margin: 0 10px;
+}
+
+#prevBtn, #nextBtn {
+    background-color: transparent;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+}

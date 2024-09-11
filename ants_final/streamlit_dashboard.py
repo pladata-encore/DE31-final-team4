@@ -84,6 +84,7 @@ if not oncetime_data.empty:
 else:
     st.error("No data available for the selected period.")
 
+
 # # Market 데이터 그래프 (여전히 Matplotlib 사용)
 # st.subheader(f"{StockName} Current Point (Market Data)")
 # if not market_data.empty:

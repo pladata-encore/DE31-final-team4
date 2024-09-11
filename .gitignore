@@ -4,6 +4,7 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=git,linux,django
 
 ### Django ###
+logs/
 *.log
 *.pot
 *.pyc

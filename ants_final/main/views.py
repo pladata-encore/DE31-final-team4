@@ -258,3 +258,54 @@ def my_favorite_list(request):
     stock_info_list.sort(key=lambda x: x['id'], reverse=True)
     
     return render(request, 'mypage/mypage.html', {'stock_info': stock_info_list})
+
+from stocks.models import OnceTime
+import json
+from .models import DividendVolatility, Mbti, News
+# stock_detail_page 브랜치에서 생성
+# localhost:8000/stock으로 들어가면 해당 페이지 리턴
+def stock_detail_page(request, stock_code="005930"):
+    # 종목 코드를 이용해서 주식 정보를 DB에서 가져오는 코드
+    stock_data = OnceTime.objects.filter(stock_code=stock_code).order_by('date')
+    dividend_data = get_object_or_404(DividendVolatility, stock_code=stock_code)
+    
+    # 주식 mbti 정보 가져오기
+    stock_mbti = get_object_or_404(Mbti, stock_code=stock_code)
+
+    # news 정보 가져오기
+    news_list = News.objects.filter(stock_code=stock_code).order_by('pubDate')[:3]
+    
+    # 날짜 및 종가 데이터를 JSON 형태로 변환
+    dates = [str(x.date) for x in stock_data]
+    closing_prices = [x.closing_price for x in stock_data]
+    
+    context = {
+        'stock_code': stock_code,
+        'dates': json.dumps(dates),  # JSON으로 직렬화
+        'closing_prices': json.dumps(closing_prices),  # JSON으로 직렬화
+        'name': stock_data.first().name,
+        'prev_dividend_rate': dividend_data.prev_dividend_rate ,
+        'pred_dividend_rate': dividend_data.pred_dividend_rate ,
+        'dividend_stability': dividend_data.dividend_stability, 
+        'volatility': dividend_data.volatility,
+        'year': dividend_data.year,
+        'mbti': stock_mbti.mbti,
+        'news_list': news_list,
+    }
+    return render(request, 'main/stock_detail.html', context)
+
+from django.http import JsonResponse
+
+def load_news(request):
+    stock_code = request.GET.get('stock_code')
+    page = int(request.GET.get('page', 1))
+    page_size = 3
+    start = (page - 1) * page_size
+    end = start + page_size
+    news_list = News.objects.filter(stock_code=stock_code)[start:end]
+    
+    data = {
+        'news_list': [{'title': news.title, 'description': news.description} for news in news_list]
+    }
+    
+    return JsonResponse(data)

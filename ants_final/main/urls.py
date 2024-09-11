@@ -32,4 +32,9 @@ urlpatterns = [
     path('add_favorite_list/<str:stock_code>/', views.add_favorite_list, name='add_favorite_list'),
     path('mypage/', views.my_favorite_list, name='mypage'),
     # path('stock_/', views.my_favorite_list, name='my_favorite_list'),
+
+    # stock_detail_page 브랜치에서 생성
+    # navigation bar 에서 stock을 누르면 해당 페이지로 이동
+    path('stock/<str:stock_code>/', views.stock_detail_page, name='stock'),
+    path('load-news/', views.load_news, name='load_news'),  # load_news 뷰에 연결
 ]
