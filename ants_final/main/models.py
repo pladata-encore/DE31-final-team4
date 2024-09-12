@@ -25,6 +25,7 @@ class Answer(models.Model):
     def __str__(self):
         return self.text
 
+# 결과 저장
 class TestResult(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     result1 = models.CharField(max_length=100)

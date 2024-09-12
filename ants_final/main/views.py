@@ -89,10 +89,32 @@ def test_option_3(request):
 
 
 # 결과
+# views.py
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from .models import TestResult
+import json
+
+@csrf_exempt
+@login_required
+@require_POST
+def save_test_result(request):
+    try:
+        data = json.loads(request.body)
+        result1 = data.get('result1')
+        result2 = data.get('result2')
+        user = request.user
+
+        # 테스트 결과 저장
+        test_result = TestResult(user=user, result1=result1, result2=result2)
+        test_result.save()
+
+        return JsonResponse({'status': 'success'}, status=200)
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
 
 @csrf_exempt  # AJAX 요청 시 CSRF 검사를 비활성화
 @login_required  # 사용자가 로그인되어 있어야만 결과를 저장 가능

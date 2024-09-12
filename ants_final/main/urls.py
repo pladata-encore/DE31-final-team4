@@ -1,6 +1,6 @@
 from django.urls import path
 from allauth.socialaccount.providers.google.views import oauth2_login, oauth2_callback
-
+from .views import save_test_result
 from . import views
 
 urlpatterns = [
@@ -25,7 +25,7 @@ urlpatterns = [
     # 테스트 결과
     
     path('save-test-result/', views.save_test_result, name='save_test_result'),
-    
+     path('save-test-result/', save_test_result, name='save_test_result'),
 
     
     # 검색
