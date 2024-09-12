@@ -235,7 +235,9 @@ def home(request):
 def about(request):
     return render(request, 'main/about.html')
 
-#트리맵
+
+#####트리맵
+
 from django.shortcuts import render
 from stocks.models import OnceTime, RealTime  # 사용 중인 모델을 임포트
 import plotly.express as px  # Plotly 사용
@@ -250,8 +252,21 @@ def load_stock_data(selected_market, selected_time_period):
         cursor.execute('SELECT MAX(price_time) FROM real_time')
         last_price_time = cursor.fetchone()[0]
 
-    # 현재 시간 대신 가장 최근 업데이트된 시간 사용
-    time_threshold = last_price_time
+    # 선택한 기간에 맞는 과거 시간을 계산
+    if selected_time_period == '1 Day':
+        time_threshold = last_price_time  # 1일 선택 시 현재 시점 그대로 사용
+    elif selected_time_period == '1 Week':
+        time_threshold = last_price_time - timedelta(weeks=1)
+    elif selected_time_period == '1 Month':
+        time_threshold = last_price_time - timedelta(days=30)
+    elif selected_time_period == '3 Months':
+        time_threshold = last_price_time - timedelta(days=90)
+    elif selected_time_period == '6 Months':
+        time_threshold = last_price_time - timedelta(days=180)
+    elif selected_time_period == '1 Year':
+        time_threshold = last_price_time - timedelta(days=365)
+    else:
+        time_threshold = last_price_time  # 기본적으로 1일 기준
 
     # SQL 쿼리 작성: 선택한 시장과 기간에 맞게 종가 데이터를 가져옴
     query = '''
@@ -281,7 +296,6 @@ def load_stock_data(selected_market, selected_time_period):
     # 1일 선택 시 UpDownRate 값 사용
     if selected_time_period == '1 Day':
         df['Change Rate (%)'] = pd.to_numeric(df['UpDownRate'], errors='coerce')
-        # df['Change Rate (%)'] = df['UpDownRate'] * 100
     else:
         # 1일 이외의 기간에 대해 변동률 계산
         df['Change Rate (%)'] = (df['current_price'] - df['closing_price']) / df['closing_price'] * 100
@@ -310,7 +324,8 @@ def treemap_view(request):
                      path=['sector', 'label'],  # label에 회사명과 변동률 포함
                      values='market_cap',  # 시가총액 기준으로 상자 크기 설정
                      color='Change Rate (%)',  # 색상은 변동률에 따라 설정
-                     color_continuous_scale=['blue', 'black', 'red'],
+                     color_continuous_scale=['blue', '#DEDEDE', 'red'],  # 파랑-흰색-빨강
+                     color_continuous_midpoint=0,  # 0을 기준으로 색상을 나눔
                      title=f"{selected_market} 주식 시장 트리맵")
 
     # 섹터명에 대해서는 작은 텍스트, 종목명에 대해서는 큰 텍스트를 설정
@@ -318,11 +333,15 @@ def treemap_view(request):
         hovertemplate=None,
         textposition='middle center',
         # 각 아이템에 대해 글씨 크기 지정
-        texttemplate=[
-            '<span style="font-size:12px">%{label}</span>' if d['level'] == 1 else '<span style="font-size:20px">%{label}</span>'
-            for d in fig.data[0]['ids']
-        ],
-        insidetextfont=dict(color='white'),
+    )
+    
+     # 레이아웃을 업데이트하여 그래프가 화면을 꽉 차게 설정
+    fig.update_layout(
+        margin=dict(t=0, l=0, r=0, b=0),
+        height=800,  # 높이 설정을 100%로 할 수 있지만 800px로도 설정 가능
+        width=1200,  # 너비를 100%로 설정하거나 적절한 크기로 설정
+        paper_bgcolor='white',
+        plot_bgcolor='white',
     )
 
     # HTML로 변환

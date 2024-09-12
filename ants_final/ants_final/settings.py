@@ -59,6 +59,15 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',  # 소셜 인증 추가
 ]
 
+# settings.py
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',  # 로컬 메모리 캐시
+        'LOCATION': 'unique-snowflake',
+    }
+}
+
+
 # 이메일 주소를 필수로 할지 여부
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'none'

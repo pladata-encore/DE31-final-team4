@@ -1,121 +1,106 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block title %}ANTS-트리맵{% endblock %}
+
+{% block head %}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        flex-direction: column;
+        align-items: center;
+        padding: 0;
+        margin: 0;
+        height: 100vh; /* 화면 전체 높이를 사용 */
+        overflow-y: auto;
+    }
+    .main-container {
+        flex-direction: row;
+        justify-content: center;
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+    }
+    .treemap-container {
+        flex: 4;
+        display: flex;
+        justify-content: center; /* 트리맵 가운데 배치 */
+        align-items: center;
+        height: 100%;
+        overflow: hidden; /* 트리맵은 스크롤하지 않음 */
+    }
+    .controls-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        width: 150px;
+        height: 100%; /* 버튼 컨테이너도 스크롤 영역에 포함 */
+        overflow-y: hidden; /* 스크롤바 없애기 */
+        padding-top: 20px;
+        flex:1;
+    }
+    .controls-container button {
+        padding: 5px 5px;
+        margin: 5px;
+        font-size: 16px;
+        background-color: #a0a0a0;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+        width: 50%;
+    }
+    button:disabled {
+        background-color: #00d338; /* 비활성화 시 회색 */
+        cursor: not-allowed;
+    }
+    .market-selection {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+    .market-selection button {
+        padding: 10px 10px;
+        margin: 10px;
+        font-size: 16px;
+        background-color: #a0a0a0;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+    .market-selection button:disabled {
+        background-color: #00d338; /* 선택된 마켓 버튼 회색으로 변환 */
+        cursor: not-allowed;
+    }
+    footer {
+        width: 100%;
+        background-color: #333;
+        color: white;
+        text-align: center;
+        padding: 10px 0; /* footer 높이를 줄임 */
+        position: relative; /* 화면 하단에 고정하지 않고 내용 이후에 표시 */
+        left: 0;
+        bottom: 0;
+    }
+</style>
+{% endblock %}
 {% block content %}
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>트리맵</title>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center; /* 전체 페이지 가운데 정렬 */
-            padding: 20px;
-        }
 
-        h1 {
-            text-align: center;
-            font-size: 24px; /* 제목 크기 */
-        }
-
-        .main-container {
-            display: flex;
-            flex-direction: row;
-            justify-content: center; /* 전체 레이아웃 가운데 정렬 */
-            width: 100%;
-            max-width: 1200px;
-        }
-
-        .treemap-container {
-            flex: 1;  /* 트리맵이 화면의 대부분을 차지 */
-            margin-right: 20px; /* 오른쪽 패딩 추가 */
-        }
-
-        .controls-container {
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: center;
-            width: 150px; /* 버튼 컨테이너의 너비 설정 */
-        }
-
-        .controls-container button {
-            padding: 10px 20px;
-            margin: 10px;
-            font-size: 16px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-            width: 100%;
-        }
-
-        button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-
-        .graph-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-        }
-
-        footer {
-            width: 100%; /* footer가 화면의 전체 너비를 차지하도록 */
-            background-color: #333;
-            color: white;
-            text-align: center;
-            padding: 20px;
-            position: fixed;
-            bottom: 0; /* 화면의 하단에 고정 */
-            left: 0;
-        }
-
-        .market-selection {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        .market-selection button {
-            padding: 10px 20px;
-            margin: 10px;
-            font-size: 16px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-
-    </style>
-</head>
-<body>
-
+<h1>TreeMap</h1>
     <!-- 마켓 선택 버튼을 상단에 배치 -->
     <div class="market-selection">
         <form method="GET">
-            <button type="submit" name="market" value="KOSPI200" {% if selected_market == 'KOSPI200' %}disabled{% endif %}>KOSPI200</button>
+            <button type="submit" name="market" value="KOSPI200" {% if selected_market == 'KOSPI200' %}disabled{% endif %}>KOSPI</button>
             <button type="submit" name="market" value="KOSDAQ" {% if selected_market == 'KOSDAQ' %}disabled{% endif %}>KOSDAQ</button>
         </form>
     </div>
-
     <div class="main-container">
         <!-- 트리맵 영역 -->
         <div class="treemap-container">
-            <h1>주식 시장 트리맵</h1>
-            <div class="graph-container">
-                <!-- 트리맵 그래프 표시 -->
-                {{ graph_html|safe }}
-            </div>
+            {{ graph_html|safe }}
         </div>
 
         <!-- 컨트롤 패널 영역 (기간 선택) -->
@@ -132,12 +117,5 @@
             </form>
         </div>
     </div>
+{% endblock %}
 
-    <!-- 하단 고정 footer -->
-    <footer class="text-center text-white py-4" style="background-color: #333;">
-        <p>© 2024 Data Engineering 31 Final Project</p>
-    </footer>
-
-</body>
-</html>
-{% endblock content %}
