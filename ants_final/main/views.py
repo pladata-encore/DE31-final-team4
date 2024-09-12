@@ -300,26 +300,44 @@ def my_favorite_list(request):
     # 관심 종목
     user_stocks = UserStock.objects.filter(user=request.user).select_related('stock_id')
     stock_info = {}
+
     my_list = []
-    # 각 stock_code의 최신 RealTime 객체를 선택합니다.
-    for user_stock in user_stocks:
-        stock_code = user_stock.stock_id.stock_code
-        # 최신 RealTime 객체를 가져옵니다.
-        latest_stock = RealTime.objects.filter(stock_code=stock_code).order_by('-id').first()
-        if latest_stock:
-            stock_mbti = Mbti.objects.filter(stock_code=stock_code).first()
-            mbti_value = stock_mbti.mbti if stock_mbti else None
-            if stock_code not in stock_info or latest_stock.id > stock_info[stock_code]['id']:
-                stock_info[stock_code] = {
-                    'stock_code': latest_stock.stock_code,
-                    'name': latest_stock.name,
-                    'current_price': latest_stock.current_price,
-                    'UpDownRate': latest_stock.UpDownRate,
-                    'UpDownPoint': latest_stock.UpDownPoint,
-                    'id': latest_stock.id,
-                    'mbti': mbti_value
-                }
-        my_list.append(stock_code)
+    mbti_value = ""
+    stock_infos_list = []
+    stock_info_list = []
+    test_results = []
+
+    
+    if not user_stocks.exists():
+    # 빈 데이터를 처리하는 로직을 추가하거나, 필요한 경우 예외처리
+        context = {
+            'mbti_stock': stock_infos_list,
+            'mbti': mbti_value,
+            'stock_info': stock_info_list,
+            'test_results': test_results,
+            'my_list' : my_list,
+        }
+        return render(request, 'mypage/mypage.html', context)
+    
+    else:
+        for user_stock in user_stocks:
+            stock_code = user_stock.stock_id.stock_code
+            # 최신 RealTime 객체를 가져옵니다.
+            latest_stock = RealTime.objects.filter(stock_code=stock_code).order_by('-id').first()
+            if latest_stock:
+                stock_mbti = Mbti.objects.filter(stock_code=stock_code).first()
+                mbti_value = stock_mbti.mbti if stock_mbti else None
+                if stock_code not in stock_info or (stock_info.get(stock_code) and latest_stock.id > stock_info[stock_code].get('id', 0)):
+                    stock_info[stock_code] = {
+                        'stock_code': latest_stock.stock_code,
+                        'name': latest_stock.name,
+                        'current_price': latest_stock.current_price,
+                        'UpDownRate': latest_stock.UpDownRate,
+                        'UpDownPoint': latest_stock.UpDownPoint,
+                        'id': latest_stock.id,
+                        'mbti': mbti_value
+                    }
+            my_list.append(stock_code)
 
     stock_info_list = list(stock_info.values())
     stock_info_list.sort(key=lambda x: x['id'], reverse=True)

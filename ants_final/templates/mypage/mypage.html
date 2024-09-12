@@ -12,6 +12,7 @@
         <div class="left">
             <h1 class="title">My 관심종목</h1>
             <div class="container-fvl">
+                {% if my_list %}
                 <table class="table-stockinfo">
                     <thead style="font-size: 20px;">
                         <tr style="border-bottom: 2px solid black;">
@@ -50,6 +51,9 @@
                         {% endfor %}
                     </tbody>
                 </table>
+                {% else %}
+                <span style="font-size: 25px; text-align: center;"> <b>아직 관심있게 보고 계신 종목이 없으시군요!<br>별을 눌러 추가해보세요</b> </span>
+                {% endif %}
             </div>
         </div>
         <div class="right">
@@ -77,6 +81,7 @@
 </div>
 <div class="bottom">
     <div class="mbti-stock-rec">
+        {% if my_list|length >= 5 %}
         <div style="margin: 8px;">
             <p>{{ request.user.first_name }}님이 선호하시는 기업의 mbti는 {{ mbti }}입니다!</p>
             <p>{{ mbti }}의 기업은 ~~ 기능이 있어요 ^^~</p>
@@ -107,7 +112,7 @@
                             </td>
                             <td>
                                 {% if stocks.stock_code in my_list %}
-                                <a href="{% url 'remove_stock' stocks.stock_code %}"></a>
+                                <a href="{% url 'remove_stock' stocks.stock_code %}">
                                     <img src="{% static 'images/star.png' %}" alt="Remove" style="width: 25px; margin-top: 5px;"/>
                                 </a>
                                 {% else %}
@@ -159,6 +164,9 @@
                     </tbody>
                 </table>
             </div>
+        {% else %}
+        <span style="font-size: 25px; text-align: center;">관심종목을 5개 이상 추가하시면 내가 선호하는 기업과 비슷한 기업을 보여드려요!</span>
+        {% endif %}
     </div>
 </div>
 </div>
