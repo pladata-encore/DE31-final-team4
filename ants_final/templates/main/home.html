@@ -26,22 +26,47 @@
     </div>
     </div>
 </div>
+
 <div class='container mt-3'>
-    <h1>실시간 차트</h1>
+    <h1>급상승&급하락</h1>
     <div class="row">
         <div class="col-8">
-            <input type="button" class="btn btn-secondary" value="급상승">
-            <input type="button" class="btn btn-secondary" value="급하락">
-            <h2></h2>
-            <span class="border border-2 mt-3">실시간 차트 추가해주세요</span>
-        </div>
-        <div class="col-4">
-            <a href="{% url 'economic_awareness_test' %}">
-                <img src="{% static 'images/test_image.png' %}">
-            </a>
+            <form method="get" action="">
+                <input type="submit" name="type" class="btn btn-secondary" value="rising" {% if type == 'rising' %}disabled{% endif %}>
+                <input type="submit" name="type" class="btn btn-secondary" value="falling" {% if type == 'falling' %}disabled{% endif %}>
+            </form>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>종목</th>
+                        <th>현재가</th>
+                        <th>등락률</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stock in stocks %}
+                    <tr>
+                        <td>{{ forloop.counter }}. {{ stock.name }}</td>
+                        <td>{{ stock.current_price }}원</td>
+                        <td>
+                            {% if stock.UpDownRate > 0 %} 
+                                <span class="text-danger">+{{ stock.UpDownPoint }}원 ({{ stock.UpDownRate }}%)</span>
+                            {% else %}
+                                <span class="text-primary">{{ stock.UpDownPoint }}원 ({{ stock.UpDownRate }}%)</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3">데이터가 없습니다.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
+
 <div class='container mt-3'>
     <h1>지금 뜨는 분야</h1>
     <div class="row">

@@ -188,6 +188,8 @@ def add_graphs():
 
     return graphic1, graphic2
 
+from django.db.models import Max
+
 def home(request):
 
     # 그래프 데이터 생성
@@ -197,6 +199,17 @@ def home(request):
     kospi = Market.objects.filter(StockName='KOSPI').order_by('-price_time').first()
     kosdaq = Market.objects.filter(StockName='KOSDAQ').order_by('-price_time').first()
 
+    # RealTime 테이블에서 가장 최신의 데이터를 기준으로 필터링
+    latest_time = RealTime.objects.aggregate(latest_time=Max('price_time'))['latest_time']
+
+    # 최신 데이터를 기준으로 필터링한 후, 상승/하락 종목을 정렬
+    type_choice = request.GET.get('type', 'rising')  # 기본값은 'rising'
+    
+    if type_choice == 'rising':
+        stocks = RealTime.objects.filter(price_time=latest_time, UpDownPoint__gt=0).order_by('-UpDownRate')[:10]  # 급상승 순서
+    else:
+        stocks = RealTime.objects.filter(price_time=latest_time, UpDownPoint__lt=0).order_by('UpDownRate')[:10]  # 급하락 순서
+    
     # 템플릿에 전달할 값 설정
     context = {
         'graphic1': graphic1,
@@ -205,10 +218,13 @@ def home(request):
         'KOSPI_UpDownRate': kospi.UpDownRate if kospi else 'N/A',
         'KOSDAQ_UpDownPoint': kosdaq.UpDownPoint if kosdaq else 'N/A',
         'KOSDAQ_UpDownRate': kosdaq.UpDownRate if kosdaq else 'N/A',
+        'stocks': stocks,
+        'type': type_choice  # 급상승/급하락 차트 선택
     }
 
     # 템플릿 렌더링
     return render(request, 'main/home.html', context)
+
 
 def about(request):
     return render(request, 'main/about.html')
@@ -216,11 +232,12 @@ def about(request):
 # 관심종목
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import RealTimeStock, UserStock
+from .models import UserStock
+from stocks.models import RealTime
 
 @login_required
 def add_favorite_list(request, stock_code):
-    latest_stock = RealTimeStock.objects.filter(stock_code=stock_code).order_by('-id').first()
+    latest_stock = RealTime.objects.filter(stock_code=stock_code).order_by('-id').first()
     if latest_stock is not None:
         # UserStock에 해당 유저의 관심종목으로 추가
         UserStock.objects.get_or_create(
@@ -241,7 +258,7 @@ def my_favorite_list(request):
     for user_stock in user_stocks:
         stock_code = user_stock.stock_id.stock_code
         # 최신 RealTimeStock 객체를 가져옵니다.
-        latest_stock = RealTimeStock.objects.filter(stock_code=stock_code).order_by('-id').first()
+        latest_stock = RealTime.objects.filter(stock_code=stock_code).order_by('-id').first()
         if latest_stock:
             if stock_code not in stock_info or latest_stock.id > stock_info[stock_code]['id']:
                 stock_info[stock_code] = {
@@ -258,3 +275,7 @@ def my_favorite_list(request):
     stock_info_list.sort(key=lambda x: x['id'], reverse=True)
     
     return render(request, 'mypage/mypage.html', {'stock_info': stock_info_list})
+
+
+
+
