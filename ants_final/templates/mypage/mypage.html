@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>내 관심종목 리스트</title>
+    <title>마이페이지</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -12,17 +13,26 @@
             padding: 0;
         }
 
-        h1 {
+        h1,
+        h3 {
             text-align: center;
             color: #333;
             margin-top: 20px;
         }
 
+        .section {
+            margin: 20px auto;
+            max-width: 600px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
         .stock-list {
             list-style: none;
             padding: 0;
-            margin: 20px auto;
-            max-width: 600px;
+            margin: 0;
         }
 
         .stock-list li {
@@ -58,18 +68,34 @@
         }
     </style>
 </head>
+
 <body>
 
-<h1>내 관심종목 리스트</h1>
-<ul class="stock-list">
-    {% for stock in stock_info %}
-    <li>
-        <span class="stock-code">{{ stock.stock_code }} - {{ stock.name }}</span>
-        <span class="stock-price">{{ stock.current_price }}원</span>
-        <span class="stock-rate">{{ stock.UpDownRate }}% ({{ stock.UpDownPoint }})</span>
-    </li>
-    {% endfor %}
-</ul>
+    <h1>{{ user.username }}님의 마이페이지</h1>
+
+    <div class="section">
+        <h3>테스트 결과</h3>
+        {% if test_result %}
+        <p>결과 1: {{ test_result.result1 }}</p>
+        <p>결과 2: {{ test_result.result2 }}</p>
+        {% else %}
+        <p>테스트를 진행해보세요.</p>
+        {% endif %}
+    </div>
+
+    <div class="section">
+        <h3>내 관심종목 리스트</h3>
+        <ul class="stock-list">
+            {% for stock in stock_info %}
+            <li>
+                <span class="stock-code">{{ stock.stock_code }} - {{ stock.name }}</span>
+                <span class="stock-price">{{ stock.current_price }}원</span>
+                <span class="stock-rate">{{ stock.UpDownRate }}% ({{ stock.UpDownPoint }})</span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
 
 </body>
+
 </html>

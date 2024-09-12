@@ -22,6 +22,12 @@ urlpatterns = [
     path('test-option-2/', views.test_option_2, name='test_option_2'),
     path('test-option-3/', views.test_option_3, name='test_option_3'),
     
+    # 테스트 결과
+    
+    path('save-test-result/', views.save_test_result, name='save_test_result'),
+    
+
+    
     # 검색
     path('search/', views.search_datawarehouse, name='search_datawarehouse'),
 

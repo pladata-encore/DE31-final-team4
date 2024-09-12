@@ -88,6 +88,36 @@ def test_option_3(request):
     return render(request, 'main/test_option_3.html', {'questions': questions})
 
 
+# 결과
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
+from .models import TestResult
+
+@csrf_exempt  # AJAX 요청 시 CSRF 검사를 비활성화
+@login_required  # 사용자가 로그인되어 있어야만 결과를 저장 가능
+def save_test_result(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        result1 = data.get('result1')
+        result2 = data.get('result2')
+
+        # TestResult 모델에 결과 저장
+        TestResult.objects.create(user=request.user, result1=result1, result2=result2)
+
+        return JsonResponse({'message': 'Test result saved successfully!'}, status=200)
+    
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+    # mypage에 테스트 결과 보여주기 (예송이한테 있으면 이건 삭제하고merge)
+@login_required
+def mypage(request):
+    try:
+        test_result = TestResult.objects.get(user=request.user)
+    except TestResult.DoesNotExist:
+        test_result = None
+    
+    return render(request, 'mypage.html', {'test_result': test_result})
+
 #서칭
 from .models import DataWarehouse
 from django.db.models import Q
@@ -255,7 +285,8 @@ def my_favorite_list(request):
                     'UpDownPoint': latest_stock.UpDownPoint,
                     'id': latest_stock.id
                 }
-    
+
+
     # stock_info의 값을 리스트로 변환하고, id 기준으로 정렬합니다.
     stock_info_list = list(stock_info.values())
     stock_info_list.sort(key=lambda x: x['id'], reverse=True)
