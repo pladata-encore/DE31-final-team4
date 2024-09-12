@@ -304,7 +304,7 @@ def load_news(request):
     end = start + page_size
     news_list = News.objects.filter(stock_code=stock_code).order_by('-pubDate')[start:end]
     data = {
-        'news_list': [{'title': news.title, 'description': news.description, 'pubDate': str(news.pubDate)} for news in news_list]
+        'news_list': [{'title': news.title, 'description': news.description, 'pubDate': str(news.pubDate), 'originallink': news.originallink} for news in news_list]
     }
     
     return JsonResponse(data)
