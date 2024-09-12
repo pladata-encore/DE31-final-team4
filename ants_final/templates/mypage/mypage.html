@@ -145,7 +145,7 @@
                             </td>
                             <td>
                                 {% if stocks.stock_code in my_list %}
-                                <a href="{% url 'remove_stock' stocks.stock_code %}"></a>
+                                <a href="{% url 'remove_stock' stocks.stock_code %}">
                                     <img src="{% static 'images/star.png' %}" alt="Remove" style="width: 25px; margin-top: 5px;"/>
                                 </a>
                                 {% else %}
