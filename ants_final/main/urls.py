@@ -29,5 +29,5 @@ urlpatterns = [
     path('about/', views.about, name='about'),
     
     # map 페이지
-    path('map/', views.map_view, name='map'),
+    path('map/', views.treemap_view, name='map'),
 ]

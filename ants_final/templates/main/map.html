@@ -1,105 +1,143 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>주식 트리맵</title>
-    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <title>트리맵</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <style>
-        .node {
-            font: 12px sans-serif;
-            line-height: 1.5em;
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* 전체 페이지 가운데 정렬 */
+            padding: 20px;
+        }
+
+        h1 {
             text-align: center;
-            border: solid 1px white;
-            overflow: hidden;
+            font-size: 24px; /* 제목 크기 */
         }
-        .node text {
-            pointer-events: none;
+
+        .main-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: center; /* 전체 레이아웃 가운데 정렬 */
+            width: 100%;
+            max-width: 1200px;
         }
-        form {
+
+        .treemap-container {
+            flex: 1;  /* 트리맵이 화면의 대부분을 차지 */
+            margin-right: 20px; /* 오른쪽 패딩 추가 */
+        }
+
+        .controls-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            width: 150px; /* 버튼 컨테이너의 너비 설정 */
+        }
+
+        .controls-container button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .graph-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        footer {
+            width: 100%; /* footer가 화면의 전체 너비를 차지하도록 */
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            position: fixed;
+            bottom: 0; /* 화면의 하단에 고정 */
+            left: 0;
+        }
+
+        .market-selection {
+            display: flex;
+            justify-content: center;
             margin-bottom: 20px;
         }
+
+        .market-selection button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
     </style>
 </head>
 <body>
-    <h1>{{ selected_market }} 시장 트리맵</h1>
-    <p>기간: {{ selected_time_period }}</p>
 
-    <!-- 마켓 및 기간 선택 폼 -->
-    <form method="GET" action="">
-        <label for="market">마켓 선택:</label>
-        <select id="market" name="market">
-            <option value="KOSPI200" {% if selected_market == 'KOSPI200' %}selected{% endif %}>KOSPI200</option>
-            <option value="KOSDAQ" {% if selected_market == 'KOSDAQ' %}selected{% endif %}>KOSDAQ</option>
-        </select>
+    <!-- 마켓 선택 버튼을 상단에 배치 -->
+    <div class="market-selection">
+        <form method="GET">
+            <button type="submit" name="market" value="KOSPI200" {% if selected_market == 'KOSPI200' %}disabled{% endif %}>KOSPI200</button>
+            <button type="submit" name="market" value="KOSDAQ" {% if selected_market == 'KOSDAQ' %}disabled{% endif %}>KOSDAQ</button>
+        </form>
+    </div>
 
-        <label for="time_period">기간 선택:</label>
-        <select id="time_period" name="time_period">
-            <option value="1 Day" {% if selected_time_period == '1 Day' %}selected{% endif %}>1일</option>
-            <option value="1 Week" {% if selected_time_period == '1 Week' %}selected{% endif %}>1주</option>
-            <option value="1 Month" {% if selected_time_period == '1 Month' %}selected{% endif %}>1개월</option>
-            <option value="3 Months" {% if selected_time_period == '3 Months' %}selected{% endif %}>3개월</option>
-            <option value="6 Months" {% if selected_time_period == '6 Months' %}selected{% endif %}>6개월</option>
-            <option value="1 Year" {% if selected_time_period == '1 Year' %}selected{% endif %}>1년</option>
-        </select>
+    <div class="main-container">
+        <!-- 트리맵 영역 -->
+        <div class="treemap-container">
+            <h1>주식 시장 트리맵</h1>
+            <div class="graph-container">
+                <!-- 트리맵 그래프 표시 -->
+                {{ graph_html|safe }}
+            </div>
+        </div>
 
-        <button type="submit">적용</button>
-    </form>
+        <!-- 컨트롤 패널 영역 (기간 선택) -->
+        <div class="controls-container">
+            <!-- 기간 선택 버튼 -->
+            <form method="GET">
+                <input type="hidden" name="market" value="{{ selected_market }}">
+                <button type="submit" name="period" value="1 Day" {% if selected_time_period == '1 Day' %}disabled{% endif %}>1일</button>
+                <button type="submit" name="period" value="1 Week" {% if selected_time_period == '1 Week' %}disabled{% endif %}>1주</button>
+                <button type="submit" name="period" value="1 Month" {% if selected_time_period == '1 Month' %}disabled{% endif %}>1달</button>
+                <button type="submit" name="period" value="3 Months" {% if selected_time_period == '3 Months' %}disabled{% endif %}>3달</button>
+                <button type="submit" name="period" value="6 Months" {% if selected_time_period == '6 Months' %}disabled{% endif %}>6달</button>
+                <button type="submit" name="period" value="1 Year" {% if selected_time_period == '1 Year' %}disabled{% endif %}>1년</button>
+            </form>
+        </div>
+    </div>
 
-    <div id="treemap" style="width: 100%; height: 800px;"></div>
+    <!-- 하단 고정 footer -->
+    <footer class="text-center text-white py-4" style="background-color: #333;">
+        <p>© 2024 Data Engineering 31 Final Project</p>
+    </footer>
 
-    <script>
-        const stockData = {{ stock_data_json|safe }};
-
-        const width = 960;
-        const height = 800;
-
-        const svg = d3.select("#treemap")
-            .append("svg")
-            .attr("width", width)
-            .attr("height", height);
-
-        const format = d3.format(",d");
-
-        const color = d3.scaleSequential([0, 5], d3.interpolateRdBu);
-
-        const treemap = d3.treemap()
-            .size([width, height])
-            .paddingInner(1);
-
-        const root = d3.hierarchy({children: stockData})
-            .sum(d => d.total)
-            .sort((a, b) => b.total - a.total);
-
-        treemap(root);
-
-        const cell = svg.selectAll("g")
-            .data(root.leaves())
-            .enter().append("g")
-            .attr("transform", d => `translate(${d.x0},${d.y0})`);
-
-        cell.append("rect")
-            .attr("id", d => d.name)
-            .attr("width", d => d.x1 - d.x0)
-            .attr("height", d => d.y1 - d.y0)
-            .attr("fill", d => color(d.data['Change Rate (%)']));
-
-        cell.append("clipPath")
-            .attr("id", d => "clip-" + d.name)
-            .append("use")
-            .attr("xlink:href", d => "#" + d.name);
-
-        cell.append("text")
-            .attr("clip-path", d => "url(#clip-" + d.name + ")")
-            .selectAll("tspan")
-            .data(d => [d.data.name, d.data['Change Rate (%)'] + "%"])
-            .enter().append("tspan")
-            .attr("x", 5)
-            .attr("y", (d, i) => 13 + i * 10)
-            .text(d => d);
-
-        cell.append("title")
-            .text(d => `${d.data.name}\n변동률: ${d.data['Change Rate (%)']}%\n총액: ${format(d.data.total)}`);
-    </script>
 </body>
 </html>
+{% endblock content %}

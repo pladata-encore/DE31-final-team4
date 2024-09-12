@@ -235,74 +235,119 @@ def home(request):
 def about(request):
     return render(request, 'main/about.html')
 
-#트리맵 만들기 위해 필요한 데이터 가져오는 함수
-
+#트리맵
 from django.shortcuts import render
-import pandas as pd
-import json
+from stocks.models import OnceTime, RealTime  # 사용 중인 모델을 임포트
+import plotly.express as px  # Plotly 사용
 from django.db import connection
-from django.views.decorators.cache import cache_page
-from decimal import Decimal
+import pandas as pd
+from datetime import datetime, timedelta
 
-
-# 주식 데이터를 불러오는 함수 정의
+# 데이터 로드 함수
 def load_stock_data(selected_market, selected_time_period):
-    query = '''
-        SELECT rt.stock_code, rt.name, rt.sector, rt.market, rt.current_price, rt.stockcount, rt.UpDownRate, ot.closing_price
-        FROM real_time rt
-        LEFT JOIN once_time ot
-        ON rt.stock_code = ot.stock_code
-        AND DATE(rt.price_time) = ot.date
-        WHERE rt.market = %s
-    '''
-    
-    # Raw SQL을 실행하여 데이터를 Pandas DataFrame으로 변환
+    # 가장 최근의 real_time 데이터의 마지막 업데이트 시간 가져오기
     with connection.cursor() as cursor:
-        cursor.execute(query, [selected_market])
+        cursor.execute('SELECT MAX(price_time) FROM real_time')
+        last_price_time = cursor.fetchone()[0]
+
+    # 현재 시간 대신 가장 최근 업데이트된 시간 사용
+    time_threshold = last_price_time
+
+    # SQL 쿼리 작성: 선택한 시장과 기간에 맞게 종가 데이터를 가져옴
+    query = '''
+    WITH latest_closing_price AS (
+        SELECT stock_code, name, MAX(date) AS latest_date
+        FROM once_time
+        WHERE date <= %s
+        GROUP BY stock_code, name
+    )
+    SELECT rt.stock_code, rt.name, rt.sector, rt.market, rt.current_price, rt.stockcount, rt.UpDownRate, ot.closing_price, rt.price_time
+    FROM real_time rt
+    INNER JOIN latest_closing_price lcp
+        ON rt.stock_code = lcp.stock_code AND rt.name = lcp.name
+    INNER JOIN once_time ot
+        ON lcp.stock_code = ot.stock_code AND lcp.name = ot.name AND lcp.latest_date = ot.date
+    WHERE rt.market = %s AND rt.price_time = %s;
+    '''
+
+    with connection.cursor() as cursor:
+        cursor.execute(query, (time_threshold, selected_market, last_price_time))
         rows = cursor.fetchall()
 
-    # 컬럼 이름을 지정하여 DataFrame 생성
-    columns = ['stock_code', 'name', 'sector', 'market', 'current_price', 'UpDownRate', 'stockcount', 'closing_price']
-
+    # 결과를 DataFrame으로 변환
+    columns = ['stock_code', 'name', 'sector', 'market', 'current_price', 'stockcount', 'UpDownRate', 'closing_price', 'price_time']
     df = pd.DataFrame(rows, columns=columns)
 
-    # Decimal 타입을 float으로 변환
-    df = df.apply(lambda col: col.map(lambda x: float(x) if isinstance(x, Decimal) else x))
-
-    # NaN 값을 None 또는 0으로 대체 (NaN 값을 안전하게 JSON으로 변환하기 위해 처리)
-    df = df.fillna(0)
-
-    df['sector'] = df['sector'].fillna('Unknown')
-
+    # 1일 선택 시 UpDownRate 값 사용
     if selected_time_period == '1 Day':
-        df['Change Rate (%)'] = df['UpDownRate']
+        df['Change Rate (%)'] = pd.to_numeric(df['UpDownRate'], errors='coerce')
+        # df['Change Rate (%)'] = df['UpDownRate'] * 100
     else:
+        # 1일 이외의 기간에 대해 변동률 계산
         df['Change Rate (%)'] = (df['current_price'] - df['closing_price']) / df['closing_price'] * 100
 
-    df['total'] = df['current_price'] * df['stockcount']
+    # 시가총액 계산
+    df['market_cap'] = df['current_price'] * df['stockcount']
+
+    # 섹터별로 그룹화하여 시가총액 상위 10개 종목만 남기기
+    df = df.groupby('sector').apply(lambda x: x.nlargest(10, 'market_cap')).reset_index(drop=True)
 
     return df
 
-
-@cache_page(60 * 15)
-def map_view(request):
-    # 선택된 마켓과 기간을 GET 요청으로 가져옵니다.
+# 트리맵을 그리는 함수
+def treemap_view(request):
     selected_market = request.GET.get('market', 'KOSPI200')
-    selected_time_period = request.GET.get('time_period', '1 Day')
+    selected_time_period = request.GET.get('period', '1 Day')
 
-    # 주식 데이터를 불러옵니다.
+    # 데이터 로드
     df = load_stock_data(selected_market, selected_time_period)
-    print(df.head())
 
+    # 회사 이름과 변동률을 함께 표시
+    df['label'] = df['name'] + '<br>' + df['Change Rate (%)'].round(2).astype(str) + '%'
 
-    # 필요한 데이터만 추출하여 JSON으로 변환
-    tree_data = df[['name', 'sector', 'total', 'Change Rate (%)']].to_dict(orient='records')
-    stock_data_json = json.dumps(tree_data)
-    
-    # 템플릿 렌더링
-    return render(request, 'main/map.html', {
-        'stock_data_json': stock_data_json, 
-        'selected_market': selected_market, 
-        'selected_time_period': selected_time_period
-    })
-    
+    # 트리맵 생성
+    fig = px.treemap(df,
+                     path=['sector', 'label'],  # label에 회사명과 변동률 포함
+                     values='market_cap',  # 시가총액 기준으로 상자 크기 설정
+                     color='Change Rate (%)',  # 색상은 변동률에 따라 설정
+                     color_continuous_scale=['blue', 'black', 'red'],
+                     title=f"{selected_market} 주식 시장 트리맵")
+
+    # 섹터명에 대해서는 작은 텍스트, 종목명에 대해서는 큰 텍스트를 설정
+    fig.update_traces(
+        hovertemplate=None,
+        textposition='middle center',
+        # 각 아이템에 대해 글씨 크기 지정
+        texttemplate=[
+            '<span style="font-size:12px">%{label}</span>' if d['level'] == 1 else '<span style="font-size:20px">%{label}</span>'
+            for d in fig.data[0]['ids']
+        ],
+        insidetextfont=dict(color='white'),
+    )
+
+    # HTML로 변환
+    graph_html = fig.to_html(full_html=False)
+
+    return render(request, 'main/map.html', {'graph_html': graph_html, 'selected_market': selected_market, 'selected_time_period': selected_time_period})
+
+#streamlit용 view였음..
+# import subprocess
+# import os
+# from django.http import HttpResponseRedirect
+
+# # Django의 views.py에서 Streamlit 실행
+# def treemap_view(request):
+#     # Streamlit이 이미 실행 중인지 확인하는 방법은 생략하고,
+#     # 매번 요청이 들어올 때 Streamlit을 실행하도록 처리.
+#     try:
+#         # Streamlit이 이미 실행 중인지 체크하고, 실행 중이 아니라면 실행
+#         result = subprocess.run(['lsof', '-i', ':8501'], stdout=subprocess.PIPE)
+#         if 'Streamlit' not in str(result.stdout):
+#             # Streamlit이 실행 중이지 않다면, 백그라운드에서 Streamlit을 실행
+#             subprocess.Popen(['streamlit', 'run', 'your_app.py', '--server.port', '8501'], 
+#                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+#     except Exception as e:
+#         print(f"Error launching Streamlit: {e}")
+
+#     # Streamlit 앱으로 리디렉션
+#     return HttpResponseRedirect('http://localhost:8501')
