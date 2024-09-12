@@ -203,4 +203,4 @@ cython_debug/
 # .nfs files are created when an open file is removed but is still being accessed
 .nfs*
 
-# End of https://www.toptal.com/developers/gitignore/api/git,linux,django
+# End of https://www.toptal.com/developers/gitignore/api/git,linux,djangoants_final/logs/django.log

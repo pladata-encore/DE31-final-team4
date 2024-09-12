@@ -38,18 +38,22 @@ class DataWarehouse(models.Model):
         return self.term
     
 
-class RealTimeStock(models.Model):
-    stock_code = models.CharField(max_length=10)
-    name = models.CharField(max_length=100)
-    current_price = models.DecimalField(max_digits=15, decimal_places=2)
-    UpDownRate = models.DecimalField(max_digits=15, decimal_places=2)
-    UpDownPoint = models.DecimalField(max_digits=15, decimal_places=2)
-    id = models.AutoField(primary_key=True)
+# class RealTime(models.Model):
+#     stock_code = models.CharField(max_length=10)
+#     name = models.CharField(max_length=100)
+#     current_price = models.DecimalField(max_digits=15, decimal_places=2)
+#     UpDownRate = models.DecimalField(max_digits=15, decimal_places=2)
+#     UpDownPoint = models.DecimalField(max_digits=15, decimal_places=2)
+#     id = models.AutoField(primary_key=True)
 
-    class Meta:
-        db_table = 'real_time'
-        unique_together = ('stock_code', 'id')
+#     class Meta:
+#         db_table = 'real_time'
+#         unique_together = ('stock_code', 'id')
 
+
+from stocks.models import RealTime
+
+# mypage
 class Mbti(models.Model):
     stock_code = models.CharField(max_length=10, primary_key=True)  # 종목코드는 문자열, 기본적으로 6자리
     mbti = models.CharField(max_length=10)
@@ -62,7 +66,7 @@ class Mbti(models.Model):
 
 class UserStock(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    stock_id = models.ForeignKey(RealTimeStock, on_delete=models.CASCADE,db_column='stock_id')
+    stock_id = models.ForeignKey(RealTime, on_delete=models.CASCADE,db_column='stock_id')
     stock_code = models.CharField(max_length=10, blank=True, null=True)
     mbti = models.CharField(max_length=10, blank=True, null=True)
 

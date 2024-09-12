@@ -7,27 +7,32 @@
 {% block title %}마이 뻬이보릿 스탁~❤️{% endblock %}
 
 {% block content %}
-<div class="container-leri">
-    <div class="left">
-        <h1 class="title">My 관심종목</h1>
-        <div class="container-fvl">
-            <table class="table-stockinfo">
-                <thead style="font-size: 20px;">
-                    <tr style="border-bottom: 2px solid black;">
-                        <th style="text-align: left;">종목명</th>
-                        <th style="text-align: center;">MBTI</th>
-                        <th style="text-align: right;">현재가</th>
-                        <th style="text-align: right;">등락률</th>
-                        <th style="text-align: center;">관심</th>
-                    </tr>
-                </thead>
-                <tbody style="font-size: 15px;">
-                    {% for stock in stock_info %}
-                    <tr style="border-bottom: 1px solid rgb(0, 0, 0);">
-                        <td style="text-align: left;">{{ stock.name }}</td>
-                        <td>{{ stock.mbti }}</td>
-                        <td style="text-align: right;">{{ stock.current_price }}원</td>
-                        <td style="text-align: right;">
+<div class="mypage">
+    <div class="container-leri">
+        <div class="left">
+            <h1 class="title">My 관심종목</h1>
+            <div class="container-fvl">
+                <table class="table-stockinfo">
+                    <thead style="font-size: 20px;">
+                        <tr style="border-bottom: 2px solid black;">
+                            <th style="text-align: left;">종목명</th>
+                            <th style="text-align: center;">MBTI</th>
+                            <th style="text-align: right;">현재가</th>
+                            <th style="text-align: right;">등락률</th>
+                            <th style="text-align: center;">관심</th>
+                        </tr>
+                    </thead>
+                    <tbody style="font-size: 15px;">
+                        {% for stock in stock_info %}
+                        <tr style="border-bottom: 1.8px solid rgb(100, 100, 100);">
+                            <td style="text-align: left;">{{ stock.name }}</td>
+                            {% if stock.mbti %}
+                                <td>{{ stock.mbti }}</td>
+                            {% else %}
+                                <td>정보없음</td>
+                            {% endif %}
+                            <td style="text-align: right;">{{ stock.current_price }}원</td>
+                            <td style="text-align: right;">
                             {% if stock.UpDownRate > 0 %}
                                 <span style="color: red;">{{ stock.UpDownPoint }} ({{ stock.UpDownRate }}%)</span>
                             {% elif stock.UpDownRate == 0 %}
@@ -35,40 +40,127 @@
                             {% else %}
                                 <span style="color: blue;">{{ stock.UpDownPoint }} ({{ stock.UpDownRate }}%)</span>
                             {% endif %}
-                        </td>
-                        <td>
-                            <a href="{% url 'remove_stock' stock.stock_code %}">
-                              <img src="{% static 'images/star.png' %}" alt="Remove" style="width: 25px; margin-top: 5px;"/>
-                            </a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                            </td>
+                            <td>
+                                <a href="{% url 'remove_stock' stock.stock_code %}">
+                                  <img src="{% static 'images/star.png' %}" alt="Remove" style="width: 25px; margin-top: 5px;"/>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
+        <div class="right">
+            <div class="small-box" style="background-color: rgb(202, 230, 255); font-size: 20px;">
+                {% if test_results.result1 %}
+                    <p> {{ request.user.first_name }}님은 {{ test_results.result1 }} 이시군요! </p>
+                {% else %}
+                    <p> {{ request.user.first_name }}님은 아직 테스트 전이시네요! </p>
+                    <a href="{% url 'test_option_1' %}" style="background-color: black; color: white; text-align: center; border-radius: 15px; padding: 10px; padding-bottom: 0; font-size: 25px;">
+                        <p>나의 투자성향은?<br><span style="font-weight: bold !important;">테스트 하러 가기 >></span></p>
+                    </a>
+                {% endif %}
+            </div>
+            <div class="small-box" style="background-color: rgb(232, 207, 255); font-size: 20px;">
+                {% if test_results.result2 %}
+                    <p> {{ request.user.first_name }}님은 {{ test_results.result2 }} 이시군요! </p>
+                {% else %}
+                    <p> {{ request.user.first_name }}님은 아직 테스트 전이시네요! </p>
+                    <a href="{% url 'test_option_2' %}" style="background-color: black; color: white; text-align: center; border-radius: 15px; padding: 10px; padding-bottom: 0; font-size: 25px;">
+                        <p>나의 투자지식은 어느정도일까? <br><span style="font-weight: bold !important; ">테스트 하러 가기 >></span></p>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+</div>
+<div class="bottom">
+    <div class="mbti-stock-rec">
+        <div style="margin: 8px;">
+            <p>{{ request.user.first_name }}님이 선호하시는 기업의 mbti는 {{ mbti }}입니다!</p>
+            <p>{{ mbti }}의 기업은 ~~ 기능이 있어요 ^^~</p>
+        </div>
+            <div class="mbti-stock">
+                <table class="table-mbtistock">
+                    <thead style="font-size: 20px;">
+                        <tr style="border-bottom: 2px solid black;">
+                            <th style="text-align: left;">종목명</th>
+                            <th style="text-align: right;">현재가</th>
+                            <th style="text-align: right;">등락률</th>
+                            <th style="text-align: center;">관심</th>
+                        </tr>
+                    </thead>
+                    <tbody style="font-size: 15px;">
+                        {% for stocks in mbti_stock|slice:":5" %}
+                        <tr style="border-bottom: 1.8px solid rgb(100, 100, 100);">
+                            <td style="text-align: left;">{{ stocks.name }}</td>
+                            <td style="text-align: right;">{{ stocks.current_price }}원</td>
+                            <td style="text-align: right;">
+                            {% if stocks.UpDownRate > 0 %}
+                                <span style="color: red;">{{ stocks.UpDownPoint }} ({{ stocks.UpDownRate }}%)</span>
+                            {% elif stocks.UpDownRate == 0 %}
+                                <span>{{ stocks.UpDownPoint }} ({{ stocks.UpDownRate }}%)</span>
+                            {% else %}
+                                <span style="color: blue;">{{ stocks.UpDownPoint }} ({{ stocks.UpDownRate }}%)</span>
+                            {% endif %}
+                            </td>
+                            <td>
+                                {% if stocks.stock_code in my_list %}
+                                <a href="{% url 'remove_stock' stocks.stock_code %}"></a>
+                                    <img src="{% static 'images/star.png' %}" alt="Remove" style="width: 25px; margin-top: 5px;"/>
+                                </a>
+                                {% else %}
+                                <a href="{% url 'add_favorite_list' stocks.stock_code %}">
+                                    <img src="{% static 'images/empty_star.png' %}" alt="Add" style="width: 25px; margin-top: 5px;"/>
+                                </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <table class="table-mbtistock">
+                    <thead style="font-size: 20px;">
+                        <tr style="border-bottom: 2px solid black;">
+                            <th style="text-align: left;">종목명</th>
+                            <th style="text-align: right;">현재가</th>
+                            <th style="text-align: right;">등락률</th>
+                            <th style="text-align: center;">관심</th>
+                        </tr>
+                    </thead>
+                    <tbody style="font-size: 15px;">
+                        {% for stocks in mbti_stock|slice:"5:" %}
+                        <tr style="border-bottom: 1.8px solid rgb(100, 100, 100);">
+                            <td style="text-align: left;">{{ stocks.name }}</td>
+                            <td style="text-align: right;">{{ stocks.current_price }}원</td>
+                            <td style="text-align: right;">
+                            {% if stocks.UpDownRate > 0 %}
+                                <span style="color: red;">{{ stocks.UpDownPoint }} ({{ stocks.UpDownRate }}%)</span>
+                            {% elif stocks.UpDownRate == 0 %}
+                                <span>{{ stocks.UpDownPoint }} ({{ stocks.UpDownRate }}%)</span>
+                            {% else %}
+                                <span style="color: blue;">{{ stocks.UpDownPoint }} ({{ stocks.UpDownRate }}%)</span>
+                            {% endif %}
+                            </td>
+                            <td>
+                                {% if stocks.stock_code in my_list %}
+                                <a href="{% url 'remove_stock' stocks.stock_code %}"></a>
+                                    <img src="{% static 'images/star.png' %}" alt="Remove" style="width: 25px; margin-top: 5px;"/>
+                                </a>
+                                {% else %}
+                                <a href="{% url 'add_favorite_list' stocks.stock_code %}">
+                                    <img src="{% static 'images/empty_star.png' %}" alt="Add" style="width: 25px; margin-top: 5px;"/>
+                                </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
     </div>
-    <div class="right">
-        <div class="small-box" style="background-color: rgb(202, 230, 255); font-size: 20px;">
-            {% if test_results.result1 %}
-                <p> {{ request.user.first_name }}님은 {{ test_results.result1 }} 이시군요! </p>
-            {% else %}
-                <p> {{ request.user.first_name }}님은 아직 테스트 전이시네요! </p>
-                <a href="{% url 'test_option_1' %}" style="background-color: black; color: white; text-align: center; border-radius: 15px; padding: 10px; padding-bottom: 0; font-size: 25px;">
-                    <p>나의 투자성향은?<br><span style="font-weight: bold !important;">테스트 하러 가기 >></span></p>
-                </a>
-            {% endif %}
-        </div>
-        <div class="small-box" style="background-color: rgb(232, 207, 255); font-size: 20px;">
-            {% if test_results.result2 %}
-                <p> {{ request.user.first_name }}님은 {{ test_results.result2 }} 이시군요! </p>
-            {% else %}
-                <p> {{ request.user.first_name }}님은 아직 테스트 전이시네요! </p>
-                <a href="{% url 'test_option_2' %}" style="background-color: black; color: white; text-align: center; border-radius: 15px; padding: 10px; padding-bottom: 0; font-size: 25px;">
-                    <p>나의 투자지식은 어느정도일까? <br><span style="font-weight: bold !important; ">테스트 하러 가기 >></span></p>
-                </a>
-            {% endif %}
-        </div>
-    </div>
+</div>
 </div>
 {% endblock %}
 </html>

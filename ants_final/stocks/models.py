@@ -32,3 +32,30 @@ class Market(models.Model):
         db_table = 'market'
         ordering = ['-price_time']
         unique_together = (('StockName', 'price_time'),)
+
+        
+class RealTime(models.Model):
+    stock_code = models.CharField(max_length=20)
+    name = models.CharField(max_length=100)
+    sector = models.CharField(max_length=100)
+    market = models.CharField(max_length=10)
+    status_code = models.CharField(max_length=20, null=False, blank=False)
+    current_price = models.IntegerField()
+    UpDownPoint = models.IntegerField(null=True, blank=True)
+    PlusMinus = models.IntegerField(null=True, blank=True)
+    UpDownRate = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    opening_price = models.IntegerField(null=True, blank=True)
+    high_price = models.IntegerField(null=True, blank=True)
+    low_price = models.IntegerField(null=True, blank=True)
+    price_time = models.DateTimeField(null=True, blank=True)
+    per = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    pbr = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    stockcount = models.IntegerField(null=True, blank=True)
+    id = models.AutoField(primary_key=True)
+
+    class Meta:
+        db_table = 'real_time'
+        unique_together = ('stock_code', 'id')
+
+    def __str__(self):
+        return self.name
