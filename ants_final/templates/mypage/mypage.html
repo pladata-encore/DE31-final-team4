@@ -4,7 +4,7 @@
 <html lang="ko">
 {% load static %}
     
-{% block title %}마이 뻬이보릿 스탁~❤️{% endblock %}
+{% block title %}ANTS-MyPage{% endblock %}
 
 {% block content %}
 <div class="mypage">
@@ -57,21 +57,21 @@
             </div>
         </div>
         <div class="right">
-            <div class="small-box" style="background-color: rgb(202, 230, 255); font-size: 20px;">
+            <div class="small-box" style="background-color: rgb(237, 255, 202); font-size: 20px;">
                 {% if test_results.result1 %}
-                    <p> {{ request.user.first_name }}님은 {{ test_results.result1 }} 이시군요! </p>
+                    <p> {{ request.user.username }}님은 {{ test_results.result1 }} 이시군요! </p>
                 {% else %}
-                    <p> {{ request.user.first_name }}님은 아직 테스트 전이시네요! </p>
+                    <p> {{ request.user.username }}님은 아직 테스트 전이시네요! </p>
                     <a href="{% url 'test_option_1' %}" style="background-color: black; color: white; text-align: center; border-radius: 15px; padding: 10px; padding-bottom: 0; font-size: 25px;">
                         <p>나의 투자성향은?<br><span style="font-weight: bold !important;">테스트 하러 가기 >></span></p>
                     </a>
                 {% endif %}
             </div>
-            <div class="small-box" style="background-color: rgb(232, 207, 255); font-size: 20px;">
+            <div class="small-box" style="background-color: rgb(191, 219, 186); font-size: 20px;">
                 {% if test_results.result2 %}
-                    <p> {{ request.user.first_name }}님은 {{ test_results.result2 }} 이시군요! </p>
+                    <p> {{ request.user.username }}님은 {{ test_results.result2 }} 이시군요! </p>
                 {% else %}
-                    <p> {{ request.user.first_name }}님은 아직 테스트 전이시네요! </p>
+                    <p> {{ request.user.username }}님은 아직 테스트 전이시네요! </p>
                     <a href="{% url 'test_option_2' %}" style="background-color: black; color: white; text-align: center; border-radius: 15px; padding: 10px; padding-bottom: 0; font-size: 25px;">
                         <p>나의 투자지식은 어느정도일까? <br><span style="font-weight: bold !important; ">테스트 하러 가기 >></span></p>
                     </a>
@@ -83,7 +83,7 @@
     <div class="mbti-stock-rec">
         {% if my_list|length >= 5 %}
         <div style="margin: 8px;">
-            <p>{{ request.user.first_name }}님이 선호하시는 기업의 mbti는 {{ mbti }}입니다!</p>
+            <p>{{ request.user.username }}님이 선호하시는 기업의 mbti는 {{ mbti }}입니다!</p>
             <p>{{ mbti }}의 기업은 ~~ 기능이 있어요 ^^~</p>
         </div>
             <div class="mbti-stock">
