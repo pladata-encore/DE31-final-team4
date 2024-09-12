@@ -24,6 +24,18 @@ class Answer(models.Model):
 
     def __str__(self):
         return self.text
+
+# 결과 저장
+class TestResult(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    result1 = models.CharField(max_length=100)
+    result2 = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.user.username}님의 테스트 결과"
+
+    class Meta:
+        db_table = 'test_result'
     
 #서칭
 class DataWarehouse(models.Model):
