@@ -295,14 +295,14 @@ from django.db.models import Count
 def add_favorite_list(request, stock_code):
     # 가장 최신의 stock 정보를 real_time 테이블에서 가져오기
     latest_stock = RealTime.objects.filter(stock_code=stock_code).order_by('-id').first()
-
+    
     if latest_stock is not None:
         stock_mbti = Mbti.objects.filter(stock_code=stock_code).first()
-
+        print("stock_mbti : ", stock_mbti.mbti)
         UserStock.objects.get_or_create(
             user=request.user,
             stock_id=latest_stock,
-            defaults={'stock_code': latest_stock.stock_code, 'mbti': stock_mbti}
+            defaults={'stock_code': latest_stock.stock_code, 'mbti': stock_mbti.mbti}
         )
         return redirect('mypage')
     else:

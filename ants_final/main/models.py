@@ -25,17 +25,17 @@ class Answer(models.Model):
     def __str__(self):
         return self.text
 
-# 결과 저장
-class TestResult(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    result1 = models.CharField(max_length=100)
-    result2 = models.CharField(max_length=100)
+# # 결과 저장
+# class TestResult(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     result1 = models.CharField(max_length=100)
+#     result2 = models.CharField(max_length=100)
 
-    def __str__(self):
-        return f"{self.user.username}님의 테스트 결과"
+#     def __str__(self):
+#         return f"{self.user.username}님의 테스트 결과"
 
-    class Meta:
-        db_table = 'test_result'
+#     class Meta:
+#         db_table = 'test_result'
     
 #서칭
 class DataWarehouse(models.Model):
@@ -132,7 +132,7 @@ class DividendVolatility(models.Model):
 
 class Mbti(models.Model):
     stock_code = models.CharField(max_length=6, primary_key=True)  # 종목코드는 문자열, 기본적으로 6자리
-    mbti = models.CharField(max_length=6)
+    mbti = models.CharField(max_length=10)
 
     class Meta:
         db_table = 'mbti'  # 테이블 이름을 명시적으로 설정
