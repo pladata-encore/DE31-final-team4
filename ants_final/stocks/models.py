@@ -32,14 +32,14 @@ class Market(models.Model):
         db_table = 'market'
         ordering = ['-price_time']
         unique_together = (('StockName', 'price_time'),)
-        
+
         
 class RealTime(models.Model):
     stock_code = models.CharField(max_length=20)
     name = models.CharField(max_length=100)
     sector = models.CharField(max_length=100)
     market = models.CharField(max_length=10)
-    status_code = models.CharField(max_length=20, null=True, blank=True)
+    status_code = models.CharField(max_length=20, null=False, blank=False)
     current_price = models.IntegerField()
     UpDownPoint = models.IntegerField(null=True, blank=True)
     PlusMinus = models.IntegerField(null=True, blank=True)

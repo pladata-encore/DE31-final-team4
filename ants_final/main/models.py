@@ -24,6 +24,18 @@ class Answer(models.Model):
 
     def __str__(self):
         return self.text
+
+# 결과 저장
+class TestResult(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    result1 = models.CharField(max_length=100)
+    result2 = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.user.username}님의 테스트 결과"
+
+    class Meta:
+        db_table = 'test_result'
     
 #서칭
 class DataWarehouse(models.Model):
@@ -38,19 +50,7 @@ class DataWarehouse(models.Model):
         return self.term
     
 
-# 관심종목
-# class Stock(models.Model):
-#     name = models.CharField(max_length=100)
-#     stock_code = models.CharField(max_length=10)
-
-#     def __str__(self):
-#         return self.name
-    
-#     class Meta:
-#         db_table = 'stock_symbol'
-
-# real_time table data 들고오는 모델
-# class RealTimeStock(models.Model):
+# class RealTime(models.Model):
 #     stock_code = models.CharField(max_length=10)
 #     name = models.CharField(max_length=100)
 #     current_price = models.DecimalField(max_digits=15, decimal_places=2)
@@ -59,7 +59,7 @@ class DataWarehouse(models.Model):
 #     id = models.AutoField(primary_key=True)
 
 #     class Meta:
-#         db_table = 'real_time' 
+#         db_table = 'real_time'
 #         unique_together = ('stock_code', 'id')
 
 # class UserStock(models.Model):
@@ -94,6 +94,7 @@ class UserStock(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     stock_id = models.ForeignKey(RealTime, on_delete=models.CASCADE,db_column='stock_id')
     stock_code = models.CharField(max_length=10, blank=True, null=True)
+    mbti = models.CharField(max_length=10, blank=True, null=True)
 
     def __str__(self):
         return f'{self.user.username} 관심종목: {self.stock_code.name}'
@@ -102,6 +103,17 @@ class UserStock(models.Model):
         db_table = 'favorite_list'
         unique_together = ('user', 'stock_code')
 
+#test 결과   
+class TestResult(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    result1 = models.CharField(max_length=100)
+    result2 = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.user.username}님의 테스트 결과"
+    
+    class Meta:
+        db_table = 'test_result'
 
 class DividendVolatility(models.Model):
     stock_code = models.CharField(max_length=6, primary_key=True)  # 종목코드는 문자열, 기본적으로 6자리

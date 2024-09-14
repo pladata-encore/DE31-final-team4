@@ -60,38 +60,30 @@ class TestPage {
         questionElement.textContent = result.title;
         questionTextElement.textContent = result.description;
         buttonWrap.innerHTML = ''; // 결과 화면에서 버튼 제거
+
+        // 결과를 서버로 전송 (AJAX 요청)
+        this.saveResult(result.title, result.description);
+    }
+    saveResult(resultTitle, resultDescription) {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value; // CSRF 토큰 추출
+
+        fetch('/save-test-result/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({
+                result1: resultTitle,
+                result2: resultDescription
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Test result saved successfully:', data);
+            })
+            .catch(error => {
+                console.error('Error saving test result:', error);
+            });
     }
 }
-// 설문조사 데이터 정의
-const surveyData = {
-    data: [
-        {
-            question: '당신의 연령대는 어떻게 됩니까?',
-            answerList: [
-                { answer: '19세 이하', point: 12.5 },
-                { answer: '20세 ~ 40세', point: 12.5 },
-                { answer: '41세 ~ 50세', point: 9.3 },
-                { answer: '51세 ~ 60세', point: 6.2 },
-                { answer: '61세 이상', point: 3.1 }
-            ]
-        },
-        {
-            question: '투자하고자 하는 자금의 투자 가능 기간은 얼마나 됩니까?',
-            answerList: [
-                { answer: '6개월 이내', point: 3.1 },
-                { answer: '6개월 이상 ~ 1년 이내', point: 6.2 },
-                { answer: '1년 이상 ~ 2년 이내', point: 9.3 },
-                { answer: '2년 이상 ~ 3년 이내', point: 12.5 },
-                { answer: '3년 이상', point: 15.6 }
-            ]
-        }
-    ],
-    result: [
-        { title: '낮은 포인트 결과', description: '당신은 침착하고 차분한 사람입니다.', minPoint: 10, maxPoint: 20 },
-        { title: '중간 포인트 결과', description: '당신은 밝고 외향적인 사람입니다.', minPoint: 21, maxPoint: 40 },
-        { title: '높은 포인트 결과', description: '당신은 열정적이고 활기찬 사람입니다.', minPoint: 41, maxPoint: 60 }
-    ]
-};
-// TestPage 클래스를 인스턴스화하여 사용
-const testPage = new TestPage(surveyData);
-

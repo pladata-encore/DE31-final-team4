@@ -1,12 +1,11 @@
 from django.urls import path
 from allauth.socialaccount.providers.google.views import oauth2_login, oauth2_callback
-
+from .views import save_test_result
 from . import views
 
 urlpatterns = [
     path('', views.home, name='home'),
-  
-    path('economic-awareness-test/', views.economic_awareness_test, name='economic_awareness_test'),
+    path('economic_awareness_test/', views.economic_awareness_test, name='economic_awareness_test'),
     
    
 
@@ -23,6 +22,12 @@ urlpatterns = [
     path('test-option-2/', views.test_option_2, name='test_option_2'),
     path('test-option-3/', views.test_option_3, name='test_option_3'),
     
+    # 테스트 결과
+    
+    path('save-test-result/', views.save_test_result, name='save_test_result'),
+    path('save-test-result/', save_test_result, name='save_test_result'),
+
+    
     # 검색
     path('search/', views.search_datawarehouse, name='search_datawarehouse'),
 
@@ -33,6 +38,7 @@ urlpatterns = [
     path('add_favorite_list/<str:stock_code>/', views.add_favorite_list, name='add_favorite_list'),
     path('mypage/', views.my_favorite_list, name='mypage'),
     # path('stock_/', views.my_favorite_list, name='my_favorite_list'),
+    path('remove_stock/<str:stock_code>/', views.remove_stock, name='remove_stock'),
 
     # stock_detail_page 브랜치에서 생성
     # navigation bar 에서 stock을 누르면 해당 페이지로 이동

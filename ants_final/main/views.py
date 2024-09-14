@@ -33,6 +33,7 @@ from django.contrib.auth.decorators import login_required
 
 from .models import TestOption, Question, Answer
 
+@login_required
 def test_option_1(request):
     test_option = get_object_or_404(TestOption, name="Test Option 1")
     questions = Question.objects.filter(test_option=test_option)
@@ -50,6 +51,7 @@ def test_option_1(request):
 
     return render(request, 'main/test_option_1.html', {'questions': questions})
 
+@login_required
 def test_option_2(request):
     test_option = get_object_or_404(TestOption, name="Test Option 2")
     questions = Question.objects.filter(test_option=test_option)
@@ -67,6 +69,7 @@ def test_option_2(request):
 
     return render(request, 'main/test_option_2.html', {'questions': questions})
 
+@login_required
 def test_option_3(request):
     test_option = get_object_or_404(TestOption, name="Test Option 3")
     questions = Question.objects.filter(test_option=test_option)
@@ -84,6 +87,58 @@ def test_option_3(request):
 
     return render(request, 'main/test_option_3.html', {'questions': questions})
 
+
+# 결과
+# views.py
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
+from .models import TestResult
+import json
+
+@csrf_exempt
+@login_required
+@require_POST
+def save_test_result(request):
+    try:
+        data = json.loads(request.body)
+        result1 = data.get('result1')
+        result2 = data.get('result2')
+        user = request.user
+
+        # 테스트 결과 저장
+        test_result = TestResult(user=user, result1=result1, result2=result2)
+        test_result.save()
+
+        return JsonResponse({'status': 'success'}, status=200)
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+
+@csrf_exempt  # AJAX 요청 시 CSRF 검사를 비활성화
+@login_required  # 사용자가 로그인되어 있어야만 결과를 저장 가능
+def save_test_result(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        result1 = data.get('result1')
+        result2 = data.get('result2')
+
+        # TestResult 모델에 결과 저장
+        TestResult.objects.create(user=request.user, result1=result1, result2=result2)
+
+        return JsonResponse({'message': 'Test result saved successfully!'}, status=200)
+    
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+    # mypage에 테스트 결과 보여주기 (예송이한테 있으면 이건 삭제하고merge)
+@login_required
+def mypage(request):
+    try:
+        test_result = TestResult.objects.get(user=request.user)
+    except TestResult.DoesNotExist:
+        test_result = None
+    
+    return render(request, 'mypage.html', {'test_result': test_result})
 
 #서칭
 from .models import DataWarehouse
@@ -232,49 +287,142 @@ def about(request):
 # 관심종목
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import UserStock
+from .models import UserStock, Mbti, TestResult
 from stocks.models import RealTime
+from django.db.models import Count
 
 @login_required
 def add_favorite_list(request, stock_code):
+    # 가장 최신의 stock 정보를 real_time 테이블에서 가져오기
     latest_stock = RealTime.objects.filter(stock_code=stock_code).order_by('-id').first()
-    if latest_stock is not None:
-        # UserStock에 해당 유저의 관심종목으로 추가
-        UserStock.objects.get_or_create(
-            user=request.user, 
-            stock_id=latest_stock,  # 외래키로 RealTimeStock 객체를 저장
-            stock_code=latest_stock.stock_code  # stock_code 필드에 텍스트로 저장
-        )
-        return redirect('my_favorite_list')
-    else:
-        # 만약 stock_code가 존재하지 않으면 처리
-        return redirect('error_page')
 
+    if latest_stock is not None:
+        stock_mbti = Mbti.objects.filter(stock_code=stock_code).first()
+
+        UserStock.objects.get_or_create(
+            user=request.user,
+            stock_id=latest_stock,
+            defaults={'stock_code': latest_stock.stock_code, 'mbti': stock_mbti}
+        )
+        return redirect('mypage')
+    else:
+        return redirect('mypage')
+
+    
+@login_required
 def my_favorite_list(request):
+    user = request.user
+
+    # 관심 종목
     user_stocks = UserStock.objects.filter(user=request.user).select_related('stock_id')
     stock_info = {}
+
+    my_list = []
+    mbti_value = ""
+    stock_infos_list = []
+    stock_info_list = []
+    test_results = []
+
     
-    # 각 stock_code의 최신 RealTimeStock 객체를 선택합니다.
-    for user_stock in user_stocks:
-        stock_code = user_stock.stock_id.stock_code
-        # 최신 RealTimeStock 객체를 가져옵니다.
-        latest_stock = RealTime.objects.filter(stock_code=stock_code).order_by('-id').first()
-        if latest_stock:
-            if stock_code not in stock_info or latest_stock.id > stock_info[stock_code]['id']:
-                stock_info[stock_code] = {
-                    'stock_code': latest_stock.stock_code,
-                    'name': latest_stock.name,
-                    'current_price': latest_stock.current_price,
-                    'UpDownRate': latest_stock.UpDownRate,
-                    'UpDownPoint': latest_stock.UpDownPoint,
-                    'id': latest_stock.id
-                }
+    if not user_stocks.exists():
+    # 빈 데이터를 처리하는 로직을 추가하거나, 필요한 경우 예외처리
+        context = {
+            'mbti_stock': stock_infos_list,
+            'mbti': mbti_value,
+            'stock_info': stock_info_list,
+            'test_results': test_results,
+            'my_list' : my_list,
+        }
+        return render(request, 'mypage/mypage.html', context)
     
-    # stock_info의 값을 리스트로 변환하고, id 기준으로 정렬합니다.
+    else:
+        for user_stock in user_stocks:
+            stock_code = user_stock.stock_id.stock_code
+            # 최신 RealTime 객체를 가져옵니다.
+            latest_stock = RealTime.objects.filter(stock_code=stock_code).order_by('-id').first()
+            if latest_stock:
+                stock_mbti = Mbti.objects.filter(stock_code=stock_code).first()
+                mbti_value = stock_mbti.mbti if stock_mbti else None
+                if stock_code not in stock_info or (stock_info.get(stock_code) and latest_stock.id > stock_info[stock_code].get('id', 0)):
+                    stock_info[stock_code] = {
+                        'stock_code': latest_stock.stock_code,
+                        'name': latest_stock.name,
+                        'current_price': latest_stock.current_price,
+                        'UpDownRate': latest_stock.UpDownRate,
+                        'UpDownPoint': latest_stock.UpDownPoint,
+                        'id': latest_stock.id,
+                        'mbti': mbti_value
+                    }
+            my_list.append(stock_code)
+
     stock_info_list = list(stock_info.values())
     stock_info_list.sort(key=lambda x: x['id'], reverse=True)
     
-    return render(request, 'mypage/mypage.html', {'stock_info': stock_info_list})
+    # mbti 별 추천 종목
+    most_mbti = UserStock.objects.filter(user=user) \
+        .values('mbti') \
+        .annotate(mbti_count=Count('mbti')) \
+        .order_by('-mbti_count') \
+        .first()
+
+    mbti_value = most_mbti['mbti']
+
+    # 2. Mbti 모델에서 해당 mbti에 해당하는 모든 stock_code를 구함
+    mbti_stocks = Mbti.objects.filter(mbti=mbti_value).values_list('stock_code', flat=True)
+
+    # 3. RealTime에서 해당 stock_code에 대한 주식 정보를 pbr과 -id 기준으로 정렬 후 상위 10개 가져오기
+    latest_stocks = RealTime.objects.filter(stock_code__in=mbti_stocks) \
+        .order_by('-id', 'pbr')[:10]
+
+    stock_info = {}
+
+    for latest_stock in latest_stocks:
+        stock_code = latest_stock.stock_code
+
+        # Mbti 모델에서 해당 stock_code에 대한 MBTI 값을 가져옵니다.
+        stock_mbti = Mbti.objects.filter(stock_code=stock_code).first()
+        mbti_value = stock_mbti.mbti if stock_mbti else None
+
+        # stock_info 딕셔너리에 주식 정보를 추가합니다.
+        stock_info[stock_code] = {
+            'stock_code': latest_stock.stock_code,
+            'name': latest_stock.name,
+            'current_price': latest_stock.current_price,
+            'UpDownRate': latest_stock.UpDownRate,
+            'UpDownPoint': latest_stock.UpDownPoint,
+            'id': latest_stock.id,
+            # 'mbti': mbti_value
+        }
+
+    # 데이터를 리스트로 변환
+    stock_infos_list = list(stock_info.values())
+    
+
+    # 테스트 결과 확인용
+    test_results = TestResult.objects.filter(user=request.user).first()
+
+    context = {
+        'mbti_stock': stock_infos_list,
+        'mbti': mbti_value,
+        'stock_info': stock_info_list,
+        'test_results': test_results,
+        'my_list' : my_list,
+    }
+
+    return render(request, 'mypage/mypage.html', context)
+
+
+from django.shortcuts import redirect, get_object_or_404
+from .models import UserStock
+
+@login_required
+def remove_stock(request, stock_code):
+    user_stocks = UserStock.objects.filter(stock_code=stock_code, user=request.user)
+    
+    for user_stock in user_stocks:
+        user_stock.delete()
+
+    return redirect('mypage')
 
 from stocks.models import OnceTime
 import json
