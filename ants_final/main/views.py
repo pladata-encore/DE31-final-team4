@@ -258,9 +258,9 @@ def home(request):
     latest_time = RealTime.objects.aggregate(latest_time=Max('price_time'))['latest_time']
 
     # 최신 데이터를 기준으로 필터링한 후, 상승/하락 종목을 정렬
-    type_choice = request.GET.get('type', 'rising')  # 기본값은 'rising'
+    type_choice = request.GET.get('type', '급상승')  # 기본값은 'rising'
     
-    if type_choice == 'rising':
+    if type_choice == '급상승':
         stocks = RealTime.objects.filter(price_time=latest_time, UpDownPoint__gt=0).order_by('-UpDownRate')[:10]  # 급상승 순서
     else:
         stocks = RealTime.objects.filter(price_time=latest_time, UpDownPoint__lt=0).order_by('UpDownRate')[:10]  # 급하락 순서
