@@ -1,20 +1,23 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>테스트 결과</title>
 </head>
-
 <body>
     <h1>테스트 결과</h1>
-    <div id="results">
-        <!-- 결과를 보여주는 부분 -->
-        <p id="resultTitle">{{ result.title }}</p>
-        <p id="resultDescription">{{ result.description }}</p>
-    </div>
-    <button id="saveResultBtn">결과 저장</button>
+
+    <form id="testForm" method="POST">
+        <!-- Django의 CSRF 토큰 추가 -->
+        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+        {% csrf_token %}
+        <div id="results">
+            <p id="resultTitle">{{ result.title }}</p>
+            <p id="resultDescription">{{ result.description }}</p>
+        </div>
+        <button type="button" id="saveResultBtn">결과 저장</button>
+    </form>
 
     <script>
         document.getElementById('saveResultBtn').addEventListener('click', function () {
@@ -25,8 +28,8 @@
         });
 
         function saveResult(resultTitle, resultDescription) {
-            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value; // CSRF 토큰 추출
-
+            // const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value; // CSRF 토큰 추출
+            const csrfToken = "{{ csrf_token }}";
             fetch('/save-test-result/', {
                 method: 'POST',
                 headers: {
@@ -38,17 +41,16 @@
                     result2: resultDescription
                 })
             })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('테스트 결과가 성공적으로 저장되었습니다:', data);
-                    alert('결과가 저장되었습니다!');
-                })
-                .catch(error => {
-                    console.error('테스트 결과 저장 중 오류가 발생했습니다:', error);
-                    alert('결과 저장 중 오류가 발생했습니다.');
-                });
+            .then(response => response.json())
+            .then(data => {
+                console.log('테스트 결과가 성공적으로 저장되었습니다:', data);
+                alert('결과가 저장되었습니다!');
+            })
+            .catch(error => {
+                console.error('테스트 결과 저장 중 오류가 발생했습니다:', error);
+                alert('결과 저장 중 오류가 발생했습니다.');
+            });
         }
     </script>
 </body>
-
 </html>

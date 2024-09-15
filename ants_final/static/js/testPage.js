@@ -16,20 +16,20 @@ class TestPage {
         const questionTextElement = document.querySelector('.custom-question-text');
         const buttonWrap = document.querySelector('.custom-button-wrap');
 
-        // 질문 텍스트를 설정
+        // 질문 텍스트 설정
         questionElement.textContent = `Q${this.current + 1}.`;
         questionTextElement.textContent = questionData.question;
 
         // 기존 버튼 제거
         buttonWrap.innerHTML = '';
 
-        // 선택지 버튼을 생성하여 추가
+        // 선택지 버튼 생성하여 추가
         questionData.answerList.forEach((answer, index) => {
             const button = document.createElement('button');
             button.textContent = answer.answer;
-            button.classList.add('custom-button'); // 버튼 스타일을 위해 클래스 추가
+            button.classList.add('custom-button');
 
-            // 버튼 클릭 시 포인트를 추가하고 다음 질문으로 넘어감
+            // 버튼 클릭 시 포인트를 추가하고 다음 질문으로 이동
             button.addEventListener('click', () => {
                 this.point += answer.point;
                 this.nextQuestion();
@@ -64,6 +64,7 @@ class TestPage {
         // 결과를 서버로 전송 (AJAX 요청)
         this.saveResult(result.title, result.description);
     }
+
     saveResult(resultTitle, resultDescription) {
         const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value; // CSRF 토큰 추출
 
@@ -78,12 +79,12 @@ class TestPage {
                 result2: resultDescription
             })
         })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Test result saved successfully:', data);
-            })
-            .catch(error => {
-                console.error('Error saving test result:', error);
-            });
+        .then(response => response.json())
+        .then(data => {
+            console.log('Test result saved successfully:', data);
+        })
+        .catch(error => {
+            console.error('Error saving test result:', error);
+        });
     }
 }
