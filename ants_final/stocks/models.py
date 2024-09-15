@@ -44,6 +44,20 @@ class RealTime(models.Model):
 
     def __str__(self):
         return self.name
+    
+
+class FilteredOnceTime(models.Model):
+    stock_code = models.CharField(max_length=20)
+    name = models.CharField(max_length=100)
+    closing_price = models.BigIntegerField()
+    date = models.DateField()
+
+    class Meta:
+        db_table = 'filtered_once_time'  
+        unique_together = ('stock_code', 'date')  # 복합 기본 키로 설정된 항목
+    
+    def __str__(self):
+        return f"{self.stock_code} - {self.date}"
 
 class Market(models.Model):
     StockName = models.CharField(max_length=255, db_column='StockName', primary_key=True)

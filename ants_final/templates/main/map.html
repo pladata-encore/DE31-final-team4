@@ -14,6 +14,8 @@
         margin: 0;
         height: 100vh; /* 화면 전체 높이를 사용 */
         overflow-y: auto;
+        background-color: #444444; /* 배경색을 어둡게 설정 (트리맵 이외 영역) */
+        color: white; /* 기본 텍스트 색상 흰색 */
     }
     .main-container {
         flex-direction: row;
@@ -23,12 +25,15 @@
         display: flex;
     }
     .treemap-container {
-        flex: 4;
+        flex: 5;
         display: flex;
         justify-content: center; /* 트리맵 가운데 배치 */
         align-items: center;
         height: 100%;
-        overflow: hidden; /* 트리맵은 스크롤하지 않음 */
+        background-color: #444444; /* 트리맵 영역의 배경을 어둡게 설정 */
+        border-radius: 15px; /* 모서리를 둥글게 설정 */
+        padding: 20px;
+        box-shadow: 0px 0px 15px#444444; /* 트리맵에 그림자 추가 */
     }
     .controls-container {
         display: flex;
@@ -38,14 +43,18 @@
         width: 150px;
         height: 100%; /* 버튼 컨테이너도 스크롤 영역에 포함 */
         overflow-y: hidden; /* 스크롤바 없애기 */
-        padding-top: 20px;
-        flex:1;
+        padding-top: 10px;
+        flex: 1;
+        background-color: #444444; /* 컨트롤 영역의 배경색 어둡게 설정 */
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0px 0px 10px #444444;
     }
     .controls-container button {
         padding: 5px 5px;
         margin: 5px;
         font-size: 16px;
-        background-color: #a0a0a0;
+        background-color: #444444;
         color: white;
         border: none;
         cursor: pointer;
@@ -53,7 +62,8 @@
         width: 50%;
     }
     button:disabled {
-        background-color: #00d338; /* 비활성화 시 회색 */
+        background-color: white; 
+        color: black;
         cursor: not-allowed;
     }
     .market-selection {
@@ -62,26 +72,27 @@
         margin-bottom: 20px;
     }
     .market-selection button {
-        padding: 10px 10px;
-        margin: 10px;
+        padding: 10px 15px;
+        margin: 5px;
         font-size: 16px;
-        background-color: #a0a0a0;
+        background-color: #444444;
         color: white;
         border: none;
         cursor: pointer;
         border-radius: 5px;
     }
     .market-selection button:disabled {
-        background-color: #00d338; /* 선택된 마켓 버튼 회색으로 변환 */
+        background-color: white;
+        color: black;
         cursor: not-allowed;
     }
     footer {
         width: 100%;
-        background-color: #333;
+        background-color: #333333;
         color: white;
         text-align: center;
-        padding: 10px 0; /* footer 높이를 줄임 */
-        position: relative; /* 화면 하단에 고정하지 않고 내용 이후에 표시 */
+        padding: 10px 0;
+        position: relative;
         left: 0;
         bottom: 0;
     }
@@ -89,7 +100,7 @@
 {% endblock %}
 {% block content %}
 
-<h1>TreeMap</h1>
+<h1>&nbsp;&nbsp;&nbsp;&nbsp;TreeMap</h1>
     <!-- 마켓 선택 버튼을 상단에 배치 -->
     <div class="market-selection">
         <form method="GET">
@@ -118,4 +129,3 @@
         </div>
     </div>
 {% endblock %}
-

@@ -29,6 +29,5 @@ urlpatterns = [
     path('about/', views.about, name='about'),
     
     # map 페이지
-    # path('api/treemap/', views.treemap_data_api, name='treemap_data_api'),  # 비동기 데이터 API
     path('map/', views.treemap_view, name='map'),
 ]
