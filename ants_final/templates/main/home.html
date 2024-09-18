@@ -70,15 +70,27 @@
 <div class='container mt-3'>
     <h1>지금 뜨는 분야</h1>
     <div class="row">
-        <div class="col-4">
+        <!-- 이미지와 섹터 순위를 함께 배치하는 열 -->
+        <div class="col-12">
             <div class="container">
-                <img src="{% static 'images/electric_car_icon.png' %}" class="d-block sector-icon-size">
-                <img src="{% static 'images/biology_icon.png' %}" class="d-block sector-icon-size">
-                <img src="{% static 'images/semiconductor_icon.png' %}" class="d-block sector-icon-size">
+                <ul class="list-group">
+                    {% if top_sectors %}
+                        {% for sector in top_sectors %}
+                        <li class="list-group-item d-flex align-items-center">
+                            <!-- 이미지 왼쪽에 배치 -->
+                            <img src="{% static 'images/icon/'|add:sector.image %}" class="sector-icon-size mr-3" alt="{{ sector.sector }}">
+                            <!-- 섹터 순위와 updownrate -->
+                            <div class="d-flex justify-content-between w-100">
+                                <span>{{ forloop.counter }}위: {{ sector.sector }}</span>
+                                <span>{{ sector.avg_updownrate }}%</span>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    {% else %}
+                        <li class="list-group-item">데이터가 없습니다.</li>
+                    {% endif %}
+                </ul>
             </div>
-        </div>
-        <div class="col-8">
-
         </div>
     </div>
 </div>

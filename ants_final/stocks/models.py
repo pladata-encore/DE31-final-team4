@@ -56,6 +56,7 @@ class RealTime(models.Model):
     class Meta:
         db_table = 'real_time'
         unique_together = ('stock_code', 'id')
+        ordering = ['-price_time']
 
     def __str__(self):
         return self.name
