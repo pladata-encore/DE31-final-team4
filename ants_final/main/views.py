@@ -304,10 +304,20 @@ def add_favorite_list(request, stock_code):
             stock_id=latest_stock,
             defaults={'stock_code': latest_stock.stock_code, 'mbti': stock_mbti.mbti}
         )
-        return redirect('mypage')
-    else:
-        return redirect('mypage')
+        # return redirect('mypage')
+        return JsonResponse({'status': 'added'})
 
+    else:
+        # return redirect('mypage')
+        return JsonResponse({'status': 'error'})
+
+from django.contrib import messages
+from django.urls import reverse
+
+# def add_favorite_list_not_logged_in(request):
+#     # If not logged in, redirect to the login page with a message
+#     messages.error(request, '로그인이 필요합니다.')
+#     return redirect(f'{reverse("account_login")}?next={request.path}')
     
 @login_required
 def my_favorite_list(request):
@@ -422,7 +432,9 @@ def remove_stock(request, stock_code):
     for user_stock in user_stocks:
         user_stock.delete()
 
-    return redirect('mypage')
+    # return redirect('mypage')
+    return JsonResponse({'status': 'removed'})
+
 
 from stocks.models import OnceTime
 import json
@@ -444,6 +456,12 @@ def stock_detail_page(request, stock_code="005930"):
     dates = [str(x.date) for x in stock_data]
     closing_prices = [x.closing_price for x in stock_data]
     
+    # 사용자가 이 종목을 관심 목록에 추가했는지 확인하는 변수
+    try:
+        is_favorite = UserStock.objects.filter(user=request.user, stock_code=stock_code).exists()
+    except:
+        is_favorite = False
+    favorite_icon = 'images/filled_star.png' if is_favorite else 'images/empty_star.png'
     context = {
         'stock_code': stock_code,
         'dates': json.dumps(dates),  # JSON으로 직렬화
@@ -456,6 +474,8 @@ def stock_detail_page(request, stock_code="005930"):
         'year': dividend_data.year,
         'mbti': stock_mbti.mbti,
         'news_list': news_list,
+        'is_favorite': is_favorite,
+        'favorite_icon': favorite_icon,
     }
     return render(request, 'main/stock_detail.html', context)
 

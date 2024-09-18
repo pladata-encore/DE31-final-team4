@@ -15,7 +15,12 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-lg-6 p-3">
-            <h2 class="text-center"><strong>{{ name }}</strong>({{ stock_code }})</h2>
+            <h2 class="text-center"><strong>{{ name }}</strong>({{ stock_code }}) 
+                <img id="favorite-icon" 
+                    src="{% static favorite_icon %}" 
+                    alt="Favorite Icon" 
+                    style="width: 30px; height: 30px; cursor: pointer;">
+            </h2>
             <canvas id="stockChart"></canvas> <!-- 차트를 그릴 캔버스 -->
         </div>
         <div class="col-lg-6 p-3">
@@ -145,5 +150,35 @@
         currentPage++;
         loadNews(currentPage);
     });
+
+    // 관심 종목 추가/제거 기능
+    document.getElementById('favorite-icon').addEventListener('click', function() {
+        const stockCode = "{{ stock_code }}";
+        const isFavorite = this.getAttribute('src').includes('filled_star.png');
+
+        // 관심 종목에 있으면 제거, 없으면 추가
+        const url = isFavorite ? `/remove_stock/${stockCode}/` : `/add_favorite_list/${stockCode}/`;
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                if (isFavorite) {
+                    this.setAttribute('src', "{% static 'images/empty_star.png' %}");  // 비워진 별로 변경
+                } else {
+                    this.setAttribute('src', "{% static 'images/filled_star.png' %}");  // 채워진 별로 변경
+                }
+            } else {
+                console.error('Error processing request');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+    
 </script>
 {% endblock %}
