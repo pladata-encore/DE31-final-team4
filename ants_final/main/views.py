@@ -494,7 +494,6 @@ def stock_search(request):
 from django.db import connection
 
 def get_top_sectors():
-    # Raw SQL로 섹터별로 고유한 name을 가진 최근 10개의 데이터를 가져오는 쿼리 작성
     query = '''
         SELECT sector, AVG(UpDownRate) as avg_updownrate
         FROM (
@@ -503,7 +502,7 @@ def get_top_sectors():
             WHERE rt1.sector IS NOT NULL
             AND rt1.sector != ''
             AND rt1.UpDownRate IS NOT NULL
-            GROUP BY rt1.sector, rt1.name  -- 섹터와 이름을 기준으로 그룹화
+            GROUP BY rt1.sector, rt1.name
         ) AS recent_data
         GROUP BY sector
         ORDER BY avg_updownrate DESC
@@ -514,7 +513,8 @@ def get_top_sectors():
         cursor.execute(query)
         result = cursor.fetchall()
 
-    # 이미지와 함께 섹터 정보를 리턴
+    print(result)  # 상위 3개의 섹터를 출력하여 확인
+
     sector_avg_list = [
         {
             'sector': row[0],
@@ -525,8 +525,6 @@ def get_top_sectors():
     ]
 
     return sector_avg_list
-
-
 
 
 
@@ -562,18 +560,33 @@ def get_sector_image(sector_name):
         "철강.금속": "철강금속.png",
         "종이.목재": "종이목재.png",
         "비금속": "비금속.png",
-        "의료정밀": "의료정밀.png",
+        "의료정밀": "의료정밀2.png",
         "통신업": "통신.png",
         "보험": "보험.png",
         "외국증권": "외국증권.png",
         "섬유.의류": "섬유의류.png",
         "비금속광물": "비금속광물.png",
         "운송": "운송-1.png",
-        "인프라투용": "인프라투용.png"
+        "인프라투용": "인프라.png"
     }
 
     # 매핑되지 않은 섹터는 기본 이미지를 반환
     return sector_image_map.get(sector_name, "default_icon.png")
+
+from django.http import JsonResponse
+from stocks.models import RealTime
+
+# 특정 섹터에 대한 최근 10개의 데이터를 반환하는 함수
+def get_sector_details(request, sector_name):
+    # 주어진 섹터에 대한 고유한 name과 데이터를 가져옴
+    sector_data = list(
+        RealTime.objects.filter(sector=sector_name)
+        .order_by('-price_time')[:10]
+        .values('name', 'current_price', 'UpDownRate')
+    )
+
+    return JsonResponse(sector_data, safe=False)
+
 
 
 
