@@ -491,33 +491,41 @@ def stock_search(request):
     
 
 #민혁의 섹션
-from django.db.models import Avg
-from stocks.models import RealTime
+from django.db import connection
 
-# 섹터별로 최근 30개의 데이터를 기준으로 UpDownRate 평균을 계산한 후 상위 3개 섹터를 반환하는 함수
 def get_top_sectors():
-    # 최근 30개의 데이터를 가져옴 (메모리로 로드)
-    recent_30_data = list(RealTime.objects.filter(sector__isnull=False).filter(sector__gt='').order_by('-price_time')[:30])
-    
-    # 섹터별 평균 UpDownRate를 계산하고 정렬
-    sector_averages = (
-        RealTime.objects.filter(id__in=[obj.id for obj in recent_30_data])  # 최근 30개의 데이터만 사용
-        .values('sector')
-        .annotate(avg_updownrate=Avg('UpDownRate'))
-        .order_by('-avg_updownrate')  # 섹터별 평균을 기준으로 내림차순 정렬
-    )[:3]  # 상위 3개의 섹터만 가져옴
-    
+    # Raw SQL로 섹터별로 고유한 name을 가진 최근 10개의 데이터를 가져오는 쿼리 작성
+    query = '''
+        SELECT sector, AVG(UpDownRate) as avg_updownrate
+        FROM (
+            SELECT rt1.sector, rt1.name, MAX(rt1.price_time) as recent_time, AVG(rt1.UpDownRate) as UpDownRate
+            FROM real_time rt1
+            WHERE rt1.sector IS NOT NULL
+            AND rt1.sector != ''
+            AND rt1.UpDownRate IS NOT NULL
+            GROUP BY rt1.sector, rt1.name  -- 섹터와 이름을 기준으로 그룹화
+        ) AS recent_data
+        GROUP BY sector
+        ORDER BY avg_updownrate DESC
+        LIMIT 3;
+    '''
+
+    with connection.cursor() as cursor:
+        cursor.execute(query)
+        result = cursor.fetchall()
+
     # 이미지와 함께 섹터 정보를 리턴
     sector_avg_list = [
         {
-            'sector': sector['sector'],
-            'avg_updownrate': sector['avg_updownrate'],
-            'image': get_sector_image(sector['sector'])  # 각 섹터에 맞는 이미지를 추가
+            'sector': row[0],
+            'avg_updownrate': row[1],
+            'image': get_sector_image(row[0])  # 각 섹터에 맞는 이미지를 추가
         }
-        for sector in sector_averages
+        for row in result
     ]
 
     return sector_avg_list
+
 
 
 
