@@ -91,54 +91,62 @@ def test_option_3(request):
 # 결과
 # views.py
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
-from .models import TestResult
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+from .models import TestResult, TestResult2
 import json
 
 @csrf_exempt
 @login_required
 @require_POST
-def save_test_result(request):
+def save_test_result_option1(request):
     try:
-        data = json.loads(request.body)
-        result1 = data.get('result1')
-        result2 = data.get('result2')
-        user = request.user
-
-        # 테스트 결과 저장
-        test_result = TestResult(user=user, result1=result1, result2=result2)
-        test_result.save()
-
-        return JsonResponse({'status': 'success'}, status=200)
-    except Exception as e:
-        return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
-
-
-@csrf_exempt  # AJAX 요청 시 CSRF 검사를 비활성화
-@login_required  # 사용자가 로그인되어 있어야만 결과를 저장 가능
-def save_test_result(request):
-    if request.method == 'POST':
         data = json.loads(request.body)
         result1 = data.get('result1')
         result2 = data.get('result2')
 
         # TestResult 모델에 결과 저장
-        TestResult.objects.create(user=request.user, result1=result1, result2=result2)
+        TestResult.objects.update_or_create(
+            user=request.user,
+            defaults={'result1': result1, 'result2': result2}
+        )
+        
+        return JsonResponse({'status': 'success'}, status=200)
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
-        return JsonResponse({'message': 'Test result saved successfully!'}, status=200)
-    
-    return JsonResponse({'error': 'Invalid request'}, status=400)
-    # mypage에 테스트 결과 보여주기 (예송이한테 있으면 이건 삭제하고merge)
+@csrf_exempt
+@login_required
+@require_POST
+def save_test_result_option2(request):
+    try:
+        data = json.loads(request.body)
+        result1 = data.get('result1')
+        result2 = data.get('result2')
+
+        # TestResult2 모델에 결과 저장
+        TestResult2.objects.update_or_create(
+            user=request.user,
+            defaults={'result1': result1, 'result2': result2}
+        )
+        
+        return JsonResponse({'status': 'success'}, status=200)
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
 @login_required
 def mypage(request):
     try:
-        test_result = TestResult.objects.get(user=request.user)
+        test_result = TestResult.objects.filter(user=request.user).first()
+        test_result2 = TestResult2.objects.filter(user=request.user).first()
     except TestResult.DoesNotExist:
         test_result = None
-    
-    return render(request, 'mypage.html', {'test_result': test_result})
+    except TestResult2.DoesNotExist:
+        test_result2 = None
+
+    return render(request, 'mypage.html', {'test_result': test_result, 'test_result2': test_result2})
+
 
 #서칭
 from .models import DataWarehouse

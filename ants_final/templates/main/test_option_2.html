@@ -1,25 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test Option 2</title>
-    <!-- Static 파일 사용을 위한 태그 로드 -->
-    {% load static %}
+
     <!-- CSS 파일 추가 -->
-    <link rel="stylesheet" href="{% static 'css/custom_style.css' %}">
+    <link rel="stylesheet" href="/static/css/custom_style.css">
 </head>
 
 <body>
     <div class="custom-test-container">
-        <div class="custom-question">Q1.</div> <!-- 질문 번호 표시 -->
-        <p class="custom-question-text">사람들과 어울리는 것을 좋아하나요?</p> <!-- 질문 텍스트 표시 -->
-        <div class="custom-button-wrap"></div> <!-- 답변 버튼이 표시될 영역 -->
+        <form id="testForm" method="POST">
+            {% csrf_token %} <!-- CSRF 토큰 추가 -->
+            <div class="custom-question">Q1.</div> <!-- 질문 번호 표시 -->
+            <p class="custom-question-text">당신은 어떤 음식을 선호하시나요?</p> <!-- 질문 텍스트 표시 -->
+            <div class="custom-button-wrap"></div> <!-- 답변 버튼이 표시될 영역 -->
+        </form>
     </div>
 
     <!-- JavaScript 파일 연결 -->
-    <script src="{% static 'js/testPage.js' %}"></script>
+    <script src="/static/js/testPage.js"></script>
     <script>
         // JSON 데이터 (예시)
         const testData = {
@@ -372,7 +374,7 @@
 
         // 테스트 페이지 초기화
         document.addEventListener('DOMContentLoaded', function () {
-            const testPage = new TestPage(testData);
+            const testPage = new TestPage(testData, '/save-test-result-option2/'); // 결과 저장 URL 지정
         });
     </script>
 </body>

@@ -115,6 +115,21 @@ class TestResult(models.Model):
     class Meta:
         db_table = 'test_result'
 
+from django.db import models
+from django.contrib.auth.models import User
+
+class TestResult2(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    result1 = models.CharField(max_length=100)
+    result2 = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.user.username}님의 테스트 결과 2"
+    
+    class Meta:
+        db_table = 'test_result2'
+
+
 class DividendVolatility(models.Model):
     stock_code = models.CharField(max_length=6, primary_key=True)  # 종목코드는 문자열, 기본적으로 6자리
     prev_dividend_rate = models.FloatField()  # 전년도 배당률
