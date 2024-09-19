@@ -272,6 +272,9 @@ def home(request):
         stocks = RealTime.objects.filter(price_time=latest_time, UpDownPoint__gt=0).order_by('-UpDownRate')[:10]  # 급상승 순서
     else:
         stocks = RealTime.objects.filter(price_time=latest_time, UpDownPoint__lt=0).order_by('UpDownRate')[:10]  # 급하락 순서
+
+    # 상위 3개의 섹터 데이터를 가져옴
+    top_sectors = get_top_sectors()
     
     # 템플릿에 전달할 값 설정
     context = {
@@ -282,7 +285,8 @@ def home(request):
         'KOSDAQ_UpDownPoint': kosdaq.UpDownPoint if kosdaq else 'N/A',
         'KOSDAQ_UpDownRate': kosdaq.UpDownRate if kosdaq else 'N/A',
         'stocks': stocks,
-        'type': type_choice  # 급상승/급하락 차트 선택
+        'type': type_choice,  # 급상승/급하락 차트 선택
+        'top_sectors': top_sectors  # 추가된 섹터 정보
     }
 
     # 템플릿 렌더링
@@ -717,6 +721,107 @@ def stock_search(request):
         return redirect('stock', stock_code=stock.stock_code)
     return render(request, 'main/no_results.html', {'stock_query': stock_query})
     
+
+#민혁의 섹션
+from django.db import connection
+
+def get_top_sectors():
+    query = '''
+        SELECT sector, AVG(UpDownRate) as avg_updownrate
+        FROM (
+            SELECT rt1.sector, rt1.name, MAX(rt1.price_time) as recent_time, AVG(rt1.UpDownRate) as UpDownRate
+            FROM real_time rt1
+            WHERE rt1.sector IS NOT NULL
+            AND rt1.sector != ''
+            AND rt1.UpDownRate IS NOT NULL
+            GROUP BY rt1.sector, rt1.name
+        ) AS recent_data
+        GROUP BY sector
+        ORDER BY avg_updownrate DESC
+        LIMIT 3;
+    '''
+
+    with connection.cursor() as cursor:
+        cursor.execute(query)
+        result = cursor.fetchall()
+
+    print(result)  # 상위 3개의 섹터를 출력하여 확인
+
+    sector_avg_list = [
+        {
+            'sector': row[0],
+            'avg_updownrate': row[1],
+            'image': get_sector_image(row[0])  # 각 섹터에 맞는 이미지를 추가
+        }
+        for row in result
+    ]
+
+    return sector_avg_list
+
+
+
+
+# 섹터에 맞는 이미지를 리턴하는 함수
+def get_sector_image(sector_name):
+    # 이미지 파일 이름과 섹터 이름을 매핑
+    sector_image_map = {
+        "의료정밀기기": "의료정밀.png",
+        "기타서비스": "기타서비스.png",
+        "화학": "화학.png",
+        "건설업": "건설.png",
+        "제약": "제약.png",
+        "서비스업": "서비스.png",
+        "일반전기전자": "일반전기전자.png",
+        "건설": "건설.png",
+        "증권": "증권.png",
+        "금융업": "금융.png",
+        "오락문화": "오락문화.png",
+        "운수.장비": "운수장비.png",
+        "유통": "유통.png",
+        "음식.담배": "음식.png",
+        "음식료품": "음식.png",
+        "금속": "금속.png",
+        "기계": "기계.png",
+        "전기.전자": "전기전자.png",
+        "운수.창고": "운송.png",
+        "의약품": "의약품.png",
+        "섬유.의복": "섬유의류.png",
+        "금융": "금융2.png",
+        "운송장비부품": "운송장비부품.png",
+        "전기.가스업": "전기가스업.png",
+        "철강.금속": "철강금속.png",
+        "종이.목재": "종이목재.png",
+        "비금속": "비금속.png",
+        "의료정밀": "의료정밀2.png",
+        "통신업": "통신.png",
+        "보험": "보험.png",
+        "외국증권": "외국증권.png",
+        "섬유.의류": "섬유의류.png",
+        "비금속광물": "비금속광물.png",
+        "운송": "운송-1.png",
+        "인프라투용": "인프라.png"
+    }
+
+    # 매핑되지 않은 섹터는 기본 이미지를 반환
+    return sector_image_map.get(sector_name, "default_icon.png")
+
+from django.http import JsonResponse
+from stocks.models import RealTime
+
+# 특정 섹터에 대한 최근 10개의 데이터를 반환하는 함수
+def get_sector_details(request, sector_name):
+    # 주어진 섹터에 대한 고유한 name과 데이터를 가져옴
+    sector_data = list(
+        RealTime.objects.filter(sector=sector_name)
+        .order_by('-price_time')[:10]
+        .values('name', 'current_price', 'UpDownRate')
+    )
+
+    return JsonResponse(sector_data, safe=False)
+
+
+
+
     
 
 

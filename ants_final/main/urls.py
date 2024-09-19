@@ -6,6 +6,8 @@ from . import views
 urlpatterns = [
     path('', views.home, name='home'),
     path('economic_awareness_test/', views.economic_awareness_test, name='economic_awareness_test'),
+
+    path('sector-details/<str:sector_name>/', views.get_sector_details, name='sector_details'),  # 특정 섹터 데이터를 위한 URL
     
    
 

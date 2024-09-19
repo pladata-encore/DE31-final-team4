@@ -77,20 +77,49 @@
 </div>
 
 
-<div class='container mt-3'>
-    <h1>지금 뜨는 분야</h1>
+<div class="container mt-3">
+    <h1>상위 3개의 섹터</h1>
     <div class="row">
-        <div class="col-4">
+        <!-- 섹터 리스트 -->
+        <div class="col-6">
             <div class="container">
-                <img src="{% static 'images/electric_car_icon.png' %}" class="d-block sector-icon-size">
-                <img src="{% static 'images/biology_icon.png' %}" class="d-block sector-icon-size">
-                <img src="{% static 'images/semiconductor_icon.png' %}" class="d-block sector-icon-size">
+                <ul class="list-group">
+                    {% if top_sectors %}  <!-- sector_avg_list 대신 top_sectors로 수정 -->
+                        {% for sector in top_sectors %}  <!-- 반복문도 top_sectors로 수정 -->
+                        <li class="list-group-item d-flex align-items-center">
+                            <!-- 이미지 클릭시 자바스크립트 함수 호출 -->
+                            <img src="{% static 'images/icon/'|add:sector.image %}" 
+                                 class="sector-icon-size mr-3" 
+                                 alt="{{ sector.sector }}" 
+                                 onclick="loadSectorDetails('{{ sector.sector }}')">
+                            <div class="d-flex justify-content-between w-100">
+                                <span>{{ forloop.counter }}위: {{ sector.sector }}</span>
+                                <span>{{ sector.avg_updownrate }}%</span>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    {% else %}
+                        <li class="list-group-item">데이터가 안나온다.</li>
+                    {% endif %}
+                </ul>
             </div>
         </div>
-        <div class="col-8">
 
+        <!-- 오른쪽에 데이터를 표시할 영역 -->
+        <div class="col-6">
+            <h3>섹터 세부 정보</h3>
+            <div id="sector-details">
+                <p>섹터 이미지를 클릭하면 세부 정보가 여기에 표시됩니다.</p>
+            </div>
         </div>
     </div>
 </div>
+
+<!-- Static 파일 로드 -->
+<script src="{% static 'js/sectorDetails.js' %}"></script>
+
+
+
+
 {% endblock %}
 
