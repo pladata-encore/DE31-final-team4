@@ -68,12 +68,41 @@ html {
 }
 
 @font-face {
-    font-family: 'NanumSquareRoundB';  /* 폰트 이름 설정 */
+    font-family: 'NanumB';  /* 폰트 이름 설정 */
     src: url('/static/fonts/NanumSquareRoundB.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'NanumR';
+    src: url('/static/fonts/NanumSquareRoundR.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+@font-face {
+    font-family: 'Gowun';
+    src: url('/static/fonts/GowunBatang-Bold.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Opensans';
+    src: url('/static/fonts/OpenSans_SemiCondensed-Medium.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+@font-face {
+    font-family: 'nngothic';
+    src: url('/static/fonts/NanumGothicCoding-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
 .title {
     background-color: rgb(247, 239, 202);
     text-align: right;
@@ -191,4 +220,48 @@ th {
     padding: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     margin-bottom: 10px;
+}
+
+/* test page design */
+.custom-card {
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 100%;
+}
+
+.custom-row {
+    justify-content: center;
+    padding: 1rem;
+    gap: 6rem;
+    background-color: rgb(235, 255, 240);
+    margin: 2rem;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    border-radius: 50px;
+}
+
+/* home page design */
+.border-left-primary {
+    border-left: .5rem solid #36cc36 !important;
+}
+
+.basket {
+    display: flex;
+}
+
+.basket-in1 {
+    flex: 1;
+    padding-inline: 5px;
+    margin-top: 1rem;
+}
+.basket-in2 {
+    flex: 2;
+}
+
+.kos {
+    text-align: left;
+    padding-inline: 1rem;
+    font-size: 20px;
+    font-family: "NanumR";
+    vertical-align:middle;
 }
