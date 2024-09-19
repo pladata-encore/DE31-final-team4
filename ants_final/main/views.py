@@ -668,6 +668,12 @@ def stock_detail_page(request, stock_code="005930"):
     dates = [str(x.date) for x in stock_data]
     closing_prices = [x.closing_price for x in stock_data]
     
+    # 이동평균 데이터 가져오기
+    ma5 = [x.MA5 for x in stock_data]
+    ma20 = [x.MA20 for x in stock_data]
+    ma60 = [x.MA60 for x in stock_data]
+    ma120 = [x.MA120 for x in stock_data]
+    
     # 사용자가 이 종목을 관심 목록에 추가했는지 확인하는 변수
     try:
         is_favorite = UserStock.objects.filter(user=request.user, stock_code=stock_code).exists()
@@ -678,6 +684,10 @@ def stock_detail_page(request, stock_code="005930"):
         'stock_code': stock_code,
         'dates': json.dumps(dates),  # JSON으로 직렬화
         'closing_prices': json.dumps(closing_prices),  # JSON으로 직렬화
+        'ma5': json.dumps(ma5),  # MA20
+        'ma20': json.dumps(ma20),  # MA20
+        'ma60': json.dumps(ma60),  # MA60
+        'ma120': json.dumps(ma120),  # MA120
         'name': stock_data.first().name,
         'prev_dividend_rate': dividend_data.prev_dividend_rate ,
         'pred_dividend_rate': dividend_data.pred_dividend_rate ,
