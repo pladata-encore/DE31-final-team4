@@ -32,12 +32,17 @@
     <div class="row">
         <div class="col-8">
             <form method="get" action="">
-                <input type="submit" name="type" class="btn btn-secondary" value="rising" {% if type == 'rising' %}disabled{% endif %}>
-                <input type="submit" name="type" class="btn btn-secondary" value="falling" {% if type == 'falling' %}disabled{% endif %}>
+                <!-- '급상승' 버튼 -->
+                <input type="submit" name="type" class="btn" style="background-color: {% if type == '급상승' %}red{% else %}gray{% endif %}; color: white;" value="급상승" {% if type == '급상승' %}disabled{% endif %}>
+                
+                <!-- '급하락' 버튼 -->
+                <input type="submit" name="type" class="btn" style="background-color: {% if type == '급하락' %}blue{% else %}gray{% endif %}; color: white;" value="급하락" {% if type == '급하락' %}disabled{% endif %}>
             </form>
+
             <table class="table">
                 <thead>
                     <tr>
+                        <th>순위</th> 
                         <th>종목</th>
                         <th>현재가</th>
                         <th>등락률</th>
@@ -46,7 +51,11 @@
                 <tbody>
                     {% for stock in stocks %}
                     <tr>
-                        <td>{{ forloop.counter }}. {{ stock.name }}</td>
+                        <td>{{ forloop.counter }}</td> <!-- 순위를 따로 표시 -->
+                        <td>
+                            <!-- 종목명을 클릭할 수 있는 링크로 변환 -->
+                            <a href="{% url 'stock' stock.stock_code %}">{{ stock.name }}</a>
+                        </td>
                         <td>{{ stock.current_price }}원</td>
                         <td>
                             {% if stock.UpDownRate > 0 %} 
@@ -66,6 +75,7 @@
         </div>
     </div>
 </div>
+
 
 <div class='container mt-3'>
     <h1>지금 뜨는 분야</h1>
