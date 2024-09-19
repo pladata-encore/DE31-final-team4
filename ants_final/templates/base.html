@@ -15,6 +15,11 @@
     {% block head %}
     {% endblock %}
 </head>
+<style>
+    body {
+        color : black;
+    }
+</style>
 <body>
     <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg bg-body-tertiary fixed-top" style="padding-top: 10px; padding-bottom: 20px; font-family: Lobster; background-color:#d3ffdc;" >
@@ -40,7 +45,7 @@
                             <button class="btn btn-outline-success" type="submit">Search</button>
                         </form>
                     </li>
-
+                    
                     <!-- 로그인/로그아웃 기능 추가 -->
                     {% if user.is_authenticated %}
                         <li class="nav-item"><a class="nav-link" href="{% url 'account_logout' %}">Logout</a></li>

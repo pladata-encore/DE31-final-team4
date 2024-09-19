@@ -648,12 +648,12 @@ def add_favorite_list(request, stock_code):
             stock_id=latest_stock,
             defaults={'stock_code': latest_stock.stock_code, 'mbti': stock_mbti.mbti}
         )
-        # return redirect('mypage')
-        return JsonResponse({'status': 'added'})
+        return redirect('mypage')
+        # return JsonResponse({'status': 'added'})
 
     else:
-        # return redirect('mypage')
-        return JsonResponse({'status': 'error'})
+        return redirect('mypage')
+        # return JsonResponse({'status': 'error'})
 
 from django.contrib import messages
 from django.urls import reverse
@@ -776,8 +776,8 @@ def remove_stock(request, stock_code):
     for user_stock in user_stocks:
         user_stock.delete()
 
-    # return redirect('mypage')
-    return JsonResponse({'status': 'removed'})
+    return redirect('mypage')
+    # return JsonResponse({'status': 'removed'})
 
 
 from stocks.models import OnceTime
