@@ -19,6 +19,45 @@ class OnceTime(models.Model):
 
     def __str__(self):
         return f"{self.stock_code} - {self.date}"
+    
+    
+class RealTime(models.Model):
+    stock_code = models.CharField(max_length=20)
+    name = models.CharField(max_length=100)
+    sector = models.CharField(max_length=100)
+    market = models.CharField(max_length=10)
+    status_code = models.CharField(max_length=20, null=True, blank=True)
+    current_price = models.IntegerField()
+    UpDownPoint = models.IntegerField(null=True, blank=True)
+    PlusMinus = models.IntegerField(null=True, blank=True)
+    UpDownRate = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    opening_price = models.IntegerField(null=True, blank=True)
+    high_price = models.IntegerField(null=True, blank=True)
+    low_price = models.IntegerField(null=True, blank=True)
+    price_time = models.DateTimeField(null=True, blank=True)
+    per = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    pbr = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    stockcount = models.IntegerField(null=True, blank=True)
+    
+    class Meta:
+        db_table = 'real_time'
+
+    def __str__(self):
+        return self.name
+    
+
+class FilteredOnceTime(models.Model):
+    stock_code = models.CharField(max_length=20)
+    name = models.CharField(max_length=100)
+    closing_price = models.BigIntegerField()
+    date = models.DateField()
+
+    class Meta:
+        db_table = 'filtered_once_time'  
+        unique_together = ('stock_code', 'date')  # 복합 기본 키로 설정된 항목
+    
+    def __str__(self):
+        return f"{self.stock_code} - {self.date}"
 
 class Market(models.Model):
     StockName = models.CharField(max_length=255, db_column='StockName', primary_key=True)

@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',  # 구글 로그인 추가
     'rest_framework.authtoken',
     'stocks',  # stocks 앱 추가
+    'django_plotly_dash' # 앱추가
 ]
 
 # 사이트 ID 설정
@@ -58,6 +59,15 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',  # 기본 인증
     'allauth.account.auth_backends.AuthenticationBackend',  # 소셜 인증 추가
 ]
+
+# settings.py
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',  # 로컬 메모리 캐시
+        'LOCATION': 'unique-snowflake',
+    }
+}
+
 
 # 이메일 주소를 필수로 할지 여부
 ACCOUNT_EMAIL_REQUIRED = True
