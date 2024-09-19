@@ -51,6 +51,7 @@ class DataWarehouse(models.Model):
     
 
 # class RealTime(models.Model):
+# class RealTime(models.Model):
 #     stock_code = models.CharField(max_length=10)
 #     name = models.CharField(max_length=100)
 #     current_price = models.DecimalField(max_digits=15, decimal_places=2)
@@ -59,6 +60,7 @@ class DataWarehouse(models.Model):
 #     id = models.AutoField(primary_key=True)
 
 #     class Meta:
+#         db_table = 'real_time'
 #         db_table = 'real_time'
 #         unique_together = ('stock_code', 'id')
 

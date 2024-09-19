@@ -24,8 +24,8 @@ end_date = st.sidebar.date_input("End Date (OnceTime)", datetime.today())
 # # 사용자 입력: 주식 이름과 기간 선택 (Market 데이터)
 # st.sidebar.header("Market Data Input")
 
-# # 고정된 KOSPI와 KOSDAQ만 선택 가능하게 설정
-# StockName = st.sidebar.selectbox("Select StockName (Market)", ["KOSPI", "KOSDAQ"])
+# # 고정된 KOSDAQ와 KOSDAQ만 선택 가능하게 설정
+# StockName = st.sidebar.selectbox("Select StockName (Market)", ["KOSDAQ", "KOSDAQ"])
 
 # # 사이드바에서 날짜 입력
 # yesterday = datetime.today() - timedelta(days=1)
@@ -98,3 +98,28 @@ else:
 #     st.pyplot(fig3)
 # else:
 #     st.error("No data found for the selected period.")
+
+
+<div class="col-md-6 text-center">
+            <div class="card border-left-primary shadow py-2" style="justify-content: center; width: 80%;">
+                <div class="basket">
+                    <div class="basket-in1 kos">
+                        <p><span style="font-size: 16px;">KOSDAQ 코스닥</span></p>
+                        <p><span style="font-size: 25px;">{{ KOSDAQ_CurrentPoint }}</span><br>
+                        {% if KOSDAQ_UpDownPoint|stringformat:"d" < 0 %}
+                            <span style="color: blue;">{{ KOSDAQ_UpDownPoint }}</span>
+                            <span style="color: blue;">(- {{ KOSDAQ_UpDownRate }}%)</span></p>
+                        {% elif KOSDAQ_UpDownPoint|stringformat:"d" == 0 %}
+                            <span>{{ KOSDAQ_UpDownPoint }}</span>
+                            <span>(- {{ KOSDAQ_UpDownRate }}%)</span></p>
+                        {% else %}
+                        <span style="color: red;">{{ KOSDAQ_UpDownPoint }}</span>
+                        <span style="color: red;">(+ {{ KOSDAQ_UpDownRate }}%)</span></p>
+                        {% endif %}
+                    </div>
+                    <div class="basket-in2">
+                        <img src="data:image/png;base64,{{ graphic1 }}" alt="KOSDAQ Graph" class="img-fluid" style="width: 13rem; height: 10rem;">
+                    </div>
+                </div>
+            </div>
+        </div>

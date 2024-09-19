@@ -6,22 +6,55 @@
 {% block content %}
 
 <div class='container'>
-    <h1>주가지수</h1>
-    <div class="row justify-content-center">
+    <div class="row justify-content-center" style="margin: 2rem;">
         <!-- KOSPI 그래프 -->
         <div class="col-md-6 text-center">
-            <h3>KOSPI Current Point</h3>
-            <img src="data:image/png;base64,{{ graphic1 }}" alt="KOSPI Graph" class="img-fluid">
-            <p>UpDown Point: {{ KOSPI_UpDownPoint }}</p>
-            <p>UpDown Rate: {{ KOSPI_UpDownRate }}</p>
+            <div class="card border-left-primary py-2" style="justify-content: center; width: 90%;">
+                <div class="basket">
+                    <div class="basket-in1 kos">
+                        <p><span style="font-size: 16px;">KOSPI 코스피</span></p>
+                        <p><span style="font-size: 25px;">{{ KOSPI_CurrentPoint }}</span><br>
+                        {% if KOSPI_UpDownPoint|stringformat:"d" < 0 %}
+                            <span style="color: blue;">{{ KOSPI_UpDownPoint }}</span>
+                            <span style="color: blue;">({{ KOSPI_UpDownRate }}%)</span></p>
+                        {% elif KOSPI_UpDownPoint|stringformat:"d" == 0 %}
+                            <span>{{ KOSPI_UpDownPoint }}</span>
+                            <span>({{ KOSPI_UpDownRate }}%)</span></p>
+                        {% else %}
+                        <span style="color: red;">{{ KOSPI_UpDownPoint }}</span>
+                        <span style="color: red;">(+{{ KOSPI_UpDownRate }}%)</span></p>
+                        {% endif %}
+                    </div>
+                    <div class="basket-in2">
+                        <img src="data:image/png;base64,{{ graphic1 }}" alt="KOSPI Graph" class="img-fluid" style="width: 13rem; height: 10rem;">
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- KOSDAQ 그래프 -->
         <div class="col-md-6 text-center">
-            <h3>KOSDAQ Current Point</h3>
-            <img src="data:image/png;base64,{{ graphic2 }}" alt="KOSDAQ Graph" class="img-fluid">
-            <p>UpDown Point: {{ KOSDAQ_UpDownPoint }}</p>
-            <p>UpDown Rate: {{ KOSDAQ_UpDownRate }}</p>
+            <div class="card border-left-primary py-2" style="justify-content: center; width: 90%;">
+                <div class="basket">
+                    <div class="basket-in1 kos">
+                        <p><span style="font-size: 16px; margin-top: 10px;">KOSDAQ 코스닥</span></p>
+                        <p><span style="font-size: 25px;">{{ KOSDAQ_CurrentPoint }}</span><br>
+                        {% if KOSDAQ_UpDownPoint|stringformat:"d" < 0 %}
+                            <span style="color: blue;">{{ KOSDAQ_UpDownPoint }}</span>
+                            <span style="color: blue;">({{ KOSDAQ_UpDownRate }}%)</span></p>
+                        {% elif KOSDAQ_UpDownPoint|stringformat:"d" == 0 %}
+                            <span>{{ KOSDAQ_UpDownPoint }}</span>
+                            <span>({{ KOSDAQ_UpDownRate }}%)</span></p>
+                        {% else %}
+                        <span style="color: red;">{{ KOSDAQ_UpDownPoint }}</span>
+                        <span style="color: red;">(+{{ KOSDAQ_UpDownRate }}%)</span></p>
+                        {% endif %}
+                    </div>
+                    <div class="basket-in2">
+                        <img src="data:image/png;base64,{{ graphic2 }}" alt="KOSDAQ Graph" class="img-fluid" style="width: 13rem; height: 10rem;">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     </div>
