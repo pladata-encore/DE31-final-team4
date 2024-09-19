@@ -1,6 +1,7 @@
 class TestPage {
-    constructor(data) {
+    constructor(data, saveUrl) {
         this.data = data;
+        this.saveUrl = saveUrl; // 저장할 URL을 전달받음
         this.current = 0;
         this.point = 0;
         this.init();
@@ -68,7 +69,7 @@ class TestPage {
     saveResult(resultTitle, resultDescription) {
         const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value; // CSRF 토큰 추출
 
-        fetch('/save-test-result/', {
+        fetch(this.saveUrl, { // 전달받은 URL을 사용
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -79,12 +80,12 @@ class TestPage {
                 result2: resultDescription
             })
         })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Test result saved successfully:', data);
-        })
-        .catch(error => {
-            console.error('Error saving test result:', error);
-        });
+            .then(response => response.json())
+            .then(data => {
+                console.log('Test result saved successfully:', data);
+            })
+            .catch(error => {
+                console.error('Error saving test result:', error);
+            });
     }
 }
