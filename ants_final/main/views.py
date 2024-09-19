@@ -148,22 +148,26 @@ def mypage(request):
     return render(request, 'mypage.html', {'test_result': test_result, 'test_result2': test_result2})
 
 #서칭
+from django.http import JsonResponse
 from .models import DataWarehouse
 from django.db.models import Q
 
 def search_datawarehouse(request):
-    query = request.GET.get('q', '')
+    query = request.GET.get('q', '')  # 쿼리 파라미터 'q'를 가져옴
     results = []
+    
+    # 검색어가 있을 경우 필터링 수행
     if query:
         results = DataWarehouse.objects.filter(
             Q(term__icontains=query) | Q(details__icontains=query)
-        )
-    if not results:
-        message = "No results found."
-    else:
-        message = None
+        ).values('term', 'details')  # 검색 결과에서 term과 details만 반환
     
-    return render(request, 'base.html', {'results': results, 'message': message, 'query': query})
+    if not results:
+        return JsonResponse({'results': [], 'message': "No results found."})
+
+    return JsonResponse({'results': list(results), 'message': None})
+
+
 
 
 
