@@ -139,22 +139,5 @@
 
     // 초기 색상 설정
     setSurfaceColor();
-
-
-    //트리맵 글자 크기
-    // 모든 <text> 요소를 선택
-    document.querySelectorAll('text.slicetext').forEach(text => {
-        const pathElement = text.closest('path.surface');
-
-        if (pathElement) {
-            const bbox = pathElement.getBBox();
-            console.log(`Path Width: ${bbox.width}, Height: ${bbox.height}`);  // 경계 크기 출력
-            const fontSize = Math.min(bbox.width, bbox.height) * 0.1;  // 10%
-            console.log(`Setting font size: ${fontSize}px`);  // 설정할 글자 크기 출력
-            text.style.fontSize = `${fontSize}px`;
-        }
-    });
-
-
 </script>
 {% endblock %}

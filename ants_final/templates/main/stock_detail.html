@@ -14,16 +14,16 @@
 
 <div class="container" style="font-family: NanumR; margin-top: 4rem; flex-direction: row;">
     <div class="row">
-        <div class="col-lg-6 p-3 justify-content-center">
-            <h2 class="text-center"><strong>{{ name }}</strong>({{ stock_code }}) 
+        <div class="col-lg-8 p-3 justify-content-center">
+            <h4 style="margin-left: 2rem;"><strong>{{ name }}</strong>({{ stock_code }}) 
                 <img id="favorite-icon" 
                     src="{% static favorite_icon %}" 
                     alt="Favorite Icon" 
-                    style="width: 30px; height: 30px; cursor: pointer;">
-            </h2>
+                    style="width: 20px; height: 20px; cursor: pointer;">
+            </h4>
             <canvas id="stockChart"></canvas> <!-- 차트를 그릴 캔버스 -->
         </div>
-        <div class="col-lg-6 position-relative" style="font-size: 20px; text-align: left; padding: 1rem; padding-left: 5rem; z-index: 1;">
+        <div class="col-lg-4 position-relative" style="font-size: 20px; text-align: left; padding: 1rem; z-index: 1;">
             <h2>주식 종목 정보</h2>            
             <div style="display: inline-block;">
                 ANTS MBTI : 
@@ -50,17 +50,49 @@
                                     <br>L은 기업이 낮은 수익을 내고 있다는 의미에요.
                                     <br>새로운 사업을 시작했거나 사업을 위해 투자중일 수 있어요.</p>
                                 <li class="nowrap"><strong>G</strong>: Growth-oriented vs. <strong>V</strong>: Value-oriented</li>
-                                <p class="nowrap">이거 뭐임? 아직 이해못함 나중에 추가 예정</p>
+                                <p class="nowrap">G는 기업이 단기적으로 성장할 것으로 보이는 상태에요.
+                                    <br>V는 현재 시장가치는 높지 않지만 장기적으로 성장이 예상되는 상태에요.
+                                </p>
                                 <li class="nowrap"><strong>E</strong>: Extroverted vs. <strong>I</strong>: Introverted</li>
                                 <p class="nowrap">E는 기업의 자산이 높은 회전율을 가지고 있다는 의미에요.
                                     <br>I는 기업의 자산이 낮은 회전율을 가지고 있다는 의미에요.
-                                    <br>기업의 자산 회전율은 높을수록 좋다고 평가돼요.</p>
+                                    <br>보통 기업의 자산 회전율은 높을수록 좋다고 평가돼요.</p>
                             </ul>
                         </div>
                     </div>
                 </div>  
             </div>            
-            <p>배당성 : {{ dividend_stability }}</p>
+            <div style="display: inline-block;">배당성 : {{ dividend_stability }}
+                <div class="mb-3 position-relative" style="display: inline-block;">
+                    <img src="{% static 'images/questionmark.png' %}" alt="mbti 상세정보" width="13" height="13" 
+                         onmouseover="showInfoPopup()" onmouseout="hideInfoPopup()" style="opacity: 0.5;">
+                    <div id="infoPopup" class="popup" style="display: none;">
+                        <div style="padding: 1.3rem; padding-bottom: .5rem;">
+                            <h6>배당성은 </h6>
+                            <p>4가지의 기준을 바탕으로<br>주식 초보자도 기업을 이해하기 쉽게 만들었어요.</p>
+                        </div>
+                        <div style="padding: 1.3rem; padding-left: 0px; padding-top: 0;">
+                            <ul style="list-style-type: circle;">
+                                <li class="nowrap"><strong>C</strong>: Conservative vs. <strong>R</strong>: Risk-taker</li>
+                                <p class="nowrap">C는 해당 기업의 사업이 안정적으로 유지되고 있다는 의미에요.
+                                    <br>R은 기업이 사업에 적극적으로 투자하며 성장하고 있다는 의미에요.</p>
+                                <li class="nowrap"><strong>H</strong>: High Profitability vs. <strong>L</strong>: Low Profitability</li>
+                                <p class="nowrap">H는 기업이 높은 수익을 내고 있다는 의미에요.
+                                    <br>L은 기업이 낮은 수익을 내고 있다는 의미에요.
+                                    <br>새로운 사업을 시작했거나 사업을 위해 투자중일 수 있어요.</p>
+                                <li class="nowrap"><strong>G</strong>: Growth-oriented vs. <strong>V</strong>: Value-oriented</li>
+                                <p class="nowrap">G는 기업이 단기적으로 성장할 것으로 보이는 상태에요.
+                                    <br>V는 현재 시장가치는 높지 않지만 장기적으로 성장이 예상되는 상태에요.
+                                </p>
+                                <li class="nowrap"><strong>E</strong>: Extroverted vs. <strong>I</strong>: Introverted</li>
+                                <p class="nowrap">E는 기업의 자산이 높은 회전율을 가지고 있다는 의미에요.
+                                    <br>I는 기업의 자산이 낮은 회전율을 가지고 있다는 의미에요.
+                                    <br>보통 기업의 자산 회전율은 높을수록 좋다고 평가돼요.</p>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <p>변동성 : {{ volatility }}</p>
             <p>전년도 배당률 : {{ prev_dividend_rate }}</p>
             <p>예측 배당률 : {{ pred_dividend_rate }}</p>
@@ -89,15 +121,15 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // 툴팁
+    // MBTI 팝업
     function showInfoPopup() {
         const popup = document.getElementById("infoPopup");
-        popup.style.display = "block"; // 툴팁 보이기
+        popup.style.display = "block"; // 팝업 보이기
     }
 
     function hideInfoPopup() {
         const popup = document.getElementById("infoPopup");
-        popup.style.display = "none"; // 툴팁 숨기기
+        popup.style.display = "none"; // 팝업 숨기기
     }
 
 

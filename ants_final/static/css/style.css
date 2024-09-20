@@ -401,11 +401,29 @@ th {
 }
 
 .news-item {
+    position: relative;
     width: 30%;
     margin: 0 10px;
-    height: 220px;
+    height: auto;
+    margin-right: 5px;
+    padding-right: 2.5rem;
 }
-
+.news-item:last-child {
+    padding-right: 0; /* 패딩을 0으로 설정 */
+}
+.news-item::after {
+    content: "";
+    width: 1px;
+    height: 80%;
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    background-color: #333;
+}
+.news-item:last-of-type::after {
+    display: none; /* 마지막 아이템에 선 숨기기 */
+}
 #prevBtn, #nextBtn {
     background-color: transparent;
     border: none;
