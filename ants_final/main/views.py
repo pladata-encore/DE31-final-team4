@@ -135,17 +135,6 @@ def save_test_result_option2(request):
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
-@login_required
-def mypage(request):
-    try:
-        test_result = TestResult.objects.filter(user=request.user).first()
-        test_result2 = TestResult2.objects.filter(user=request.user).first()
-    except TestResult.DoesNotExist:
-        test_result = None
-    except TestResult2.DoesNotExist:
-        test_result2 = None
-
-    return render(request, 'mypage.html', {'test_result': test_result, 'test_result2': test_result2})
 
 #서칭
 from .models import DataWarehouse
@@ -624,13 +613,15 @@ def my_favorite_list(request):
     
 
     # 테스트 결과 확인용
-    test_results = TestResult.objects.filter(user=request.user).first()
+    test_result1 = TestResult.objects.filter(user=request.user).order_by('-id').first()
+    test_result2 = TestResult2.objects.filter(user=request.user).order_by('-id').first()
 
     context = {
         'mbti_stock': stock_infos_list,
         'mbti': mbti_value,
         'stock_info': stock_info_list,
-        'test_results': test_results,
+        'test_result1': test_result1,
+        'test_result2': test_result2,
         'my_list' : my_list,
     }
 
