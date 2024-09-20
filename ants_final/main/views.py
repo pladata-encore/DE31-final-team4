@@ -674,6 +674,16 @@ def stock_detail_page(request, stock_code="005930"):
     ma60 = [x.MA60 for x in stock_data]
     ma120 = [x.MA120 for x in stock_data]
     
+    # RealTime 데이터에서 시가, 고가, 저가, 종가 가져오기
+    realtime_data = RealTime.objects.filter(stock_code=stock_code).order_by('price_time')
+    ohlc_data = [{
+        'time': str(x.price_time),
+        'open': x.opening_price,
+        'high': x.high_price,
+        'low': x.low_price,
+        'close': x.current_price
+    } for x in realtime_data]
+    
     # 사용자가 이 종목을 관심 목록에 추가했는지 확인하는 변수
     try:
         is_favorite = UserStock.objects.filter(user=request.user, stock_code=stock_code).exists()

@@ -1,5 +1,3 @@
-
-
 {% extends 'base.html' %}
 {% load static %}
 
@@ -11,38 +9,41 @@
         <input type="text" name="stock_query" placeholder="종목 코드 또는 종목명을 입력하세요" required>
         <button type="submit" class="btn btn-dark">검색</button>
     </form>
-
 </div>
 
+<!-- 차트, 버튼 그룹, 종목 정보를 나란히 배치 -->
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-lg-6 p-3">
-            <h2 class="text-center"><strong>{{ name }}</strong>({{ stock_code }}) 
-                <img id="favorite-icon" 
-                    src="{% static favorite_icon %}" 
-                    alt="Favorite Icon" 
-                    style="width: 30px; height: 30px; cursor: pointer;">
+        <!-- 차트 -->
+        <div class="col-lg-6 p-2">
+            <h2 class="text-center"><strong>{{ name }}</strong>({{ stock_code }})
+                <img id="favorite-icon" src="{% static favorite_icon %}" alt="Favorite Icon" style="width: 30px; height: 30px; cursor: pointer;">
             </h2>
             <canvas id="stockChart"></canvas>
-
         </div>
-        <div class="col-lg-4 p-3">
+
+        <!-- 버튼 그룹을 차트 오른쪽에 세로로 배치 -->
+        <div class="col-lg-1 p-3">
+            <div class="btn-group-vertical" role="group" aria-label="X축 범위 선택" id="rangeButtons" style="width: 100%;">
+                <button id="range0" class="btn btn-secondary" style="width: 100%; margin-bottom: 10px;">1일</button>
+                <button id="range1" class="btn btn-secondary" style="width: 100%; margin-bottom: 10px;">1년</button>
+                <button id="range5" class="btn btn-secondary" style="width: 100%; margin-bottom: 10px;">5년</button>
+                <button id="range10" class="btn btn-primary active" style="width: 100%; margin-bottom: 10px;">10년</button>
+            </div>
+        </div>
+
+        <!-- 주식 종목 정보를 버튼 오른쪽에 배치 -->
+        <div class="col-lg-4 p-2">
             <h2 class="text-center">주식 종목 정보</h2>            
-            <p class="text-center">주식 MBTI : 
-                {% if mbti %}
-                    {{ mbti }}
-                {% else %}
-                    정보 없음
-                {% endif %}
-            </p>
-            <p class="text-center">배당성 : {{ dividend_stability }}</p>
-            <p class="text-center">변동성 : {{ volatility }}</p>
-            <p class="text-center">전년도 배당률 : {{ prev_dividend_rate }}</p>
-            <p class="text-center">예측 배당률 : {{ pred_dividend_rate }}</p>
-            
+            <p class="text-center">주식 MBTI: {{ mbti|default:"정보 없음" }}</p>
+            <p class="text-center">배당성: {{ dividend_stability }}</p>
+            <p class="text-center">변동성: {{ volatility }}</p>
+            <p class="text-center">전년도 배당률: {{ prev_dividend_rate }}</p>
+            <p class="text-center">예측 배당률: {{ pred_dividend_rate }}</p>
         </div>
     </div>
 </div>
+
 <div class="news-section">
     <h3 class="text-center">주요 뉴스</h3>
     <div class="news-carousel">
@@ -50,138 +51,152 @@
         <div id="newsWrapper">
             {% for news in news_list %}
                 <div class="news-item">
-                    <a href="{{ news.originallink}}" style="color: black; text-decoration: none;" target="_blank">
+                    <a href="{{ news.originallink }}" style="color: black; text-decoration: none;" target="_blank">
                         <h4>{{ news.title|safe }}</h4>
                         <p>{{ news.description|safe }}</p>
                     </a>
-                    <p>{{ news.pubDate|safe|slice:":16"}}</p>
+                    <p>{{ news.pubDate|slice:":16" }}</p>
                 </div>
             {% endfor %}
         </div>
         <button id="nextBtn">&gt;</button>
     </div>
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
 
 <script>
-    // 장고에서 전달된 데이터를 JavaScript에서 사용
     const dates = {{ dates|safe }};
     const closingPrices = {{ closing_prices|safe }};
-    const stock_code = "{{ stock_code }}";  // Django 템플릿에서 전달받은 stock_code를 JavaScript 변수로 저장
+    const stock_code = "{{ stock_code }}";
     const ma5 = {{ ma5|safe }};
     const ma20 = {{ ma20|safe }};
     const ma60 = {{ ma60|safe }};
     const ma120 = {{ ma120|safe }};
+    const maxDate = new Date(dates[dates.length - 1]);
 
-    // Chart.js로 그래프 그리기
-    const ctx = document.getElementById('stockChart').getContext('2d');
-    const stockChart = new Chart(ctx, {
-        type: 'line',  // 라인 차트 타입
+    function calculateMinDate(years) {
+        const minDate = new Date(maxDate);
+        minDate.setFullYear(minDate.getFullYear() - years);
+        return minDate.toISOString().split('T')[0];
+    }
+
+    let stockChart = new Chart(document.getElementById('stockChart').getContext('2d'), {
+        type: 'line',
         data: {
-            labels: dates,  // x축에 날짜 데이터
+            labels: dates,
             datasets: [{
                 label: '종가',
-                data: closingPrices,  // y축에 주가 데이터
-                borderColor: 'rgba(75, 192, 192, 1)',  // 선 색상
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',  // 배경 색상
-                borderWidth: 0.1,
-                pointRadius: 2,  // 포인터 크기를 줄임
-                pointHoverRadius: 4,  // 포인터에 마우스를 올렸을 때 크기
-                pointBorderColor: 'rgba(75, 192, 192, 1)',  // 포인터 테두리 색상
-                pointBackgroundColor: 'rgba(75, 192, 192, 0.5)'  // 포인터 배경 색상
-            },
-            {
-                label: 'MA5',
-                data: ma5,
-                borderColor: 'rgba(255, 99, 132, 1)',
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderWidth: 0.5,
-                pointRadius: 2,
-            },
-            {
-                label: 'MA20',
-                data: ma20,
-                borderColor: 'rgba(54, 162, 235, 1)',
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderWidth: 0.5,
-                pointRadius: 2,
-            },
-            {
-                label: 'MA60',
-                data: ma60,
-                borderColor: 'rgba(255, 206, 86, 1)',
-                backgroundColor: 'rgba(255, 206, 86, 0.2)',
-                borderWidth: 0.5,
-                pointRadius: 2,
-            },
-            {
-                label: 'MA120',
-                data: ma120,
-                borderColor: 'rgba(75, 192, 192, 1)',
+                data: closingPrices,
+                borderColor: 'rgba(14, 138, 117, 1)',
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderWidth: 0.5,
-                pointRadius: 2,
+                borderWidth: 1,
+                pointRadius: 0,
+                tension: 0.1
             }]
         },
         options: {
             scales: {
                 x: {
-                    title: {
-                        display: true,
-                        text: '날짜'
-                    }
+                    type: 'time',
+                    min: calculateMinDate(10),
+                    max: maxDate.toISOString().split('T')[0],
+                    title: { display: true, text: '날짜' }
                 },
-                y: {
-                    title: {
-                        display: true,
-                        text: '가격 (원)'
-                    },
-                    beginAtZero: false  // 주가에 맞게 0부터 시작하지 않도록
-                }
+                y: { title: { display: true, text: '가격 (원)' }, beginAtZero: false }
             }
         }
     });
 
+    const rangeButtons = document.querySelectorAll('#rangeButtons button');
+
+    rangeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const years = parseInt(this.id.replace('range', ''));
+            if (years === 0) {
+                // 1일 버튼 클릭 시 실시간 데이터를 가져와 봉차트로 업데이트
+                fetchRealTimeData();
+            } else {
+                updateChartRange(years, this);
+            }
+        });
+    });
+
+    function updateChartRange(years, clickedButton) {
+        const showMovingAverages = years === 0;
+
+        stockChart.options.scales.x.min = calculateMinDate(years);
+
+    }
+
+        stockChart.update();
+        
+
+    function updateChartRange(years, clickedButton) {
+        const showMovingAverages = years === 1;
+
+        stockChart.options.scales.x.min = calculateMinDate(years);
+
+        stockChart.data.datasets = [{
+            label: '종가',
+            data: closingPrices,
+            borderColor: 'rgba(14, 138, 117, 1)',
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            pointRadius: 0,
+            borderWidth: 1,
+            tension: 0.1
+        }];
+
+        if (showMovingAverages) {
+            stockChart.data.datasets.push(
+                { label: 'MA5', data: ma5, borderColor: 'rgba(255, 99, 132, 1)', pointRadius: 0, borderWidth: 0.8,tension: 0.1 },
+                { label: 'MA20', data: ma20, borderColor: 'rgba(54, 162, 235, 1)', pointRadius: 0,borderWidth: 0.8,tension: 0.1 },
+                { label: 'MA60', data: ma60, borderColor: 'rgba(255, 206, 86, 1)', pointRadius: 0, borderWidth: 0.8,tension: 0.1 },
+                { label: 'MA120', data: ma120, borderColor: 'rgba(75, 192, 192, 1)', pointRadius: 0, borderWidth: 0.5,tension: 0.1 }
+            );
+        }
+
+        stockChart.update();
+
+        rangeButtons.forEach(btn => {
+            btn.classList.remove('btn-primary', 'active');
+            btn.classList.add('btn-secondary');
+        });
+
+        clickedButton.classList.remove('btn-secondary');
+        clickedButton.classList.add('btn-primary', 'active');
+    }
+
+    // 뉴스 페이징 및 관심 종목 추가/제거 기능
     let currentPage = 1;
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
-    const newsWrapper = document.getElementById('newsWrapper');
 
     function loadNews(page) {
         fetch(`/load-news/?stock_code=${stock_code}&page=${page}`)
             .then(response => response.json())
             .then(data => {
-                console.log(data.news_list);  // 뉴스 리스트 데이터를 콘솔에 출력하여 확인
-                newsWrapper.innerHTML = '';  // 기존 뉴스 항목 삭제
-    
+                document.getElementById('newsWrapper').innerHTML = '';
                 data.news_list.forEach(news => {
-                    const newsItem = document.createElement('div');
-                    newsItem.classList.add('news-item');
-    
-                    // pubDate가 undefined로 나오는 문제를 해결하기 위해 데이터 확인
-                    const formattedDate = news.pubDate ? news.pubDate.slice(0, 16) : '날짜 정보 없음';
-    
-                    newsItem.innerHTML = `
-                        <a href="${news.originallink}" style="color: black; text-decoration: none;" target="_blank">
-                            <h4>${news.title}</h4>
-                            <p>${news.description}</p>
-                        </a>
-                        <p>${formattedDate}</p>
+                    const newsItem = `
+                        <div class="news-item">
+                            <a href="${news.originallink}" style="color: black; text-decoration: none;" target="_blank">
+                                <h4>${news.title}</h4>
+                                <p>${news.description}</p>
+                            </a>
+                            <p>${news.pubDate.slice(0, 16)}</p>
+                        </div>
                     `;
-                    
-                    newsWrapper.appendChild(newsItem);
+                    document.getElementById('newsWrapper').insertAdjacentHTML('beforeend', newsItem);
                 });
             })
-            .catch(error => {
-                console.error('Error fetching news:', error);
-            });
+            .catch(error => console.error('Error fetching news:', error));
     }
 
     prevBtn.addEventListener('click', () => {
-        if (currentPage > 1) {
-            currentPage--;
-            loadNews(currentPage);
-        }
+        if (currentPage > 1) currentPage--;
+        loadNews(currentPage);
     });
 
     nextBtn.addEventListener('click', () => {
@@ -189,37 +204,24 @@
         loadNews(currentPage);
     });
 
-    // 관심 종목 추가/제거 기능
     const isAuthenticated = "{{ user.is_authenticated|yesno:'true,false' }}";
     document.getElementById('favorite-icon').addEventListener('click', function() {
-        const stockCode = "{{ stock_code }}";
-        const isFavorite = this.getAttribute('src').includes('filled_star.png');
-
-        // 로그인이 되어 있지 않으면 로그인 페이지로 리다이렉트
         if (isAuthenticated === 'false') {
             alert('로그인이 필요합니다.');
             window.location.href = "{% url 'account_login' %}?next={{ request.path }}";
             return;
         }
 
-        // 관심 종목에 있으면 제거, 없으면 추가
-        const url = isFavorite ? `/remove_stock/${stockCode}/` : `/add_favorite_list/${stockCode}/`;
+        const isFavorite = this.getAttribute('src').includes('filled_star.png');
+        const url = isFavorite ? `/remove_stock/${stock_code}/` : `/add_favorite_list/${stock_code}/`;
 
         fetch(url, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}'
-            }
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' }
         })
         .then(response => {
             if (response.ok) {
-                // 로그인 상태에서만 별표 상태 변경
-                if (isFavorite) {
-                    this.setAttribute('src', "{% static 'images/empty_star.png' %}");
-                } else {
-                    this.setAttribute('src', "{% static 'images/filled_star.png' %}");
-                }
+                this.setAttribute('src', isFavorite ? "{% static 'images/empty_star.png' %}" : "{% static 'images/filled_star.png' %}");
             } else {
                 console.error('Error processing request');
             }
@@ -227,5 +229,4 @@
         .catch(error => console.error('Error:', error));
     });
 </script>
-
 {% endblock %}

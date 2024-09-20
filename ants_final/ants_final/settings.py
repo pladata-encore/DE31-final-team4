@@ -165,7 +165,7 @@ DATABASES = {
         'USER': os.environ['RDS_USER'],
         'PASSWORD': os.environ['RDS_PASSWORD'],
         'HOST': os.environ['RDS_HOST'],
-        'PORT': '3306',
+        'PORT': '13306',
         'OPTIONS': {
             'charset': 'utf8',
             'use_unicode': True,
