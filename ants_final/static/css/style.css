@@ -68,7 +68,7 @@ html {
 }
 
 @font-face {
-    font-family: 'NanumB';  /* 폰트 이름 설정 */
+    font-family: 'NanumB';
     src: url('/static/fonts/NanumSquareRoundB.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
@@ -81,7 +81,6 @@ html {
     font-style: normal;
 }
 
-
 @font-face {
     font-family: 'Gowun';
     src: url('/static/fonts/GowunBatang-Bold.ttf') format('truetype');
@@ -89,20 +88,6 @@ html {
     font-style: normal;
 }
 
-@font-face {
-    font-family: 'Opensans';
-    src: url('/static/fonts/OpenSans_SemiCondensed-Medium.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-}
-
-
-@font-face {
-    font-family: 'nngothic';
-    src: url('/static/fonts/NanumGothicCoding-Regular.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-}
 .title {
     background-color: rgb(247, 239, 202);
     text-align: right;
@@ -247,6 +232,7 @@ th {
 
 .basket {
     display: flex;
+    overflow: hidden;
 }
 
 .basket-in1 {
@@ -417,6 +403,7 @@ th {
 .news-item {
     width: 30%;
     margin: 0 10px;
+    height: 150px;
 }
 
 #prevBtn, #nextBtn {
@@ -428,4 +415,23 @@ th {
 
 body {
     color : black;
+}
+
+/* stock_detail design */
+.popup {
+    display: none;
+    position: absolute;
+    background-color: rgba(242, 255, 235, 0.946);
+    border: 1px solid #ccc;
+    /* padding: 10px; */
+    margin-top: 5px;
+    width: auto; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    z-index: 1000; /* 다른 요소들 위에 표시되도록 */
+    font-size: 13px;
+}
+
+.nowrap {
+    white-space: nowrap;
 }

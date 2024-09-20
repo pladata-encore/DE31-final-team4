@@ -4,17 +4,17 @@
 {% block title %}ANTS{% endblock %}
 
 {% block content %}
-<div class="container">
+<!-- <div class="container">
     <form method="GET" action="{% url 'stock_search' %}">
-        <input type="text" name="stock_query" placeholder="종목 코드 또는 종목명을 입력하세요" required>
+        <input type="text" name="stock_query" placeholder="종목 코드 또는 종목명을 입력하세요." required>
         <button type="submit" class="btn btn-dark">검색</button>
     </form>
 
-</div>
+</div> -->
 
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-lg-6 p-3">
+<div class="container" style="font-family: NanumR; margin-top: 4rem; flex-direction: row;">
+    <div class="row">
+        <div class="col-lg-6 p-3 justify-content-center">
             <h2 class="text-center"><strong>{{ name }}</strong>({{ stock_code }}) 
                 <img id="favorite-icon" 
                     src="{% static favorite_icon %}" 
@@ -23,24 +23,53 @@
             </h2>
             <canvas id="stockChart"></canvas> <!-- 차트를 그릴 캔버스 -->
         </div>
-        <div class="col-lg-6 p-3">
-            <h2 class="text-center">주식 종목 정보</h2>            
-            <p class="text-center">주식 MBTI : 
+        <div class="col-lg-6 position-relative" style="font-size: 20px; text-align: left; padding: 1rem; padding-left: 5rem; z-index: 1;">
+            <h2>주식 종목 정보</h2>            
+            <div style="display: inline-block;">
+                ANTS MBTI : 
                 {% if mbti %}
                     {{ mbti }}
                 {% else %}
                     정보 없음
                 {% endif %}
-            </p>
-            <p class="text-center">배당성 : {{ dividend_stability }}</p>
-            <p class="text-center">변동성 : {{ volatility }}</p>
-            <p class="text-center">전년도 배당률 : {{ prev_dividend_rate }}</p>
-            <p class="text-center">예측 배당률 : {{ pred_dividend_rate }}</p>
-            
+                <div class="mb-3 position-relative" style="display: inline-block;">
+                    <img src="{% static 'images/questionmark.png' %}" alt="mbti 상세정보" width="13" height="13" 
+                         onmouseover="showInfoPopup()" onmouseout="hideInfoPopup()" style="opacity: 0.5;">
+                    <div id="infoPopup" class="popup" style="display: none;">
+                        <div style="padding: 1.3rem; padding-bottom: .5rem;">
+                            <h6>ANTS MBTI는<br>ANTS에서 기업에게 부여한 MBTI에요.</h6>
+                            <p>4가지의 기준을 바탕으로<br>주식 초보자도 기업을 이해하기 쉽게 만들었어요.</p>
+                        </div>
+                        <div style="padding: 1.3rem; padding-left: 0px; padding-top: 0;">
+                            <ul style="list-style-type: circle;">
+                                <li class="nowrap"><strong>C</strong>: Conservative vs. <strong>R</strong>: Risk-taker</li>
+                                <p class="nowrap">C는 해당 기업의 사업이 안정적으로 유지되고 있다는 의미에요.
+                                    <br>R은 기업이 사업에 적극적으로 투자하며 성장하고 있다는 의미에요.</p>
+                                <li class="nowrap"><strong>H</strong>: High Profitability vs. <strong>L</strong>: Low Profitability</li>
+                                <p class="nowrap">H는 기업이 높은 수익을 내고 있다는 의미에요.
+                                    <br>L은 기업이 낮은 수익을 내고 있다는 의미에요.
+                                    <br>새로운 사업을 시작했거나 사업을 위해 투자중일 수 있어요.</p>
+                                <li class="nowrap"><strong>G</strong>: Growth-oriented vs. <strong>V</strong>: Value-oriented</li>
+                                <p class="nowrap">이거 뭐임? 아직 이해못함 나중에 추가 예정</p>
+                                <li class="nowrap"><strong>E</strong>: Extroverted vs. <strong>I</strong>: Introverted</li>
+                                <p class="nowrap">E는 기업의 자산이 높은 회전율을 가지고 있다는 의미에요.
+                                    <br>I는 기업의 자산이 낮은 회전율을 가지고 있다는 의미에요.
+                                    <br>기업의 자산 회전율은 높을수록 좋다고 평가돼요.</p>
+                            </ul>
+                        </div>
+                    </div>
+                </div>  
+            </div>            
+            <p>배당성 : {{ dividend_stability }}</p>
+            <p>변동성 : {{ volatility }}</p>
+            <p>전년도 배당률 : {{ prev_dividend_rate }}</p>
+            <p>예측 배당률 : {{ pred_dividend_rate }}</p>
         </div>
+        </div>
+        
     </div>
 </div>
-<div class="news-section">
+<div class="news-section" style="font-family: NanumR;">
     <h3 class="text-center">주요 뉴스</h3>
     <div class="news-carousel">
         <button id="prevBtn">&lt;</button>
@@ -60,6 +89,18 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+    // 툴팁
+    function showInfoPopup() {
+        const popup = document.getElementById("infoPopup");
+        popup.style.display = "block"; // 툴팁 보이기
+    }
+
+    function hideInfoPopup() {
+        const popup = document.getElementById("infoPopup");
+        popup.style.display = "none"; // 툴팁 숨기기
+    }
+
+
     // 장고에서 전달된 데이터를 JavaScript에서 사용
     const dates = {{ dates|safe }};
     const closingPrices = {{ closing_prices|safe }};
@@ -106,8 +147,6 @@
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
     const newsWrapper = document.getElementById('newsWrapper');
-
-    
 
     function loadNews(page) {
         fetch(`/load-news/?stock_code=${stock_code}&page=${page}`)
@@ -186,7 +225,7 @@
 
         // 로그인이 되어 있지 않으면 로그인 페이지로 리다이렉트
         if (isAuthenticated === 'false') {
-            alert('로그인이 필요합니다.');
+            alert('로그인이 필요.합니다.');
             window.location.href = "{% url 'account_login' %}?next={{ request.path }}";
             return;
         }
