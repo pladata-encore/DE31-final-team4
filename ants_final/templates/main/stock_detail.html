@@ -65,6 +65,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial@0.1.0"></script>
 
 <script>
     const dates = {{ dates|safe }};
@@ -75,14 +76,85 @@
     const ma60 = {{ ma60|safe }};
     const ma120 = {{ ma120|safe }};
     const maxDate = new Date(dates[dates.length - 1]);
+    const candleData = {{ candle_data|safe }}.map(item => {
+        return {
+            ...item,
+            x: new Date(item.x)  // 문자열을 Date 객체로 변환
+        };
+    });
+    console.log("변환된 candleData 값:", candleData);
 
-    function calculateMinDate(years) {
-        const minDate = new Date(maxDate);
-        minDate.setFullYear(minDate.getFullYear() - years);
-        return minDate.toISOString().split('T')[0];
-    }
+    // stockChart 전역 변수로 선언
+    let stockChart;
 
-    let stockChart = new Chart(document.getElementById('stockChart').getContext('2d'), {
+    function fetchRealTimeData() {
+        // 오늘 날짜 계산
+        const today = new Date().toISOString().split('T')[0];  // 오늘 날짜 (YYYY-MM-DD 형식)
+        
+        // 오늘 날짜 데이터만 필터링
+        const todayData = candleData.filter(item => {
+            // item.x가 Date 객체일 경우 처리
+            if (item.x instanceof Date) {
+                return item.x.toISOString().startsWith(today);  // Date 객체를 ISO 문자열로 변환 후 필터링
+            } else if (typeof item.x === 'string') {
+                return item.x.startsWith(today);  // 문자열인 경우 그대로 필터링
+            } else {
+                console.error("item.x는 Date 객체나 문자열이 아닙니다:", item.x);
+                return false;
+            }
+        });
+        
+      // 기존 라인차트를 제거하고 캔들차트로 변경
+        if (stockChart) {
+            stockChart.destroy();  // 기존 차트를 삭제
+        }
+
+    stockChart.destroy();  // 기존 차트를 삭제
+    const stockChart = new Chart(document.getElementById('stockChart').getContext('2d'), {
+        type: 'candlestick',
+        data: {
+            datasets: [{
+                label: '1일 캔들차트',
+                data: candleData,  // 변환된 오늘 날짜 데이터
+                borderColor: 'rgba(14, 138, 117, 1)'
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    type: 'time',
+                    time: {
+                        unit: 'minute',
+                        displayFormats: {
+                            minute: 'HH:mm',  // 분 단위 표시 형식
+                            hour: 'HH:mm'
+                        }
+                    },
+                    title: { display: true, text: '시간' },
+                    adapters: {
+                        date: {
+                            locale: enUS, // 'enUS'와 같은 로케일 설정이 필요할 수 있음
+                            timezone: 'UTC'  // 타임존을 UTC로 맞추기 (또는 다른 타임존)
+                        }
+                    }
+                },
+                y: {
+                    title: { display: true, text: '가격 (원)' },
+                    beginAtZero: false
+                }
+            }
+        }
+    });
+}
+
+
+function calculateMinDate(years) {
+    const minDate = new Date(maxDate);
+    minDate.setFullYear(minDate.getFullYear() - years);
+    return minDate.toISOString().split('T')[0];
+}
+    // 라인 차트 설정
+    stockChart = new Chart(document.getElementById('stockChart').getContext('2d'), {
         type: 'line',
         data: {
             labels: dates,
@@ -123,15 +195,8 @@
         });
     });
 
-    function updateChartRange(years, clickedButton) {
-        const showMovingAverages = years === 0;
-
-        stockChart.options.scales.x.min = calculateMinDate(years);
-
-    }
-
-        stockChart.update();
-        
+   
+    
 
     function updateChartRange(years, clickedButton) {
         const showMovingAverages = years === 1;
