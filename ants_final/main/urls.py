@@ -50,4 +50,7 @@ urlpatterns = [
     
     # 주식 검색 결과를 처리할 URL
     path('stock_search/', views.stock_search, name='stock_search'),
+
+    # 주식 검색어 자동완성 기능
+    path('stock_autocomplete/', views.stock_autocomplete, name='stock_autocomplete'),
 ]

@@ -110,6 +110,152 @@
                 });
             });
         });
+
+        // 종목 검색 자동완성 기능 
+        {% comment %} document.addEventListener('DOMContentLoaded', function () {
+            const stockInput = document.querySelector('#stock_search input[name="stock_query"]');
+            const suggestionBox = document.createElement('ul');  // 자동완성 결과를 표시할 요소
+            suggestionBox.classList.add('list-group');
+            suggestionBox.style.position = 'absolute';
+            suggestionBox.style.zIndex = '1000';  // 다른 요소보다 위에 표시되도록
+            stockInput.parentNode.appendChild(suggestionBox);
+        
+            stockInput.addEventListener('input', function () {
+                const query = stockInput.value;
+        
+                if (query.length < 1) {
+                    suggestionBox.innerHTML = '';  // 검색어가 없으면 리스트를 비운다
+                    return;
+                }
+        
+                // 서버로 비동기 요청을 보내 종목 코드를 검색
+                fetch(`/stock_autocomplete/?stock_query=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        suggestionBox.innerHTML = '';  // 기존 목록 초기화
+        
+                        if (data.length > 0) {
+                            data.forEach(stock => {
+                                const listItem = document.createElement('li');
+                                listItem.classList.add('list-group-item', 'list-group-item-action');
+                                listItem.textContent = `${stock.name} (${stock.stock_code})`;
+                                suggestionBox.appendChild(listItem);
+        
+                                // 리스트 클릭 시 input에 선택한 값이 들어가도록 설정
+                                listItem.addEventListener('click', function () {
+                                    stockInput.value = `${stock.name} (${stock.stock_code})`;
+                                    suggestionBox.innerHTML = '';  // 선택 후 리스트 닫기
+                                });
+                            });
+                        } 
+                        /*else {
+                            const noResult = document.createElement('li');
+                            noResult.classList.add('list-group-item');
+                            noResult.textContent = 'No results found';
+                            suggestionBox.appendChild(noResult);
+                        }*/
+                    })
+                    .catch(error => {
+                        console.error('Error fetching stock data:', error);
+                    });
+            });
+        
+            // input 필드에서 focus를 잃으면 추천 목록을 숨김
+            stockInput.addEventListener('blur', function () {
+                setTimeout(() => suggestionBox.innerHTML = '', 100);  // 잠시 후 숨기기
+            });
+        }); {% endcomment %}
+        
+    // 종목 검색 자동완성 기능
+    document.addEventListener('DOMContentLoaded', function () {
+        const stockInput = document.querySelector('#stock_search input[name="stock_query"]');
+        const suggestionBox = document.createElement('ul');  // 제안 목록 생성
+        suggestionBox.classList.add('list-group');
+        suggestionBox.style.position = 'absolute';
+        suggestionBox.style.zIndex = '1000';
+        stockInput.parentNode.appendChild(suggestionBox);
+    
+        let isSuggestionClicked = false;  // 제안 클릭 여부 추적
+        let debounceTimer;  // 디바운스 타이머
+    
+        stockInput.addEventListener('input', function () {
+            clearTimeout(debounceTimer);  // 이전 타이머 지우기
+    
+            const query = stockInput.value;
+    
+            // 입력이 1글자 이상일 때만 요청 대기
+            if (query.length < 1) {
+                suggestionBox.innerHTML = '';  // 입력이 2글자 미만일 때 제안 목록 지우기
+                return;
+            }
+    
+            // 디바운스: 300ms 후에 요청 보내기
+            debounceTimer = setTimeout(() => {
+                // 제안 목록 위치 조정
+                const rect = stockInput.getBoundingClientRect();
+                suggestionBox.style.top = `${rect.bottom + window.scrollY}px`;
+                suggestionBox.style.left = `${rect.left + window.scrollX}px`;
+    
+                // 서버에서 제안 가져오기
+                fetch(`/stock_autocomplete/?stock_query=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        suggestionBox.innerHTML = '';  // 이전 제안 목록 지우기
+    
+                        if (data.length > 0) {
+                            data.forEach(stock => {
+                                const listItem = document.createElement('li');
+                                listItem.classList.add('list-group-item', 'list-group-item-action');
+                                listItem.textContent = `${stock.name} (${stock.stock_code})`;
+                                suggestionBox.appendChild(listItem);
+    
+                                // 제안 클릭 처리
+                                listItem.addEventListener('mousedown', function () {
+                                    isSuggestionClicked = true;
+                                    stockInput.value = `${stock.name}`;
+                                    // 검색 버튼 클릭 효과를 위한 Promise
+                                    Promise.resolve().then(() => {
+                                        const searchButton = document.querySelector('#stock_search button[type="submit"]');
+                                        searchButton.click();  // 버튼 클릭 이벤트 호출
+                                    });
+
+                                    suggestionBox.innerHTML = '';  // 선택 후 제안 목록 지우기
+                                });
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('주식 데이터 가져오기 오류:', error);
+                    });
+            }, 300);  // 300ms 후에 요청 보내기
+        });
+    
+        // 입력 및 제안 목록 외부 클릭 시 목록 숨기기
+        document.addEventListener('click', function (event) {
+            if (!stockInput.contains(event.target) && !suggestionBox.contains(event.target)) {
+                suggestionBox.innerHTML = '';  // 외부 클릭 시 제안 목록 지우기
+            }
+        });
+    
+        // 입력이 포커스될 때 제안 목록 표시
+        stockInput.addEventListener('focus', function () {
+            if (suggestionBox.innerHTML) {
+                suggestionBox.style.display = 'block';  // 제안 목록 보이기
+            }
+        });
+    
+        // 입력이 블러될 때 클릭되지 않은 경우 목록 숨기기
+        stockInput.addEventListener('blur', function () {
+            setTimeout(() => {
+                if (!isSuggestionClicked) {
+                    suggestionBox.innerHTML = '';  // 제안 목록 지우기
+                }
+                isSuggestionClicked = false;  // 플래그 초기화
+            }, 100);
+        });
+    });
+    
+
     </script>
 </body>
 </html>

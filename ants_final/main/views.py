@@ -947,11 +947,29 @@ def get_sector_details(request, sector_name):
 
     return JsonResponse(sector_data, safe=False)
 
+from django.core.cache import cache
 
-
-
-    
-
+def stock_autocomplete(request):
+    query = request.GET.get('stock_query', '')
+    cache_key = f'stock_autocomplete_{query}'
+    stocks = cache.get(cache_key)
+    if not stocks:
+        stocks = list(RealTime.objects.filter(Q(stock_code__icontains=query) | Q(name__icontains=query))\
+                      .values('name', 'stock_code').distinct())[:5]
+        # Python에서 추가로 중복 제거 (name과 stock_code로만 중복 제거)
+        unique_stocks = []
+        seen = set()
+        
+        for stock in stocks:
+            # 튜플 (name, stock_code) 로 중복 여부 확인
+            stock_tuple = (stock['name'], stock['stock_code'])
+            if stock_tuple not in seen:
+                seen.add(stock_tuple)
+                unique_stocks.append(stock)
+        # 캐시에 저장
+        cache.set(cache_key, unique_stocks, 60 * 60 * 12)  # 12시간 캐싱
+        stocks = unique_stocks
+    return JsonResponse(stocks, safe=False) 
 
 
 
