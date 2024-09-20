@@ -13,18 +13,19 @@
         margin: 0;
         height: 100vh; /* 화면 전체 높이를 사용 */
         overflow-y: auto;
-        background-color: rgba(209, 209, 209, 0.5); /* 배경색을 어둡게 설정 (트리맵 이외 영역) */
+        background-color: rgba(209, 209, 209, 0.5);
     }
     .treemap-container {
         display: flex;
-        justify-content: center; /* 트리맵 가운데 배치 */
         align-items: center;
+        justify-content: center;
         height: 100%;
         background-color: transparent;
-        border-radius: 15px; /* 모서리를 둥글게 설정 */
         padding: 20px;
-        margin: 4rem;
+        padding-top: 0;
+        margin: 3rem;
         margin-top: 0;
+        flex-direction: column;
     }
     .controls-container {
         display: flex; 
@@ -36,6 +37,7 @@
         background-color: transparent;
         border-radius: 10px;
         margin: 1rem;
+        margin-bottom: 0;
     }
     .controls-container button {
         padding: .5rem;
@@ -112,6 +114,8 @@
     <!-- 트리맵 영역 -->
     <div class="treemap-container">
         {{ graph_html|safe }}
+
+        
     </div>
     
 <!-- </div> -->

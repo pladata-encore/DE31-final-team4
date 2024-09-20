@@ -435,22 +435,33 @@ def treemap_view(request):
 
     # 데이터 로드
     df = load_stock_data(selected_market, selected_time_period)
+    df['market_cap_억'] = df['market_cap'] / 1e8 # 시가총액 억단위로 보이게 설정중
 
     # Plotly 트리맵 생성
     fig = px.treemap(
         df,
         path=['sector', 'name'],  # 섹터와 이름 계층 구조
-        values='market_cap',  # 시가총액을 크기로 설정
+        values='market_cap_억',  # 시가총액을 크기로 설정
         color='Change Rate (%)',  # 변동률에 따라 색상 설정
         color_continuous_scale=['blue', '#FAFAFA', 'red'],  # 파랑-흰색-빨강
         color_continuous_midpoint=0,  # 0을 기준으로 색상을 나눔
-        custom_data=['name', 'Change Rate (%)'],  # 추가 데이터로 변동률을 제공
-        # branchvalues="remainder"  # 최상위 계층을 나머지 값으로 설정하여 검정 배경을 없앰
+        custom_data=['name', 'Change Rate (%)','market_cap_억'],  # 추가 데이터로 변동률을 제공
+    )
+
+    fig.add_annotation(
+        x=0.99,  # X축 위치 (오른쪽)
+        y=0.99,  # Y축 위치 (상단)
+        text="(단위: 억 원)",  # 표시할 텍스트
+        showarrow=False,  # 화살표 숨기기
+        font=dict(size=15, color="black", family="NanumR"),  # 글씨 크기와 색상 설정
+        xanchor="right",  # 오른쪽 정렬
+        yanchor="top",  # 위쪽 정렬
     )
     fig.update_traces(
         textposition='middle center',
         # hovertemplate에서 %{customdata[0]} 부분을 제거하여 불필요한 항목을 숨김
-        hovertemplate='<b>%{label}</b><br>변동률: %{customdata[1]:.2f}%<br>시가총액: %{value:,.0f} 원<br>',
+        # hovertemplate='<b>%{label}</b><br>변동률: %{customdata[1]:.2f}%<br>시가총액: %{value:,.0f} 원<br>',
+        hovertemplate='<b>%{label}</b><br>변동률: %{customdata[1]:.2f}%<br>시가총액: %{customdata[2]:,.0f}<br>',
         texttemplate='<b>%{label}<br>%{customdata[1]:.2f}%</b>',  # 트리맵 내에서도 변동률 표시
         marker=dict(line=dict(width=0.2, color='rgb(255, 255, 255)')), 
         textfont=dict(size=15, family="NanumR"),  # 글씨 크기
@@ -476,6 +487,7 @@ def treemap_view(request):
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
     )
+
 
 
     # 그래프를 HTML로 변환
