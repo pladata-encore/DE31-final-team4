@@ -403,7 +403,7 @@ th {
 .news-item {
     width: 30%;
     margin: 0 10px;
-    height: 150px;
+    height: 220px;
 }
 
 #prevBtn, #nextBtn {
@@ -435,3 +435,5 @@ body {
 .nowrap {
     white-space: nowrap;
 }
+
+/* treemap */

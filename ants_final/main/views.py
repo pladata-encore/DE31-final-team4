@@ -453,49 +453,39 @@ def treemap_view(request):
         path=['sector', 'name'],  # 섹터와 이름 계층 구조
         values='market_cap',  # 시가총액을 크기로 설정
         color='Change Rate (%)',  # 변동률에 따라 색상 설정
-        color_continuous_scale=['blue', '#DEDEDE', 'red'],  # 파랑-흰색-빨강
+        color_continuous_scale=['blue', '#FAFAFA', 'red'],  # 파랑-흰색-빨강
         color_continuous_midpoint=0,  # 0을 기준으로 색상을 나눔
         custom_data=['name', 'Change Rate (%)'],  # 추가 데이터로 변동률을 제공
         # branchvalues="remainder"  # 최상위 계층을 나머지 값으로 설정하여 검정 배경을 없앰
-        
     )
-    
     fig.update_traces(
         textposition='middle center',
         # hovertemplate에서 %{customdata[0]} 부분을 제거하여 불필요한 항목을 숨김
         hovertemplate='<b>%{label}</b><br>변동률: %{customdata[1]:.2f}%<br>시가총액: %{value:,.0f} 원<br>',
         texttemplate='<b>%{label}<br>%{customdata[1]:.2f}%</b>',  # 트리맵 내에서도 변동률 표시
-        marker=dict(line=dict(width=0.2)), 
-        textfont=dict(size=15),  # 글씨 크기
+        marker=dict(line=dict(width=0.2, color='rgb(255, 255, 255)')), 
+        textfont=dict(size=15, family="NanumR"),  # 글씨 크기
         hoverlabel=dict(
-            bgcolor='rgba(255,255,255,1)',  # 배경 흰색 설정
-            font=dict(size=16)  # 툴팁 글꼴 크기와 스타일 설정
+            font=dict(size=16, family="NanumR"),
         ),
-
     )
-    
-    fig.update_traces(
-        selector=dict(level=0),
-        textinfo='none',
-        root_color="white"  # 최상위 검정 배경을 흰색으로 설정
-    )
-
     
         # 레이아웃을 업데이트하여 그래프가 화면을 꽉 차게 설정
     fig.update_layout(
             coloraxis_colorbar=dict(
-            title="Change Rate (%)",
-            tickfont=dict(size=14, color='white'),  # 색상 스케일의 글꼴 크기와 색상 설정
-            titlefont=dict(size=16, color='white')  # 색상 스케일 제목의 글꼴 설정
+            title="변동률(%)",
+            tickfont=dict(size=14, color='black', family="NanumR"),
+            titlefont=dict(size=16, color='black', family="NanumR"),
+            len=0.4, 
+            thickness=20,
+            yanchor="top",
+            y=1,
         ),
         margin=dict(t=0, l=30, r=0, b=20),
         height=800,  
-        width=1500, 
-        paper_bgcolor='#444444',  # 종이 배경을 어둡게 설정
-        plot_bgcolor='#444444',  # 그래프 배경을 어둡게 설정
-        # uniformtext=dict(minsize=10, mode='show')  # 섹터 텍스트를 작게 표시
-
-
+        width=1300,
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
     )
 
 
@@ -509,30 +499,6 @@ def treemap_view(request):
         'selected_time_period': selected_time_period
     })
 
-
-
-############################################
-#streamlit용 view였음..
-# import subprocess
-# import os
-# from django.http import HttpResponseRedirect
-
-# # Django의 views.py에서 Streamlit 실행
-# def treemap_view(request):
-#     # Streamlit이 이미 실행 중인지 확인하는 방법은 생략하고,
-#     # 매번 요청이 들어올 때 Streamlit을 실행하도록 처리.
-#     try:
-#         # Streamlit이 이미 실행 중인지 체크하고, 실행 중이 아니라면 실행
-#         result = subprocess.run(['lsof', '-i', ':8501'], stdout=subprocess.PIPE)
-#         if 'Streamlit' not in str(result.stdout):
-#             # Streamlit이 실행 중이지 않다면, 백그라운드에서 Streamlit을 실행
-#             subprocess.Popen(['streamlit', 'run', 'your_app.py', '--server.port', '8501'], 
-#                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-#     except Exception as e:
-#         print(f"Error launching Streamlit: {e}")
-
-#     # Streamlit 앱으로 리디렉션
-#     return HttpResponseRedirect('http://localhost:8501')
 
 # 관심종목
 from django.shortcuts import render, redirect, get_object_or_404
