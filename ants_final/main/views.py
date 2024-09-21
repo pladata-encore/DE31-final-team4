@@ -674,7 +674,7 @@ def stock_detail_page(request, stock_code="005930"):
     
     # RealTime 데이터에서 캔들차트용 데이터
     candle_data = [{
-        'x': str(data.price_time),  # ISO 8601 형식으로 변환
+        'x': data.price_time.strftime('%Y-%m-%dT%H:%M:%SZ'),  # ISO 8601 형식으로 변환
         'o': data.opening_price,
         'h': data.high_price,
         'l': data.low_price,
