@@ -290,9 +290,9 @@ def home(request):
     type_choice = request.GET.get('type', '급상승')  # 기본값은 'rising'
     
     if type_choice == '급상승':
-        stocks = RealTime.objects.filter(price_time=latest_time, UpDownPoint__gt=0).order_by('-UpDownRate')[:10]  # 급상승 순서
+        stocks = RealTime.objects.filter(price_time=latest_time, UpDownPoint__gt=0).order_by('-UpDownRate')[:7]  # 급상승 순서
     else:
-        stocks = RealTime.objects.filter(price_time=latest_time, UpDownPoint__lt=0).order_by('UpDownRate')[:10]  # 급하락 순서
+        stocks = RealTime.objects.filter(price_time=latest_time, UpDownPoint__lt=0).order_by('UpDownRate')[:7]  # 급하락 순서
 
     # 상위 3개의 섹터 데이터를 가져옴
     top_sectors = get_top_sectors()
@@ -777,7 +777,7 @@ def get_top_sectors():
         ) AS recent_data
         GROUP BY sector
         ORDER BY avg_updownrate DESC
-        LIMIT 3;
+        LIMIT 5;
     '''
 
     with connection.cursor() as cursor:

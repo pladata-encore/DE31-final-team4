@@ -6,7 +6,7 @@
 
 {% block content %}
 </div>
-<div class="container" style="font-family: NanumR; margin-top: 3rem; flex-direction: row;">
+<div class="container" style="font-family: NanumR; margin-top: 3rem;">
     <div class="row">
         <h5 style="margin-left: 2rem;">{{ name }}({{ stock_code }}) 
             <img id="favorite-icon" 
@@ -14,9 +14,24 @@
                 alt="Favorite Icon" 
                 style="width: 20px; height: 20px; cursor: pointer; margin: .5rem;">
         </h5>
-        <h3 style="margin-left: 2rem; font-family: NanumB;">
-            {{ stock_info.current_price|intcomma }}
-        </h3>
+        <div style="display: inline-block;">
+            <h3 style="display: inline; margin-left: 2rem; font-family: NanumB;">
+                {{ stock_info.current_price|intcomma }} 
+            </h3>
+            {% if stock_info.UpDownPoint > 0 %}
+                <h5 style="display: inline; color: red; font-family: NanumB;">
+                    {{ stock_info.UpDownPoint|intcomma }} ({{ stock_info.UpDownRate }}%)
+                </h5>
+            {% elif stock_info.UpDownPoint < 0 %}
+                <h5 style="display: inline; color: blue; font-family: NanumB;">
+                    {{ stock_info.UpDownPoint|intcomma }} ({{ stock_info.UpDownRate }}%)
+                </h5>
+            {% else %}
+                <h5 style="display: inline; color: block; font-family: NanumB;">
+                    {{ stock_info.UpDownPoint|intcomma }} ({{ stock_info.UpDownRate }}%)
+                </h5>
+            {% endif %}
+        </div>
         <div class="col-lg-8 p-3 justify-content-center">
             <canvas id="stockChart"></canvas> <!-- 차트를 그릴 캔버스 -->
         </div>
@@ -100,7 +115,7 @@
         
     </div>
 </div>
-<div class="news-section" style="font-family: NanumR;">
+<div class="news-section">
     <h3 class="text-center">주요 뉴스</h3>
     <div class="news-carousel">
         <button id="prevBtn">&lt;</button>
@@ -240,34 +255,6 @@
         loadNews(currentPage);
     });
 
-    // 관심 종목 추가/제거 기능
-    /* document.getElementById('favorite-icon').addEventListener('click', function() {
-        const stockCode = "{{ stock_code }}";
-        const isFavorite = this.getAttribute('src').includes('filled_star.png');
-
-        // 관심 종목에 있으면 제거, 없으면 추가
-        const url = isFavorite ? `/remove_stock/${stockCode}/` : `/add_favorite_list/${stockCode}/`;
-
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}'
-            }
-        })
-        .then(response => {
-            if (response.ok) {
-                if (isFavorite) {
-                    this.setAttribute('src', "{% static 'images/empty_star.png' %}");  // 비워진 별로 변경
-                } else {
-                    this.setAttribute('src', "{% static 'images/filled_star.png' %}");  // 채워진 별로 변경
-                }
-            } else {
-                console.error('Error processing request');
-            }
-        })
-        .catch(error => console.error('Error:', error));
-    });*/
     const isAuthenticated = "{{ user.is_authenticated|yesno:'true,false' }}";
     document.getElementById('favorite-icon').addEventListener('click', function() {
         const stockCode = "{{ stock_code }}";

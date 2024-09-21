@@ -266,11 +266,122 @@ th {
     vertical-align:middle;
 }
 
+#sector-details {
+    height: 400px; /* 원하는 높이로 설정 */
+    overflow-y: auto; /* 내용이 넘칠 경우 스크롤바 표시 */
+}
+
+.note-style {
+    background-color: #fff7e6; /* 연한 노란색 배경 */
+    border-radius: 8px; /* 모서리 둥글게 */
+    padding: 20px; /* 여백 추가 */
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 */
+    font-family: 'Arial', sans-serif; /* 폰트 설정 */
+}
+
+.note-style p {
+    margin: 0; /* 기본 마진 제거 */
+    color: #333; /* 글자 색상 */
+}
+
+.index-stickers {
+    display: flex;
+    gap: 13px; /* 스티커 간격 */
+}
+
+.sticker {
+    /* width: 100px;
+    height: 100px;
+    padding: 10px; */
+    border-radius: 5px;
+    box-shadow: 0 5px 6px rgba(0, 0, 0, 0.2);
+    display: flex;
+    /* align-items: center; */
+    justify-content: center;
+    color: #333;
+    font-weight: bold;
+
+}
+
+.table {
+    border-collapse: collapse; /* 테두리 간격 제거 */
+    width: 100%; /* 너비를 100%로 설정 */
+    background-color: transparent; /* 테이블 배경을 투명하게 */
+    border-left: none; 
+    border-right: none;
+    padding: auto;
+}
+
+.table th, .table td {
+    border: none; /* 모든 테두리 제거 */
+    padding: 10px; /* 패딩 추가 */
+    background-color: transparent; /* 셀 배경을 투명하게 */
+}
+
+.table tr {
+    border-bottom: 1px solid rgba(90, 78, 78, 0.7); /* 기본 가로줄 색상 */
+}
+
+.table tr:first-child {
+    border-top: 1px solid rgba(90, 78, 78, 0.7); /* 맨 위 줄 색상 */
+}
+
+.table tr:last-child {
+    border-bottom: 1px solid rgba(90, 78, 78, 0.7); /* 맨 아래 줄 색상 */
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+/* 기본색 */
+/* .yellow {
+    background-color: #ffeb3b;
+}
+
+.pink {
+    background-color: #f06292;
+}
+
+.green {
+    background-color: #4caf50;
+}
+
+.blue {
+    background-color: #2196f3;
+} */
+
+/* 파스텔 색 */
+.yellow {
+    background-color: rgb(249, 232, 139);
+}
+
+.pink {
+    background-color: rgb(242, 166, 200);
+}
+
+.green {
+    background-color: rgb(168, 230, 207);
+}
+
+.blue {
+    background-color: rgb(164, 200, 225);
+}
+
+.gray {
+    background-color: rgb(211, 211, 211);
+}
+
+
 /* News Style*/
 .news-section {
     margin-top: 20px;
-    width: 80%;
+    font-family: 'NanumR';
     justify-content: center;
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    margin: 0 auto;
 }
 
 .news-carousel {
