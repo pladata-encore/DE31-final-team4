@@ -551,7 +551,6 @@ def my_favorite_list(request):
 
     
     if not user_stocks.exists():
-    # 빈 데이터를 처리하는 로직을 추가하거나, 필요한 경우 예외처리
         context = {
             'mbti_stock': stock_infos_list,
             'mbti': mbti_value,
@@ -641,7 +640,7 @@ def my_favorite_list(request):
 
 
 from django.shortcuts import redirect, get_object_or_404
-from .models import UserStock
+from .models import UserStock, DividendVolatility, Mbti, News
 
 @login_required
 def remove_stock(request, stock_code):
@@ -656,7 +655,7 @@ def remove_stock(request, stock_code):
 
 from stocks.models import OnceTime
 import json
-from .models import DividendVolatility, Mbti, News
+
 # stock_detail_page 브랜치에서 생성
 # localhost:8000/stock으로 들어가면 해당 페이지 리턴
 def stock_detail_page(request, stock_code="005930"):
@@ -701,6 +700,17 @@ def stock_detail_page(request, stock_code="005930"):
     except:
         is_favorite = False
     favorite_icon = 'images/filled_star.png' if is_favorite else 'images/empty_star.png'
+
+    # Real_time 종목 현재가
+
+    latest_stock = RealTime.objects.filter(stock_code=stock_code).order_by('-id').first()
+    stock_info ={
+        'current_price': latest_stock.current_price,
+        'UpDownRate': latest_stock.UpDownRate,
+        'UpDownPoint': latest_stock.UpDownPoint,
+        'id': latest_stock.id,
+    }
+    
     context = {
         'stock_code': stock_code,
         'dates': json.dumps(dates),  # JSON으로 직렬화
@@ -720,6 +730,7 @@ def stock_detail_page(request, stock_code="005930"):
         'news_list': news_list,
         'is_favorite': is_favorite,
         'favorite_icon': favorite_icon,
+        'stock_info': stock_info,
     }
     return render(request, 'main/stock_detail.html', context)
 
@@ -834,7 +845,6 @@ def get_sector_image(sector_name):
     return sector_image_map.get(sector_name, "default_icon.png")
 
 from django.http import JsonResponse
-from stocks.models import RealTime
 
 # 특정 섹터에 대한 최근 10개의 데이터를 반환하는 함수
 def get_sector_details(request, sector_name):

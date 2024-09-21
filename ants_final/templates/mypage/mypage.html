@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
+{% load humanize %} <!-- 숫자에 , 표시 -->
 
-<!DOCTYPE html>
-<html lang="ko">
 {% load static %}
     
 {% block title %}ANTS-MyPage{% endblock %}
@@ -32,14 +31,14 @@
                             {% else %}
                                 <td>정보없음</td>
                             {% endif %}
-                            <td style="text-align: right;">{{ stock.current_price }}원</td>
+                            <td style="text-align: right;">{{ stock.current_price|intcomma }}</td>
                             <td style="text-align: right;">
                             {% if stock.UpDownRate > 0 %}
-                                <span style="color: red;">{{ stock.UpDownPoint }} ({{ stock.UpDownRate }}%)</span>
+                                <span style="color: red;">{{ stock.UpDownPoint|intcomma }} ({{ stock.UpDownRate }}%)</span>
                             {% elif stock.UpDownRate == 0 %}
-                                <span>{{ stock.UpDownPoint }} ({{ stock.UpDownRate }}%)</span>
+                                <span>{{ stock.UpDownPoint|intcomma }} ({{ stock.UpDownRate }}%)</span>
                             {% else %}
-                                <span style="color: blue;">{{ stock.UpDownPoint }} ({{ stock.UpDownRate }}%)</span>
+                                <span style="color: blue;">{{ stock.UpDownPoint|intcomma }} ({{ stock.UpDownRate }}%)</span>
                             {% endif %}
                             </td>
                             <td>
@@ -108,14 +107,14 @@
                         {% for stocks in mbti_stock|slice:":5" %}
                         <tr style="border-bottom: 1.8px solid rgb(100, 100, 100);">
                             <td style="text-align: left;">{{ stocks.name }}</td>
-                            <td style="text-align: right;">{{ stocks.current_price }}원</td>
+                            <td style="text-align: right;">{{ stocks.current_price|intcomma }}</td>
                             <td style="text-align: right;">
                             {% if stocks.UpDownRate > 0 %}
-                                <span style="color: red;">{{ stocks.UpDownPoint }} ({{ stocks.UpDownRate }}%)</span>
+                                <span style="color: red;">{{ stocks.UpDownPoint|intcomma }} ({{ stocks.UpDownRate }}%)</span>
                             {% elif stocks.UpDownRate == 0 %}
-                                <span>{{ stocks.UpDownPoint }} ({{ stocks.UpDownRate }}%)</span>
+                                <span>{{ stocks.UpDownPoint|intcomma }} ({{ stocks.UpDownRate }}%)</span>
                             {% else %}
-                                <span style="color: blue;">{{ stocks.UpDownPoint }} ({{ stocks.UpDownRate }}%)</span>
+                                <span style="color: blue;">{{ stocks.UpDownPoint|intcomma }} ({{ stocks.UpDownRate }}%)</span>
                             {% endif %}
                             </td>
                             <td>
@@ -146,14 +145,14 @@
                         {% for stocks in mbti_stock|slice:"5:" %}
                         <tr style="border-bottom: 1.8px solid rgb(100, 100, 100);">
                             <td style="text-align: left;">{{ stocks.name }}</td>
-                            <td style="text-align: right;">{{ stocks.current_price }}원</td>
+                            <td style="text-align: right;">{{ stocks.current_price|intcomma }}</td>
                             <td style="text-align: right;">
                             {% if stocks.UpDownRate > 0 %}
-                                <span style="color: red;">{{ stocks.UpDownPoint }} ({{ stocks.UpDownRate }}%)</span>
+                                <span style="color: red;">{{ stocks.UpDownPoint|intcomma }} ({{ stocks.UpDownRate }}%)</span>
                             {% elif stocks.UpDownRate == 0 %}
-                                <span>{{ stocks.UpDownPoint }} ({{ stocks.UpDownRate }}%)</span>
+                                <span>{{ stocks.UpDownPoint|intcomma }} ({{ stocks.UpDownRate }}%)</span>
                             {% else %}
-                                <span style="color: blue;">{{ stocks.UpDownPoint }} ({{ stocks.UpDownRate }}%)</span>
+                                <span style="color: blue;">{{ stocks.UpDownPoint|intcomma }} ({{ stocks.UpDownRate }}%)</span>
                             {% endif %}
                             </td>
                             <td>

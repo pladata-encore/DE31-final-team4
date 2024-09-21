@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load humanize %} <!-- 숫자에 , 표시 -->
 
 {% block title %}ANTS{% endblock %}
 
@@ -21,8 +22,8 @@
                             <span>{{ KOSPI_UpDownPoint }}</span>
                             <span>({{ KOSPI_UpDownRate }}%)</span></p>
                         {% else %}
-                        <span style="color: red;">{{ KOSPI_UpDownPoint }}</span>
-                        <span style="color: red;">(+{{ KOSPI_UpDownRate }}%)</span></p>
+                            <span style="color: red;">{{ KOSPI_UpDownPoint }}</span>
+                            <span style="color: red;">(+{{ KOSPI_UpDownRate }}%)</span></p>
                         {% endif %}
                     </div>
                     <div class="basket-in2">
@@ -89,12 +90,12 @@
                             <!-- 종목명을 클릭할 수 있는 링크로 변환 -->
                             <a href="{% url 'stock' stock.stock_code %}">{{ stock.name }}</a>
                         </td>
-                        <td style="text-align: right;">{{ stock.current_price }}원</td>
+                        <td style="text-align: right;">{{ stock.current_price|intcomma }}</td>
                         <td style="text-align: right;">
                             {% if stock.UpDownRate > 0 %} 
-                                <span class="text-danger">+{{ stock.UpDownPoint }}원 ({{ stock.UpDownRate }}%)</span>
+                                <span class="text-danger">+{{ stock.UpDownPoint|intcomma }} ({{ stock.UpDownRate }}%)</span>
                             {% else %}
-                                <span class="text-primary">{{ stock.UpDownPoint }}원 ({{ stock.UpDownRate }}%)</span>
+                                <span class="text-primary">{{ stock.UpDownPoint|intcomma }} ({{ stock.UpDownRate }}%)</span>
                             {% endif %}
                         </td>
                     </tr>

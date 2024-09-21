@@ -269,6 +269,8 @@ th {
 /* News Style*/
 .news-section {
     margin-top: 20px;
+    width: 80%;
+    justify-content: center;
 }
 
 .news-carousel {
