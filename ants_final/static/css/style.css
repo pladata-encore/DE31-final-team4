@@ -227,6 +227,7 @@ th {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     width: 100%;
     transition: transform 0.3s ease;
+    overflow: hidden;
 }
 .card-img-top{
     overflow: hidden;
