@@ -7,125 +7,141 @@
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <style>
     body {
-        font-family: Arial, sans-serif;
-        flex-direction: column;
+        font-family: 'NanumR';
         align-items: center;
         padding: 0;
         margin: 0;
         height: 100vh; /* 화면 전체 높이를 사용 */
         overflow-y: auto;
-        background-color: #444444; /* 배경색을 어둡게 설정 (트리맵 이외 영역) */
-        color: white; /* 기본 텍스트 색상 흰색 */
-    }
-    .main-container {
-        flex-direction: row;
-        justify-content: center;
-        height: 100vh;
-        overflow: hidden;
-        display: flex;
+        background-color: rgba(209, 209, 209, 0.5);
     }
     .treemap-container {
-        flex: 5;
         display: flex;
-        justify-content: center; /* 트리맵 가운데 배치 */
         align-items: center;
+        justify-content: center;
         height: 100%;
-        background-color: #444444; /* 트리맵 영역의 배경을 어둡게 설정 */
-        border-radius: 15px; /* 모서리를 둥글게 설정 */
+        background-color: transparent;
         padding: 20px;
-        box-shadow: 0px 0px 15px#444444; /* 트리맵에 그림자 추가 */
+        padding-top: 0;
+        margin: 3rem;
+        margin-top: 0;
+        flex-direction: column;
     }
     .controls-container {
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
+        display: flex; 
+        justify-content: center;
         align-items: center;
-        width: 150px;
-        height: 100%; /* 버튼 컨테이너도 스크롤 영역에 포함 */
-        overflow-y: hidden; /* 스크롤바 없애기 */
+        flex-direction: row;
+        width: 100%;
         padding-top: 10px;
-        flex: 1;
-        background-color: #444444; /* 컨트롤 영역의 배경색 어둡게 설정 */
+        background-color: transparent;
         border-radius: 10px;
-        padding: 20px;
-        box-shadow: 0px 0px 10px #444444;
+        margin: 1rem;
+        margin-bottom: 0;
     }
     .controls-container button {
-        padding: 5px 5px;
+        padding: .5rem;
         margin: 5px;
         font-size: 16px;
-        background-color: #444444;
+        background-color: transparent;
         color: white;
-        border: none;
-        cursor: pointer;
         border-radius: 5px;
-        width: 50%;
+        width: 50px;
+        background-color: rgb(152, 152, 152); 
     }
     button:disabled {
-        background-color: white; 
+        background-color: rgb(248, 255, 245); 
         color: black;
         cursor: not-allowed;
     }
     .market-selection {
         display: flex;
         justify-content: center;
-        margin-bottom: 20px;
+        margin-top: 3rem;
     }
     .market-selection button {
         padding: 10px 15px;
-        margin: 5px;
+        margin: 0 10px;
         font-size: 16px;
-        background-color: #444444;
+        background-color: transparent;
         color: white;
         border: none;
         cursor: pointer;
         border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        background-color: rgb(206, 212, 204);
+        
     }
     .market-selection button:disabled {
         background-color: white;
         color: black;
         cursor: not-allowed;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
     }
-    footer {
-        width: 100%;
-        background-color: #333333;
-        color: white;
-        text-align: center;
-        padding: 10px 0;
-        position: relative;
-        left: 0;
-        bottom: 0;
+
+    .surface {
+        stroke: rgba(0, 0, 0, 0) !important;
     }
+    form {
+        display: flex;
+    }
+
 </style>
 {% endblock %}
 {% block content %}
 
-<h1>&nbsp;&nbsp;&nbsp;&nbsp;TreeMap</h1>
-    <!-- 마켓 선택 버튼을 상단에 배치 -->
-    <div class="market-selection">
+<!-- 마켓 선택 버튼을 상단에 배치 -->
+<div class="market-selection" style="font-family: NanumB;">
+    <form method="GET">
+        <button type="submit" name="market" value="KOSPI200" {% if selected_market == 'KOSPI200' %}disabled{% endif %}>KOSPI</button>
+        <button type="submit" name="market" value="KOSDAQ" {% if selected_market == 'KOSDAQ' %}disabled{% endif %}>KOSDAQ</button>
+    </form>
+</div>
+<!-- <div class="main-container"> -->
+    <!-- 컨트롤 패널 영역 (기간 선택) -->
+    <div class="controls-container">
+        <!-- 기간 선택 버튼 -->
         <form method="GET">
-            <button type="submit" name="market" value="KOSPI200" {% if selected_market == 'KOSPI200' %}disabled{% endif %}>KOSPI</button>
-            <button type="submit" name="market" value="KOSDAQ" {% if selected_market == 'KOSDAQ' %}disabled{% endif %}>KOSDAQ</button>
+            <input type="hidden" name="market" value="{{ selected_market }}">
+            <button class="button" type="submit" name="period" value="1 Day" {% if selected_time_period == '1 Day' %}disabled{% endif %}>1일</button>
+            <button class="button" type="submit" name="period" value="1 Week" {% if selected_time_period == '1 Week' %}disabled{% endif %}>1주</button>
+            <button class="button" type="submit" name="period" value="1 Month" {% if selected_time_period == '1 Month' %}disabled{% endif %}>1달</button>
+            <button class="button" type="submit" name="period" value="3 Months" {% if selected_time_period == '3 Months' %}disabled{% endif %}>3달</button>
+            <button class="button" type="submit" name="period" value="6 Months" {% if selected_time_period == '6 Months' %}disabled{% endif %}>6달</button>
+            <button class="button" type="submit" name="period" value="1 Year" {% if selected_time_period == '1 Year' %}disabled{% endif %}>1년</button>
         </form>
     </div>
-    <div class="main-container">
-        <!-- 트리맵 영역 -->
-        <div class="treemap-container">
-            {{ graph_html|safe }}
-        </div>
+    <!-- 트리맵 영역 -->
+    <div class="treemap-container">
+        {{ graph_html|safe }}
 
-        <!-- 컨트롤 패널 영역 (기간 선택) -->
-        <div class="controls-container">
-            <!-- 기간 선택 버튼 -->
-            <form method="GET">
-                <input type="hidden" name="market" value="{{ selected_market }}">
-                <button type="submit" name="period" value="1 Day" {% if selected_time_period == '1 Day' %}disabled{% endif %}>1일</button>
-                <button type="submit" name="period" value="1 Week" {% if selected_time_period == '1 Week' %}disabled{% endif %}>1주</button>
-                <button type="submit" name="period" value="1 Month" {% if selected_time_period == '1 Month' %}disabled{% endif %}>1달</button>
-                <button type="submit" name="period" value="3 Months" {% if selected_time_period == '3 Months' %}disabled{% endif %}>3달</button>
-                <button type="submit" name="period" value="6 Months" {% if selected_time_period == '6 Months' %}disabled{% endif %}>6달</button>
-                <button type="submit" name="period" value="1 Year" {% if selected_time_period == '1 Year' %}disabled{% endif %}>1년</button>
-            </form>
-        </div>
+        
     </div>
+    
+<!-- </div> -->
+<script>
+    //트리맵 배경색깔
+    const targetSurface = 'M30,0L1189,0L1189,780L30,780Z';
+    const surfaces = document.querySelectorAll('path.surface');
+
+    // 색상을 설정하는 함수
+    function setSurfaceColor() {
+        surfaces.forEach(surface => {
+            if (surface.getAttribute('d') === targetSurface) {
+                surface.style.fill = 'rgba(0,0,0,0)';  // 원하는 색으로 변경
+            }
+        });
+    }
+
+    // MutationObserver 설정
+    const observer = new MutationObserver(setSurfaceColor);
+
+    // 관찰할 대상 설정
+    surfaces.forEach(surface => {
+        observer.observe(surface, { attributes: true, childList: false, subtree: false });
+    });
+
+    // 초기 색상 설정
+    setSurfaceColor();
+</script>
 {% endblock %}

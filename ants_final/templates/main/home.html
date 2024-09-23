@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load humanize %} <!-- 숫자에 , 표시 -->
 
 {% block title %}ANTS{% endblock %}
 
@@ -9,9 +10,9 @@
     <div class="row justify-content-center" style="margin: 2rem;">
         <!-- KOSPI 그래프 -->
         <div class="col-md-6 text-center">
-            <div class="card border-left-primary py-2" style="justify-content: center; width: 90%;">
+            <div class="card border-left-primary py-2" style="justify-content: center; width: 93%; height: 10rem;">
                 <div class="basket">
-                    <div class="basket-in1 kos">
+                    <div class="basket-in1 kos nowrap">
                         <p><span style="font-size: 16px;">KOSPI 코스피</span></p>
                         <p><span style="font-size: 25px;">{{ KOSPI_CurrentPoint }}</span><br>
                         {% if KOSPI_UpDownPoint|stringformat:"d" < 0 %}
@@ -21,8 +22,8 @@
                             <span>{{ KOSPI_UpDownPoint }}</span>
                             <span>({{ KOSPI_UpDownRate }}%)</span></p>
                         {% else %}
-                        <span style="color: red;">{{ KOSPI_UpDownPoint }}</span>
-                        <span style="color: red;">(+{{ KOSPI_UpDownRate }}%)</span></p>
+                            <span style="color: red;">{{ KOSPI_UpDownPoint }}</span>
+                            <span style="color: red;">(+{{ KOSPI_UpDownRate }}%)</span></p>
                         {% endif %}
                     </div>
                     <div class="basket-in2">
@@ -34,9 +35,9 @@
 
         <!-- KOSDAQ 그래프 -->
         <div class="col-md-6 text-center">
-            <div class="card border-left-primary py-2" style="justify-content: center; width: 90%;">
+            <div class="card border-left-primary py-2" style="justify-content: center; width: 93%; height: 10rem;">
                 <div class="basket">
-                    <div class="basket-in1 kos">
+                    <div class="basket-in1 kos nowrap">
                         <p><span style="font-size: 16px; margin-top: 10px;">KOSDAQ 코스닥</span></p>
                         <p><span style="font-size: 25px;">{{ KOSDAQ_CurrentPoint }}</span><br>
                         {% if KOSDAQ_UpDownPoint|stringformat:"d" < 0 %}
@@ -60,8 +61,8 @@
     </div>
 </div>
 
-<div class='container mt-3'>
-    <h1>급상승&급하락</h1>
+<div class='container mt-3' style="font-family: NanumR; padding-inline: 4rem;">
+    <h3>이슈 종목</h3>
     <div class="row">
         <div class="col-8">
             <form method="get" action="">
@@ -76,25 +77,25 @@
                 <thead>
                     <tr>
                         <th>순위</th> 
-                        <th>종목</th>
-                        <th>현재가</th>
-                        <th>등락률</th>
+                        <th style="text-align: left;">종목</th>
+                        <th style="text-align: right;">현재가</th>
+                        <th style="text-align: right;">등락률</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for stock in stocks %}
-                    <tr>
+                    <tr style="border-bottom: 1.8px solid rgb(167, 167, 167) !important; cursor: pointer;">
                         <td>{{ forloop.counter }}</td> <!-- 순위를 따로 표시 -->
-                        <td>
+                        <td style="text-align: left;">
                             <!-- 종목명을 클릭할 수 있는 링크로 변환 -->
                             <a href="{% url 'stock' stock.stock_code %}">{{ stock.name }}</a>
                         </td>
-                        <td>{{ stock.current_price }}원</td>
-                        <td>
+                        <td style="text-align: right;">{{ stock.current_price|intcomma }}</td>
+                        <td style="text-align: right;">
                             {% if stock.UpDownRate > 0 %} 
-                                <span class="text-danger">+{{ stock.UpDownPoint }}원 ({{ stock.UpDownRate }}%)</span>
+                                <span class="text-danger">+{{ stock.UpDownPoint|intcomma }} ({{ stock.UpDownRate }}%)</span>
                             {% else %}
-                                <span class="text-primary">{{ stock.UpDownPoint }}원 ({{ stock.UpDownRate }}%)</span>
+                                <span class="text-primary">{{ stock.UpDownPoint|intcomma }} ({{ stock.UpDownRate }}%)</span>
                             {% endif %}
                         </td>
                     </tr>
@@ -110,26 +111,27 @@
 </div>
 
 
-<div class="container mt-3">
-    <h1>상위 3개의 섹터</h1>
+<div class="container mt-3 py-4" style="font-family: NanumR; justify-content: center; padding-inline: 4rem;">
+    <h3>급상승 카테고리</h3>
     <div class="row">
         <!-- 섹터 리스트 -->
-        <div class="col-6">
-            <div class="container">
-                <ul class="list-group">
-                    {% if top_sectors %}  <!-- sector_avg_list 대신 top_sectors로 수정 -->
-                        {% for sector in top_sectors %}  <!-- 반복문도 top_sectors로 수정 -->
-                        <li class="list-group-item d-flex align-items-center">
-                            <!-- 이미지 클릭시 자바스크립트 함수 호출 -->
+        <div style="padding: 0; width: 400px; flex: 0 0 20%; max-width: 20%;">
+            <div class="container" style="padding: 0;">
+                <ul class="list-group index-stickers">
+                    {% if top_sectors %}
+                        {% for sector in top_sectors %}
+                        <div class="d-flex align-items-center py-2 sticker nowrap
+                        {% if forloop.counter == 1 %}yellow{% elif forloop.counter == 2 %}pink{% elif forloop.counter == 3 %}green{% elif forloop.counter == 4 %}blue{% else %}gray{% endif %}"
+                        data-sector="{{ sector.sector }}"
+                        onclick="loadSectorDetails('{{ sector.sector }}', 
+                            '{% if forloop.counter == 1 %}rgb(249, 232, 139){% elif forloop.counter == 2 %}rgb(242, 166, 200){% elif forloop.counter == 3 %}rgb(168, 230, 207){% elif forloop.counter == 4 %}rgb(164, 200, 225){% else %}rgb(211, 211, 211){% endif %}')">
                             <img src="{% static 'images/icon/'|add:sector.image %}" 
-                                 class="sector-icon-size mr-3" 
-                                 alt="{{ sector.sector }}" 
-                                 onclick="loadSectorDetails('{{ sector.sector }}')">
-                            <div class="d-flex justify-content-between w-100">
+                                class="sector-icon-size mr-3"
+                                alt="{{ sector.sector }}">
+                            <div class="d-flex w-50">
                                 <span>{{ forloop.counter }}위: {{ sector.sector }}</span>
-                                <span>{{ sector.avg_updownrate }}%</span>
                             </div>
-                        </li>
+                        </div>
                         {% endfor %}
                     {% else %}
                         <li class="list-group-item">데이터가 안나온다.</li>
@@ -139,9 +141,9 @@
         </div>
 
         <!-- 오른쪽에 데이터를 표시할 영역 -->
-        <div class="col-6">
-            <h3>섹터 세부 정보</h3>
-            <div id="sector-details">
+        <div class="col-9" style="padding: 0;">
+            <!-- <h3>섹터 세부 정보</h3> -->
+            <div id="sector-details" class="note-style">
                 <p>섹터 이미지를 클릭하면 세부 정보가 여기에 표시됩니다.</p>
             </div>
         </div>
@@ -150,8 +152,6 @@
 
 <!-- Static 파일 로드 -->
 <script src="{% static 'js/sectorDetails.js' %}"></script>
-
-
 
 
 {% endblock %}

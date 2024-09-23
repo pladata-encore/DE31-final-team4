@@ -181,101 +181,6 @@ from stocks.models import Market
 from datetime import datetime
 import pandas as pd
 
-# 그래프를 생성하고 base64로 인코딩하는 함수
-# def add_graphs():
-#     # 오늘 날짜의 시작 시간과 끝 시간 설정 (오전 9시 ~ 오후 4시)
-#     today_start = timezone.now().replace(hour=9, minute=0, second=0, microsecond=0)
-#     today_end = timezone.now().replace(hour=16, minute=0, second=0, microsecond=0)
-
-#     # KOSPI 및 KOSDAQ 데이터 중 오늘 날짜의 데이터만 가져옴
-#     kospi_data = Market.objects.filter(StockName="KOSPI", price_time__range=[today_start, today_end])
-#     kosdaq_data = Market.objects.filter(StockName="KOSDAQ", price_time__range=[today_start, today_end])
-
-#     # 데이터가 없을 때 대비 (빈 그래프 생성)
-#     if not kospi_data.exists():
-#         kospi_data = Market.objects.filter(StockName="KOSPI").order_by('-price_time')[:10]
-#     if not kosdaq_data.exists():
-#         kosdaq_data = Market.objects.filter(StockName="KOSDAQ").order_by('-price_time')[:10]
-
-#     # 데이터를 pandas DataFrame으로 변환 (시간 순으로 정렬)
-#     kospi_df = pd.DataFrame(list(kospi_data.values('price_time', 'CurrentPoint')))
-#     kosdaq_df = pd.DataFrame(list(kosdaq_data.values('price_time', 'CurrentPoint')))
-
-#     # 쉼표 제거 후 숫자로 변환
-#     kospi_df['CurrentPoint'] = kospi_df['CurrentPoint'].str.replace(',', '')
-#     kospi_df['CurrentPoint'] = pd.to_numeric(kospi_df['CurrentPoint'], errors='coerce')
-
-#     kosdaq_df['CurrentPoint'] = kosdaq_df['CurrentPoint'].str.replace(',', '')
-#     kosdaq_df['CurrentPoint'] = pd.to_numeric(kosdaq_df['CurrentPoint'], errors='coerce')
-
-#     # 선형 보간 적용 (결측값을 선형으로 보간)
-#     kospi_df['CurrentPoint'] = kospi_df['CurrentPoint'].interpolate(method='linear')
-#     kosdaq_df['CurrentPoint'] = kosdaq_df['CurrentPoint'].interpolate(method='linear')
-
-#     kospi_df['price_time'] = pd.to_datetime(kospi_df['price_time'])
-#     kosdaq_df['price_time'] = pd.to_datetime(kosdaq_df['price_time'])
-
-#     kospi_df = kospi_df.sort_values(by='price_time')
-#     kosdaq_df = kosdaq_df.sort_values(by='price_time')
-
-#     # KOSPI 그래프 생성
-#     fig1, ax1 = plt.subplots(figsize=(8, 6))
-#     ax1.plot(kospi_df['price_time'], kospi_df['CurrentPoint'], label="KOSPI", color="blue")
-#     ax1.set_title("KOSPI (Today)")
-#     ax1.xaxis.set_visible(True)  # 시간 축 표시
-#     ax1.yaxis.set_visible(True)  # 값 축 표시
-#     ax1.set_xlabel("Time")  # X축 레이블 설정
-#     ax1.set_ylabel("CurrentPoint")  # Y축 레이블 설정
-
-#     # KOSDAQ 그래프 생성
-#     fig2, ax2 = plt.subplots(figsize=(8, 6))
-#     ax2.plot(kosdaq_df['price_time'], kosdaq_df['CurrentPoint'], label="KOSDAQ", color="green")
-#     ax2.set_title("KOSDAQ (Today)")
-#     ax2.xaxis.set_visible(True)  # 시간 축 표시
-#     ax2.yaxis.set_visible(True)  # 값 축 표시
-#     ax2.set_xlabel("Time")  # X축 레이블 설정
-#     ax2.set_ylabel("CurrentPoint")  # Y축 레이블 설정
-
-#     # KOSPI 그래프를 base64로 인코딩
-#     buffer1 = BytesIO()
-#     fig1.savefig(buffer1, format="png")
-#     buffer1.seek(0)
-#     image_png1 = buffer1.getvalue()
-#     buffer1.close()
-#     graphic1 = base64.b64encode(image_png1).decode('utf-8')
-
-#     # KOSDAQ 그래프를 base64로 인코딩
-#     buffer2 = BytesIO()
-#     fig2.savefig(buffer2, format="png")
-#     buffer2.seek(0)
-#     image_png2 = buffer2.getvalue()
-#     buffer2.close()
-#     graphic2 = base64.b64encode(image_png2).decode('utf-8')
-
-#     return graphic1, graphic2
-
-# def home(request):
-
-#     # 그래프 데이터 생성
-#     graphic1, graphic2 = add_graphs()
-
-#     # 가장 최근의 KOSPI 및 KOSDAQ 데이터 가져오기
-#     kospi = Market.objects.filter(StockName='KOSPI').order_by('-price_time').first()
-#     kosdaq = Market.objects.filter(StockName='KOSDAQ').order_by('-price_time').first()
-
-#     # 템플릿에 전달할 값 설정
-#     context = {
-#         'graphic1': graphic1,
-#         'graphic2': graphic2,
-#         'KOSPI_UpDownPoint': kospi.UpDownPoint if kospi else 'N/A',
-#         'KOSPI_UpDownRate': kospi.UpDownRate if kospi else 'N/A',
-#         'KOSDAQ_UpDownPoint': kosdaq.UpDownPoint if kosdaq else 'N/A',
-#         'KOSDAQ_UpDownRate': kosdaq.UpDownRate if kosdaq else 'N/A',
-#     }
-
-#     # 템플릿 렌더링
-#     return render(request, 'main/home.html', context)
-
 import matplotlib.pyplot as plt
 import pandas as pd
 import base64
@@ -400,9 +305,9 @@ def home(request):
     type_choice = request.GET.get('type', '급상승')  # 기본값은 'rising'
     
     if type_choice == '급상승':
-        stocks = RealTime.objects.filter(price_time=latest_time, UpDownPoint__gt=0).order_by('-UpDownRate')[:10]  # 급상승 순서
+        stocks = RealTime.objects.filter(price_time=latest_time, UpDownPoint__gt=0).order_by('-UpDownRate')[:7]  # 급상승 순서
     else:
-        stocks = RealTime.objects.filter(price_time=latest_time, UpDownPoint__lt=0).order_by('UpDownRate')[:10]  # 급하락 순서
+        stocks = RealTime.objects.filter(price_time=latest_time, UpDownPoint__lt=0).order_by('UpDownRate')[:7]  # 급하락 순서
 
     # 상위 3개의 섹터 데이터를 가져옴
     top_sectors = get_top_sectors()
@@ -545,57 +450,59 @@ def treemap_view(request):
 
     # 데이터 로드
     df = load_stock_data(selected_market, selected_time_period)
+    df['market_cap_억'] = df['market_cap'] / 1e8 # 시가총액 억단위로 보이게 설정중
 
     # Plotly 트리맵 생성
     fig = px.treemap(
         df,
         path=['sector', 'name'],  # 섹터와 이름 계층 구조
-        values='market_cap',  # 시가총액을 크기로 설정
+        values='market_cap_억',  # 시가총액을 크기로 설정
         color='Change Rate (%)',  # 변동률에 따라 색상 설정
-        color_continuous_scale=['blue', '#DEDEDE', 'red'],  # 파랑-흰색-빨강
+        color_continuous_scale=['blue', '#FAFAFA', 'red'],  # 파랑-흰색-빨강
         color_continuous_midpoint=0,  # 0을 기준으로 색상을 나눔
-        custom_data=['name', 'Change Rate (%)'],  # 추가 데이터로 변동률을 제공
-        # branchvalues="remainder"  # 최상위 계층을 나머지 값으로 설정하여 검정 배경을 없앰
-        
+        custom_data=['name', 'Change Rate (%)','market_cap_억'],  # 추가 데이터로 변동률을 제공
     )
-    
+
+    fig.add_annotation(
+        x=0.99,  # X축 위치 (오른쪽)
+        y=0.99,  # Y축 위치 (상단)
+        text="(단위: 억 원)",  # 표시할 텍스트
+        showarrow=False,  # 화살표 숨기기
+        font=dict(size=15, color="black", family="NanumR"),  # 글씨 크기와 색상 설정
+        xanchor="right",  # 오른쪽 정렬
+        yanchor="top",  # 위쪽 정렬
+    )
     fig.update_traces(
         textposition='middle center',
         # hovertemplate에서 %{customdata[0]} 부분을 제거하여 불필요한 항목을 숨김
-        hovertemplate='<b>%{label}</b><br>변동률: %{customdata[1]:.2f}%<br>시가총액: %{value:,.0f} 원<br>',
+        # hovertemplate='<b>%{label}</b><br>변동률: %{customdata[1]:.2f}%<br>시가총액: %{value:,.0f} 원<br>',
+        hovertemplate='<b>%{label}</b><br>변동률: %{customdata[1]:.2f}%<br>시가총액: %{customdata[2]:,.0f}<br>',
         texttemplate='<b>%{label}<br>%{customdata[1]:.2f}%</b>',  # 트리맵 내에서도 변동률 표시
-        marker=dict(line=dict(width=0.2)), 
-        textfont=dict(size=15),  # 글씨 크기
+        marker=dict(line=dict(width=0.2, color='rgb(255, 255, 255)')), 
+        textfont=dict(size=15, family="NanumR"),  # 글씨 크기
         hoverlabel=dict(
-            bgcolor='rgba(255,255,255,1)',  # 배경 흰색 설정
-            font=dict(size=16)  # 툴팁 글꼴 크기와 스타일 설정
+            font=dict(size=16, family="NanumR"),
         ),
-
     )
-    
-    fig.update_traces(
-        selector=dict(level=0),
-        textinfo='none',
-        root_color="white"  # 최상위 검정 배경을 흰색으로 설정
-    )
-
     
         # 레이아웃을 업데이트하여 그래프가 화면을 꽉 차게 설정
     fig.update_layout(
             coloraxis_colorbar=dict(
-            title="Change Rate (%)",
-            tickfont=dict(size=14, color='white'),  # 색상 스케일의 글꼴 크기와 색상 설정
-            titlefont=dict(size=16, color='white')  # 색상 스케일 제목의 글꼴 설정
+            title="변동률(%)",
+            tickfont=dict(size=14, color='black', family="NanumR"),
+            titlefont=dict(size=16, color='black', family="NanumR"),
+            len=0.4, 
+            thickness=20,
+            yanchor="top",
+            y=1,
         ),
         margin=dict(t=0, l=30, r=0, b=20),
         height=800,  
-        width=1500, 
-        paper_bgcolor='#444444',  # 종이 배경을 어둡게 설정
-        plot_bgcolor='#444444',  # 그래프 배경을 어둡게 설정
-        # uniformtext=dict(minsize=10, mode='show')  # 섹터 텍스트를 작게 표시
-
-
+        width=1300,
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
     )
+
 
 
     # 그래프를 HTML로 변환
@@ -608,30 +515,6 @@ def treemap_view(request):
         'selected_time_period': selected_time_period
     })
 
-
-
-############################################
-#streamlit용 view였음..
-# import subprocess
-# import os
-# from django.http import HttpResponseRedirect
-
-# # Django의 views.py에서 Streamlit 실행
-# def treemap_view(request):
-#     # Streamlit이 이미 실행 중인지 확인하는 방법은 생략하고,
-#     # 매번 요청이 들어올 때 Streamlit을 실행하도록 처리.
-#     try:
-#         # Streamlit이 이미 실행 중인지 체크하고, 실행 중이 아니라면 실행
-#         result = subprocess.run(['lsof', '-i', ':8501'], stdout=subprocess.PIPE)
-#         if 'Streamlit' not in str(result.stdout):
-#             # Streamlit이 실행 중이지 않다면, 백그라운드에서 Streamlit을 실행
-#             subprocess.Popen(['streamlit', 'run', 'your_app.py', '--server.port', '8501'], 
-#                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-#     except Exception as e:
-#         print(f"Error launching Streamlit: {e}")
-
-#     # Streamlit 앱으로 리디렉션
-#     return HttpResponseRedirect('http://localhost:8501')
 
 # 관심종목
 from django.shortcuts import render, redirect, get_object_or_404
@@ -683,7 +566,6 @@ def my_favorite_list(request):
 
     
     if not user_stocks.exists():
-    # 빈 데이터를 처리하는 로직을 추가하거나, 필요한 경우 예외처리
         context = {
             'mbti_stock': stock_infos_list,
             'mbti': mbti_value,
@@ -757,13 +639,15 @@ def my_favorite_list(request):
     
 
     # 테스트 결과 확인용
-    test_results = TestResult.objects.filter(user=request.user).first()
+    test_result1 = TestResult.objects.filter(user=request.user).order_by('-id').first()
+    test_result2 = TestResult2.objects.filter(user=request.user).order_by('-id').first()
 
     context = {
         'mbti_stock': stock_infos_list,
         'mbti': mbti_value,
         'stock_info': stock_info_list,
-        'test_results': test_results,
+        'test_result1': test_result1,
+        'test_result2': test_result2,
         'my_list' : my_list,
     }
 
@@ -771,7 +655,7 @@ def my_favorite_list(request):
 
 
 from django.shortcuts import redirect, get_object_or_404
-from .models import UserStock
+from .models import UserStock, DividendVolatility, Mbti, News
 
 @login_required
 def remove_stock(request, stock_code):
@@ -786,7 +670,7 @@ def remove_stock(request, stock_code):
 
 from stocks.models import OnceTime
 import json
-from .models import DividendVolatility, Mbti, News
+
 # stock_detail_page 브랜치에서 생성
 # localhost:8000/stock으로 들어가면 해당 페이지 리턴
 def stock_detail_page(request, stock_code="005930"):
@@ -831,6 +715,17 @@ def stock_detail_page(request, stock_code="005930"):
     except:
         is_favorite = False
     favorite_icon = 'images/filled_star.png' if is_favorite else 'images/empty_star.png'
+
+    # Real_time 종목 현재가
+
+    latest_stock = RealTime.objects.filter(stock_code=stock_code).order_by('-id').first()
+    stock_info ={
+        'current_price': latest_stock.current_price,
+        'UpDownRate': latest_stock.UpDownRate,
+        'UpDownPoint': latest_stock.UpDownPoint,
+        'id': latest_stock.id,
+    }
+    
     context = {
         'stock_code': stock_code,
         'dates': json.dumps(dates),  # JSON으로 직렬화
@@ -850,6 +745,7 @@ def stock_detail_page(request, stock_code="005930"):
         'news_list': news_list,
         'is_favorite': is_favorite,
         'favorite_icon': favorite_icon,
+        'stock_info': stock_info,
     }
     return render(request, 'main/stock_detail.html', context)
 
@@ -900,7 +796,7 @@ def get_top_sectors():
         ) AS recent_data
         GROUP BY sector
         ORDER BY avg_updownrate DESC
-        LIMIT 3;
+        LIMIT 5;
     '''
 
     with connection.cursor() as cursor:
@@ -968,7 +864,6 @@ def get_sector_image(sector_name):
     return sector_image_map.get(sector_name, "default_icon.png")
 
 from django.http import JsonResponse
-from stocks.models import RealTime
 
 # 특정 섹터에 대한 최근 10개의 데이터를 반환하는 함수
 def get_sector_details(request, sector_name):

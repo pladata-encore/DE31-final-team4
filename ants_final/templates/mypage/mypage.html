@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
+{% load humanize %} <!-- 숫자에 , 표시 -->
 
-<!DOCTYPE html>
-<html lang="ko">
 {% load static %}
     
 {% block title %}ANTS-MyPage{% endblock %}
@@ -10,11 +9,11 @@
 <div class="mypage">
     <div class="container-leri">
         <div class="left">
-            <h1 class="title">My 관심종목</h1>
+            <h2 class="title">My 관심종목</h2>
             <div class="container-fvl">
                 {% if my_list %}
                 <table class="table-stockinfo">
-                    <thead style="font-size: 20px;">
+                    <thead>
                         <tr style="border-bottom: 2px solid black;">
                             <th style="text-align: left;">종목명</th>
                             <th style="text-align: center;">MBTI</th>
@@ -23,7 +22,7 @@
                             <th style="text-align: center;">관심</th>
                         </tr>
                     </thead>
-                    <tbody style="font-size: 15px;">
+                    <tbody>
                         {% for stock in stock_info %}
                         <tr style="border-bottom: 1.8px solid rgb(100, 100, 100);">
                             <td style="text-align: left;">{{ stock.name }}</td>
@@ -32,14 +31,14 @@
                             {% else %}
                                 <td>정보없음</td>
                             {% endif %}
-                            <td style="text-align: right;">{{ stock.current_price }}원</td>
+                            <td style="text-align: right;">{{ stock.current_price|intcomma }}</td>
                             <td style="text-align: right;">
                             {% if stock.UpDownRate > 0 %}
-                                <span style="color: red;">{{ stock.UpDownPoint }} ({{ stock.UpDownRate }}%)</span>
+                                <span style="color: red;">{{ stock.UpDownPoint|intcomma }} ({{ stock.UpDownRate }}%)</span>
                             {% elif stock.UpDownRate == 0 %}
-                                <span>{{ stock.UpDownPoint }} ({{ stock.UpDownRate }}%)</span>
+                                <span>{{ stock.UpDownPoint|intcomma }} ({{ stock.UpDownRate }}%)</span>
                             {% else %}
-                                <span style="color: blue;">{{ stock.UpDownPoint }} ({{ stock.UpDownRate }}%)</span>
+                                <span style="color: blue;">{{ stock.UpDownPoint|intcomma }} ({{ stock.UpDownRate }}%)</span>
                             {% endif %}
                             </td>
                             <td>
@@ -58,21 +57,29 @@
         </div>
         <div class="right">
             <div class="small-box" style="background-color: rgb(237, 255, 202); font-size: 20px;">
-                {% if test_results.result1 %}
-                    <p> {{ request.user.username }}님은 {{ test_results.result1 }} 이시군요! </p>
+                {% if test_result1.result1 %}
+                    <h3> {{ request.user.username }}님은 {{ test_result1.result1 }}이시네요! </h3>
+                    <p>{{ test_result1.result2 }}</p>
+                    <a href="{% url 'test_option_1' %}" class="test-button">
+                        <p>테스트 다시하기</p>
+                    </a>
                 {% else %}
                     <p> {{ request.user.username }}님은 아직 테스트 전이시네요! </p>
-                    <a href="{% url 'test_option_1' %}" style="background-color: black; color: white; text-align: center; border-radius: 15px; padding: 10px; padding-bottom: 0; font-size: 25px;">
+                    <a href="{% url 'test_option_1' %}" class="test-button">
                         <p>나의 투자성향은?<br><span style="font-weight: bold !important;">테스트 하러 가기 >></span></p>
                     </a>
                 {% endif %}
             </div>
             <div class="small-box" style="background-color: rgb(191, 219, 186); font-size: 20px;">
-                {% if test_results.result2 %}
-                    <p> {{ request.user.username }}님은 {{ test_results.result2 }} 이시군요! </p>
+                {% if test_result2.result1 %}
+                    <h3> {{ request.user.username }}님은 {{ test_result2.result1 }}이시네요! </h3>
+                    <p>{{ test_result2.result2 }}</p>
+                    <a href="{% url 'test_option_2' %}" class="test-button">
+                        <p>테스트 다시하기</p>
+                    </a>
                 {% else %}
                     <p> {{ request.user.username }}님은 아직 테스트 전이시네요! </p>
-                    <a href="{% url 'test_option_2' %}" style="background-color: black; color: white; text-align: center; border-radius: 15px; padding: 10px; padding-bottom: 0; font-size: 25px;">
+                    <a href="{% url 'test_option_2' %}" class="test-button">
                         <p>나의 투자지식은 어느정도일까? <br><span style="font-weight: bold !important; ">테스트 하러 가기 >></span></p>
                     </a>
                 {% endif %}
@@ -83,12 +90,12 @@
     <div class="mbti-stock-rec">
         {% if my_list|length >= 5 %}
         <div style="margin: 8px;">
-            <p>{{ request.user.username }}님이 선호하시는 기업의 mbti는 {{ mbti }}입니다!</p>
+            <h5>{{ request.user.username }}님이 가장 선호하시는 MBTI는 <strong>{{ mbti }}</strong>네요.</h5>
             <p>{{ mbti }}의 기업은 ~~ 기능이 있어요 ^^~</p>
         </div>
             <div class="mbti-stock">
                 <table class="table-mbtistock">
-                    <thead style="font-size: 20px;">
+                    <thead>
                         <tr style="border-bottom: 2px solid black;">
                             <th style="text-align: left;">종목명</th>
                             <th style="text-align: right;">현재가</th>
@@ -96,18 +103,18 @@
                             <th style="text-align: center;">관심</th>
                         </tr>
                     </thead>
-                    <tbody style="font-size: 15px;">
+                    <tbody>
                         {% for stocks in mbti_stock|slice:":5" %}
                         <tr style="border-bottom: 1.8px solid rgb(100, 100, 100);">
                             <td style="text-align: left;">{{ stocks.name }}</td>
-                            <td style="text-align: right;">{{ stocks.current_price }}원</td>
+                            <td style="text-align: right;">{{ stocks.current_price|intcomma }}</td>
                             <td style="text-align: right;">
                             {% if stocks.UpDownRate > 0 %}
-                                <span style="color: red;">{{ stocks.UpDownPoint }} ({{ stocks.UpDownRate }}%)</span>
+                                <span style="color: red;">{{ stocks.UpDownPoint|intcomma }} ({{ stocks.UpDownRate }}%)</span>
                             {% elif stocks.UpDownRate == 0 %}
-                                <span>{{ stocks.UpDownPoint }} ({{ stocks.UpDownRate }}%)</span>
+                                <span>{{ stocks.UpDownPoint|intcomma }} ({{ stocks.UpDownRate }}%)</span>
                             {% else %}
-                                <span style="color: blue;">{{ stocks.UpDownPoint }} ({{ stocks.UpDownRate }}%)</span>
+                                <span style="color: blue;">{{ stocks.UpDownPoint|intcomma }} ({{ stocks.UpDownRate }}%)</span>
                             {% endif %}
                             </td>
                             <td>
@@ -126,7 +133,7 @@
                     </tbody>
                 </table>
                 <table class="table-mbtistock">
-                    <thead style="font-size: 20px;">
+                    <thead>
                         <tr style="border-bottom: 2px solid black;">
                             <th style="text-align: left;">종목명</th>
                             <th style="text-align: right;">현재가</th>
@@ -134,18 +141,18 @@
                             <th style="text-align: center;">관심</th>
                         </tr>
                     </thead>
-                    <tbody style="font-size: 15px;">
+                    <tbody>
                         {% for stocks in mbti_stock|slice:"5:" %}
                         <tr style="border-bottom: 1.8px solid rgb(100, 100, 100);">
                             <td style="text-align: left;">{{ stocks.name }}</td>
-                            <td style="text-align: right;">{{ stocks.current_price }}원</td>
+                            <td style="text-align: right;">{{ stocks.current_price|intcomma }}</td>
                             <td style="text-align: right;">
                             {% if stocks.UpDownRate > 0 %}
-                                <span style="color: red;">{{ stocks.UpDownPoint }} ({{ stocks.UpDownRate }}%)</span>
+                                <span style="color: red;">{{ stocks.UpDownPoint|intcomma }} ({{ stocks.UpDownRate }}%)</span>
                             {% elif stocks.UpDownRate == 0 %}
-                                <span>{{ stocks.UpDownPoint }} ({{ stocks.UpDownRate }}%)</span>
+                                <span>{{ stocks.UpDownPoint|intcomma }} ({{ stocks.UpDownRate }}%)</span>
                             {% else %}
-                                <span style="color: blue;">{{ stocks.UpDownPoint }} ({{ stocks.UpDownRate }}%)</span>
+                                <span style="color: blue;">{{ stocks.UpDownPoint|intcomma }} ({{ stocks.UpDownRate }}%)</span>
                             {% endif %}
                             </td>
                             <td>

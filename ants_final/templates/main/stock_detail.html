@@ -1,28 +1,40 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load humanize %} <!-- 숫자에 , 표시 -->
 
 {% block title %}ANTS{% endblock %}
 
 {% block content %}
-{% comment %} <div class="container">
-    <form method="GET" action="{% url 'stock_search' %}">
-        <input type="text" name="stock_query" placeholder="종목 코드 또는 종목명을 입력하세요" required>
-        <button type="submit" class="btn btn-dark">검색</button>
-    </form>
-
-</div> {% endcomment %}
-
-<!-- 차트, 버튼 그룹, 종목 정보를 나란히 배치 -->
-<div class="container">
-    <div class="row justify-content-center">
-        <!-- 차트 -->
-        <div class="col-lg-6 p-2">
-            <h2 class="text-center"><strong>{{ name }}</strong>({{ stock_code }})
-                <img id="favorite-icon" src="{% static favorite_icon %}" alt="Favorite Icon" style="width: 30px; height: 30px; cursor: pointer;">
-            </h2>
-            <canvas id="stockChart"></canvas>
+</div>
+<div class="container" style="font-family: NanumR; margin-top: 3rem;">
+    <div class="row">
+        <h5 style="margin-left: 2rem;">{{ name }}({{ stock_code }}) 
+            <img id="favorite-icon" 
+                src="{% static favorite_icon %}" 
+                alt="Favorite Icon" 
+                style="width: 20px; height: 20px; cursor: pointer; margin: .5rem;">
+        </h5>
+        <div style="display: inline-block;">
+            <h3 style="display: inline; margin-left: 2rem; font-family: NanumB;">
+                {{ stock_info.current_price|intcomma }} 
+            </h3>
+            {% if stock_info.UpDownPoint > 0 %}
+                <h5 style="display: inline; color: red; font-family: NanumB;">
+                    {{ stock_info.UpDownPoint|intcomma }} ({{ stock_info.UpDownRate }}%)
+                </h5>
+            {% elif stock_info.UpDownPoint < 0 %}
+                <h5 style="display: inline; color: blue; font-family: NanumB;">
+                    {{ stock_info.UpDownPoint|intcomma }} ({{ stock_info.UpDownRate }}%)
+                </h5>
+            {% else %}
+                <h5 style="display: inline; color: block; font-family: NanumB;">
+                    {{ stock_info.UpDownPoint|intcomma }} ({{ stock_info.UpDownRate }}%)
+                </h5>
+            {% endif %}
         </div>
-
+        <div class="col-lg-7 p-3 justify-content-center">
+            <canvas id="stockChart"></canvas> <!-- 차트를 그릴 캔버스 -->
+        </div>
         <!-- 버튼 그룹을 차트 오른쪽에 세로로 배치 -->
         <div class="col-lg-1 p-3">
             <div class="btn-group-vertical" role="group" aria-label="X축 범위 선택" id="rangeButtons" style="width: 100%;">
@@ -32,16 +44,83 @@
                 <button id="range10" class="btn btn-secondary" style="width: 100%; margin-bottom: 10px;">10년</button>
             </div>
         </div>
-
-        <!-- 주식 종목 정보를 버튼 오른쪽에 배치 -->
-        <div class="col-lg-4 p-2">
-            <h2 class="text-center">주식 종목 정보</h2>            
-            <p class="text-center">주식 MBTI: {{ mbti|default:"정보 없음" }}</p>
-            <p class="text-center">배당성: {{ dividend_stability }}</p>
-            <p class="text-center">변동성: {{ volatility }}</p>
-            <p class="text-center">전년도 배당률: {{ prev_dividend_rate }}</p>
-            <p class="text-center">예측 배당률: {{ pred_dividend_rate }}</p>
+        <div class="col-lg-4 position-relative" style="display: flex; font-size: 20px; text-align: left; padding: 1rem; flex-direction: column;">
+            <h3>주식 정보</h3>
+            <div style="display: inline-block;">
+                ANTS MBTI : 
+                {% if mbti %}
+                    {{ mbti }}
+                {% else %}
+                    정보 없음
+                {% endif %}
+                <div class="mb-3 position-relative" style="display: inline-block;">
+                    <img src="{% static 'images/questionmark.png' %}" alt="mbti 상세정보" width="13" height="13" 
+                         onmouseover="showInfoPopup1()" onmouseout="hideInfoPopup1()" style="opacity: 0.5;">
+                    <div id="infoPopup1" class="popup" style="display: none;">
+                        <div style="padding: 1.3rem; padding-bottom: .5rem;">
+                            <h6>ANTS MBTI</h6>
+                            <p>4가지의 기준을 바탕으로<br>주식 초보자도 기업을 이해하기 쉽게 만들었어요.</p>
+                        </div>
+                        <div style="padding: 1.3rem; padding-left: 0px; padding-top: 0;">
+                            <ul style="list-style-type: circle;">
+                                <li class="nowrap"><strong>C</strong>: Conservative vs. <strong>R</strong>: Risk-taker</li>
+                                <p class="nowrap">C는 해당 기업의 사업이 안정적으로 유지되고 있다는 의미에요.
+                                    <br>R은 기업이 사업에 적극적으로 투자하며 성장하고 있다는 의미에요.</p>
+                                <li class="nowrap"><strong>H</strong>: High Profitability vs. <strong>L</strong>: Low Profitability</li>
+                                <p class="nowrap">H는 기업이 높은 수익을 내고 있다는 의미에요.
+                                    <br>L은 기업이 낮은 수익을 내고 있다는 의미에요.
+                                    <br>새로운 사업을 시작했거나 사업을 위해 투자중일 수 있어요.</p>
+                                <li class="nowrap"><strong>G</strong>: Growth-oriented vs. <strong>V</strong>: Value-oriented</li>
+                                <p class="nowrap">G는 기업이 단기적으로 성장할 것으로 보이는 상태에요.
+                                    <br>V는 현재 시장가치는 높지 않지만 장기적으로 성장이 예상되는 상태에요.
+                                </p>
+                                <li class="nowrap"><strong>E</strong>: Extroverted vs. <strong>I</strong>: Introverted</li>
+                                <p class="nowrap">E는 기업의 자산이 높은 회전율을 가지고 있다는 의미에요.
+                                    <br>I는 기업의 자산이 낮은 회전율을 가지고 있다는 의미에요.
+                                    <br>보통 기업의 자산 회전율은 높을수록 좋다고 평가돼요.</p>
+                            </ul>
+                        </div>
+                    </div>
+                </div>  
+            </div>            
+            <div style="display: inline-block;">배당성 : {{ dividend_stability }}
+                <div class="mb-3 position-relative" style="display: inline-block;">
+                    <img src="{% static 'images/questionmark.png' %}" alt="배당성" width="13" height="13" 
+                         onmouseover="showInfoPopup2()" onmouseout="hideInfoPopup2()" style="opacity: 0.5;">
+                    <div id="infoPopup2" class="popup" style="display: none;">
+                        <div class="nowrap" style="padding: 1.3rem; padding-bottom: .5rem;">
+                            <h6>배당성</h6>
+                            <p>6년간의 배당률과 배당성향을 기준으로 3가지 등급인 A,B,C로 분류했어요.
+                                <br>배당성이 높은 A 기업은 안정적인 수익을 바탕으로 주주에게 배당을 지급해요.
+                                <br>고정적인 수입을 선호하는 투자자에게 적합해요.
+                                <br>반면 낮은 C 기업은 창출한 수익을 배당보다는 성장에 재투자해요.
+                                <br>시세차익을 얻고 싶은 투자자에게 적합해요.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="display: inline-block;">변동성 : {{ volatility }}
+                <div class="mb-3 position-relative" style="display: inline-block;">
+                    <img src="{% static 'images/questionmark.png' %}" alt="변동성" width="13" height="13" 
+                         onmouseover="showInfoPopup3()" onmouseout="hideInfoPopup3()" style="opacity: 0.5;">
+                    <div id="infoPopup3" class="popup" style="display: none;">
+                        <div class="nowrap" style="padding: 1.3rem; padding-bottom: .5rem;">
+                            <h6>변동성</h6>
+                            <p>52주 최고가, 최저가, 거래량 회전율, 시가총액 등을 고려하여 A,B 등급으로 분류했어요.
+                                <br>변동성이 높은 A 기업은 주가 등락폭이 큰 종목이에요.
+                                <br>단기로 높은 수익을 원하는 투자자에게 적합하지만, 리스크가 크기 때문에 주의가 필요해요.
+                                <br>낮은 B 기업은 주가 변동이 안정적인 편이에요.
+                                <br>장기 투자를 원하는 투자자에게 적합해요.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p>전년도 배당률 : {{ prev_dividend_rate }}</p>
+            <p>예측 배당률 : {{ pred_dividend_rate }}</p>
         </div>
+        
     </div>
 </div>
 
@@ -70,6 +149,37 @@
 <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial@0.2.1/dist/chartjs-chart-financial.min.js"></script>
 
 <script>
+    // MBTI 팝업
+    function showInfoPopup1() {
+        const popup = document.getElementById("infoPopup1");
+        popup.style.display = "block"; // 팝업 보이기
+    }
+
+    function hideInfoPopup1() {
+        const popup = document.getElementById("infoPopup1");
+        popup.style.display = "none"; // 팝업 숨기기
+    }
+
+    function showInfoPopup2() {
+        const popup = document.getElementById("infoPopup2");
+        popup.style.display = "block"; // 팝업 보이기
+    }
+
+    function hideInfoPopup2() {
+        const popup = document.getElementById("infoPopup2");
+        popup.style.display = "none"; // 팝업 숨기기
+    }
+    function showInfoPopup3() {
+        const popup = document.getElementById("infoPopup3");
+        popup.style.display = "block"; // 팝업 보이기
+    }
+
+    function hideInfoPopup3() {
+        const popup = document.getElementById("infoPopup3");
+        popup.style.display = "none"; // 팝업 숨기기
+    }
+
+
     // Django 템플릿에서 데이터를 받아옴
     const dates = {{ dates|safe }};  // 현재가의 날짜 배열
     const closingPrices = {{ closing_prices|safe }};  // 현재가 배열
@@ -377,6 +487,131 @@
             const years = parseInt(this.id.replace('range', ''));
             if (years === 0) {
                 fetchRealTimeData();  // 1일 버튼 클릭 시 실시간 데이터를 캔들차트로 업데이트
+            } else {
+                renderLineChart(years);  // 나머지 경우는 라인 차트로 업데이트
+            }
+            updateActiveButton(this);  // 클릭한 버튼을 활성화 상태로 업데이트
+        });
+    });
+
+    // 클릭한 버튼을 활성화 상태로 설정하는 함수
+    function updateActiveButton(clickedButton) {
+        rangeButtons.forEach(button => {
+            button.classList.remove('active', 'btn-primary');
+            button.classList.add('btn-secondary');
+        });
+
+        clickedButton.classList.remove('btn-secondary');
+        clickedButton.classList.add('active', 'btn-primary');
+    }
+
+    // 초기 차트 렌더링 (라인 차트로 10년 기간 보여줌)
+    renderLineChart(1);
+    let currentPage = 1;
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const newsWrapper = document.getElementById('newsWrapper');
+
+    function loadNews(page) {
+        fetch(`/load-news/?stock_code=${stock_code}&page=${page}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.news_list);  // 뉴스 리스트 데이터를 콘솔에 출력하여 확인
+                newsWrapper.innerHTML = '';  // 기존 뉴스 항목 삭제
+    
+                data.news_list.forEach(news => {
+                    const newsItem = document.createElement('div');
+                    newsItem.classList.add('news-item');
+    
+                    // pubDate가 undefined로 나오는 문제를 해결하기 위해 데이터 확인
+                    const formattedDate = news.pubDate ? news.pubDate.slice(0, 16) : '날짜 정보 없음';
+    
+                    newsItem.innerHTML = `
+                        <a href="${news.originallink}" style="color: black; text-decoration: none;" target="_blank">
+                            <h4>${news.title}</h4>
+                            <p>${news.description}</p>
+                        </a>
+                        <p>${formattedDate}</p>
+                    `;
+                    
+                    newsWrapper.appendChild(newsItem);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching news:', error);
+            });
+    }
+
+    prevBtn.addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            loadNews(currentPage);
+        }
+    });
+
+    nextBtn.addEventListener('click', () => {
+        currentPage++;
+        loadNews(currentPage);
+    });
+
+    // 관심 종목 추가/제거 기능
+    /* document.getElementById('favorite-icon').addEventListener('click', function() {
+        const stockCode = "{{ stock_code }}";
+        const isFavorite = this.getAttribute('src').includes('filled_star.png');
+
+        // 관심 종목에 있으면 제거, 없으면 추가
+        const url = isFavorite ? `/remove_stock/${stockCode}/` : `/add_favorite_list/${stockCode}/`;
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                if (isFavorite) {
+                    this.setAttribute('src', "{% static 'images/empty_star.png' %}");  // 비워진 별로 변경
+                } else {
+                    this.setAttribute('src', "{% static 'images/filled_star.png' %}");  // 채워진 별로 변경
+                }
+            } else {
+                console.error('Error processing request');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });*/
+    const isAuthenticated = "{{ user.is_authenticated|yesno:'true,false' }}";
+    document.getElementById('favorite-icon').addEventListener('click', function() {
+        const stockCode = "{{ stock_code }}";
+        const isFavorite = this.getAttribute('src').includes('filled_star.png');
+
+        // 로그인이 되어 있지 않으면 로그인 페이지로 리다이렉트
+        if (isAuthenticated === 'false') {
+            alert('로그인이 필요합니다.');
+            window.location.href = "{% url 'account_login' %}?next={{ request.path }}";
+            return;
+        }
+
+        // 관심 종목에 있으면 제거, 없으면 추가
+        const url = isFavorite ? `/remove_stock/${stockCode}/` : `/add_favorite_list/${stockCode}/`;
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                // 로그인 상태에서만 별표 상태 변경
+                if (isFavorite) {
+                    this.setAttribute('src', "{% static 'images/empty_star.png' %}");
+                } else {
+                    this.setAttribute('src', "{% static 'images/filled_star.png' %}");
+                }
             } else {
                 renderLineChart(years);  // 나머지 경우는 라인 차트로 업데이트
             }
