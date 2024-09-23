@@ -38,8 +38,8 @@
         <!-- 버튼 그룹을 차트 오른쪽에 세로로 배치 -->
         <div class="col-lg-1 p-3">
             <div class="btn-group-vertical" role="group" aria-label="X축 범위 선택" id="rangeButtons" style="width: 100%;">
-                <button id="range0" class="btn btn-secondary" style="width: 100%; margin-bottom: 10px;">1일</button>
-                <button id="range1" class="btn btn-primary active" style="width: 100%; margin-bottom: 10px;">1년</button>
+                <button id="range0" class="btn btn-primary active" style="width: 100%; margin-bottom: 10px;">1일</button>
+                <button id="range1" class="btn btn-secondary" style="width: 100%; margin-bottom: 10px;">1년</button>
                 <button id="range5" class="btn btn-secondary" style="width: 100%; margin-bottom: 10px;">5년</button>
                 <button id="range10" class="btn btn-secondary" style="width: 100%; margin-bottom: 10px;">10년</button>
             </div>
@@ -631,7 +631,7 @@
     }
 
     // 초기 차트 렌더링 (라인 차트로 10년 기간 보여줌)
-    renderLineChart(1);
+    fetchRealTimeData();
 </script>
 
 {% endblock %}

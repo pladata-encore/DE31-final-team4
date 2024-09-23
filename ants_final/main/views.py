@@ -674,25 +674,13 @@ import json
 # stock_detail_page 브랜치에서 생성
 # localhost:8000/stock으로 들어가면 해당 페이지 리턴
 def stock_detail_page(request, stock_code="005930"):
-    # 종목 코드를 이용해서 주식 정보를 DB에서 가져오는 코드(1일 외 기간)
-    stock_data = OnceTime.objects.filter(stock_code=stock_code).order_by('date')
     
-    #1일 차트에 사용할 RealTime 데이터 (1일 이외의 기간은 사용하지 않음)
+    # 1일 차트에 사용할 RealTime 데이터 (1일 이외의 기간은 사용하지 않음)
     real_time_data = RealTime.objects.filter(stock_code=stock_code).order_by('price_time')
-
-    dividend_data = get_object_or_404(DividendVolatility, stock_code=stock_code)
-    
-    # 주식 mbti 정보 가져오기
-    stock_mbti = get_object_or_404(Mbti, stock_code=stock_code)
-
-    # news 정보 가져오기
-    news_list = News.objects.filter(stock_code=stock_code).order_by('-pubDate')[:3]
-    
-    # 날짜 및 종가 데이터를 JSON 형태로 변환
-    dates = [str(x.date) for x in stock_data]
-    closing_prices = [x.closing_price for x in stock_data]
-    
-    # RealTime 데이터에서 캔들차트용 데이터
+    if not real_time_data.exists():
+        real_time_data = []  # 데이터가 없을 때 빈 리스트
+        # RealTime 데이터에서 캔들차트용 데이터
+        
     candle_data = [{
         'x': data.price_time.strftime('%Y-%m-%dT%H:%M:%SZ'),  # ISO 8601 형식으로 변환
         'o': data.opening_price,
@@ -700,15 +688,53 @@ def stock_detail_page(request, stock_code="005930"):
         'l': data.low_price,
         'c': data.current_price
     } for data in real_time_data]
+    
+    
+    # 종목 코드를 이용해서 주식 정보를 DB에서 가져오는 코드 (1일 외 기간)
+    stock_data = OnceTime.objects.filter(stock_code=stock_code).order_by('date')
+    
+    if not stock_data.exists():
+        stock_data = []  # 데이터가 없을 때 빈 리스트
+     
 
     
+    # 종목 이름을 RealTime 데이터에서 가져옴 (없으면 기본값 설정)
+    first_real_time_entry = real_time_data.first()
+    name = first_real_time_entry.name if first_real_time_entry else "N/A"  # 데이터가 없으면 "N/A"
+
+
+
+    # 배당 변동성 정보 (없을 경우 기본값 설정)
+    dividend_data = DividendVolatility.objects.filter(stock_code=stock_code).first()
+    if dividend_data is None:
+        dividend_data = {
+            'prev_dividend_rate': "N/A",
+            'pred_dividend_rate': "N/A",
+            'dividend_stability': "N/A",
+            'volatility': "N/A",
+            'year': "N/A"
+        }
+    
+    # 주식 MBTI 정보 가져오기 (없을 경우 기본값 설정)
+    stock_mbti = Mbti.objects.filter(stock_code=stock_code).first()
+    if stock_mbti is None:
+        stock_mbti = {'mbti': "N/A"}
+
+    # 뉴스 정보 가져오기
+    news_list = News.objects.filter(stock_code=stock_code).order_by('-pubDate')[:3]
+    
+    # 날짜 및 종가 데이터를 JSON 형태로 변환
+    dates = [str(x.date) for x in stock_data]
+    closing_prices = [x.closing_price for x in stock_data]
+    
+
+
     # 이동평균 데이터 가져오기
     ma5 = [x.MA5 for x in stock_data]
     ma20 = [x.MA20 for x in stock_data]
     ma60 = [x.MA60 for x in stock_data]
     ma120 = [x.MA120 for x in stock_data]
   
-    
     # 사용자가 이 종목을 관심 목록에 추가했는지 확인하는 변수
     try:
         is_favorite = UserStock.objects.filter(user=request.user, stock_code=stock_code).exists()
@@ -717,9 +743,8 @@ def stock_detail_page(request, stock_code="005930"):
     favorite_icon = 'images/filled_star.png' if is_favorite else 'images/empty_star.png'
 
     # Real_time 종목 현재가
-
     latest_stock = RealTime.objects.filter(stock_code=stock_code).order_by('-id').first()
-    stock_info ={
+    stock_info = {
         'current_price': latest_stock.current_price,
         'UpDownRate': latest_stock.UpDownRate,
         'UpDownPoint': latest_stock.UpDownPoint,
@@ -730,26 +755,24 @@ def stock_detail_page(request, stock_code="005930"):
         'stock_code': stock_code,
         'dates': json.dumps(dates),  # JSON으로 직렬화
         'closing_prices': json.dumps(closing_prices),  # JSON으로 직렬화
-        'ma5': json.dumps(ma5),  # MA20
+        'ma5': json.dumps(ma5),  # MA5
         'ma20': json.dumps(ma20),  # MA20
         'ma60': json.dumps(ma60),  # MA60
         'ma120': json.dumps(ma120),  # MA120
         'candle_data': json.dumps(candle_data),  # RealTime 캔들 데이터
-        'name': stock_data.first().name,
-        'prev_dividend_rate': dividend_data.prev_dividend_rate ,
-        'pred_dividend_rate': dividend_data.pred_dividend_rate ,
-        'dividend_stability': dividend_data.dividend_stability, 
-        'volatility': dividend_data.volatility,
-        'year': dividend_data.year,
-        'mbti': stock_mbti.mbti,
+        'name': name,
+        'prev_dividend_rate': getattr(dividend_data, 'prev_dividend_rate', "준비중입니다"),
+        'pred_dividend_rate': getattr(dividend_data, 'pred_dividend_rate', "준비중입니다"),
+        'dividend_stability': getattr(dividend_data, 'dividend_stability', "준비중입니다"),
+        'volatility': getattr(dividend_data, 'volatility', "준비중입니다"),
+        'year': getattr(dividend_data, 'year', "준비중입니다"),
+        'mbti': getattr(stock_mbti, 'mbti', "준비중입니다"),
         'news_list': news_list,
         'is_favorite': is_favorite,
         'favorite_icon': favorite_icon,
         'stock_info': stock_info,
     }
     return render(request, 'main/stock_detail.html', context)
-
-
 
 
 
