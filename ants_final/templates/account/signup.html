@@ -48,9 +48,11 @@
 
                         <!-- 비밀번호 필드 -->
                         <div class="mb-3 position-relative">
-                            <img src="{% static 'images/questionmark.png' %}" alt="mbti 상세정보" width="20" height="20" class="tooltip-trigger"
-                                 onfocus="showPasswordPopup()" onblur="hidePasswordPopup()" aria-expanded="false" id="tooltipIcon">
-                            <div id="infoPopup" class="popup" style="display: none;">
+                            <label for="id_password1" class="form-label">비밀번호:</label>
+                            <input type="password" name="password1" id="id_password1" class="form-control" required
+                                   onfocus="showPasswordPopup()" onblur="hidePasswordPopup()">
+                            <!-- 비밀번호 조건 팝업 (비밀번호 필드 아래에 팝업) -->
+                            <div id="passwordPopup" class="password-popup">
                                 <ul>
                                     <li>비밀번호는 최소 8자 이상이어야 합니다.</li>
                                     <li>비밀번호는 숫자, 문자, 특수 문자를 포함해야 합니다.</li>

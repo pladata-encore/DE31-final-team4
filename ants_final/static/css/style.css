@@ -345,23 +345,6 @@ th {
     display: none;
 }
 
-/* 기본색 */
-/* .yellow {
-    background-color: #ffeb3b;
-}
-
-.pink {
-    background-color: #f06292;
-}
-
-.green {
-    background-color: #4caf50;
-}
-
-.blue {
-    background-color: #2196f3;
-} */
-
 /* 파스텔 색 */
 .yellow {
     background-color: rgb(249, 232, 139);
@@ -381,6 +364,14 @@ th {
 
 .gray {
     background-color: rgb(211, 211, 211);
+}
+
+a {
+    text-decoration: none; /* 링크의 밑줄 제거 */
+}
+
+a:hover {
+    text-decoration: underline; /* 마우스 오버 시 밑줄 추가 (원하는 경우) */
 }
 
 

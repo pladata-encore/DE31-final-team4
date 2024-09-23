@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}ANTS-트리맵{% endblock %}
+{% block title %}ANTS-TreeMap{% endblock %}
 
 {% block head %}
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
@@ -120,28 +120,34 @@
     
 <!-- </div> -->
 <script>
-    //트리맵 배경색깔
     const targetSurface = 'M30,0L1189,0L1189,780L30,780Z';
     const surfaces = document.querySelectorAll('path.surface');
-
+    
     // 색상을 설정하는 함수
     function setSurfaceColor() {
         surfaces.forEach(surface => {
             if (surface.getAttribute('d') === targetSurface) {
-                surface.style.fill = 'rgba(0,0,0,0)';  // 원하는 색으로 변경
+                surface.style.fill = 'rgba(0,0,0,0)';  // 항상 이 색으로 유지
             }
         });
     }
-
+    
     // MutationObserver 설정
     const observer = new MutationObserver(setSurfaceColor);
-
+    
     // 관찰할 대상 설정
     surfaces.forEach(surface => {
         observer.observe(surface, { attributes: true, childList: false, subtree: false });
+        // 클릭 이벤트에서 색상을 변경하지 않도록 설정
+        surface.addEventListener('click', (event) => {
+            event.preventDefault();  // 기본 동작 방지
+            // 클릭해도 아무 동작도 하지 않음
+        });
     });
-
+    
     // 초기 색상 설정
     setSurfaceColor();
+
+
 </script>
 {% endblock %}
