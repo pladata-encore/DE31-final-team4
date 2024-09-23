@@ -305,9 +305,9 @@ def home(request):
     type_choice = request.GET.get('type', '급상승')  # 기본값은 'rising'
     
     if type_choice == '급상승':
-        stocks = RealTime.objects.filter(price_time=latest_time, UpDownPoint__gt=0).order_by('-UpDownRate')[:7]  # 급상승 순서
+        stocks = RealTime.objects.filter(price_time=latest_time, UpDownPoint__gt=0).order_by('-UpDownRate')[:10]  # 급상승 순서
     else:
-        stocks = RealTime.objects.filter(price_time=latest_time, UpDownPoint__lt=0).order_by('UpDownRate')[:7]  # 급하락 순서
+        stocks = RealTime.objects.filter(price_time=latest_time, UpDownPoint__lt=0).order_by('UpDownRate')[:10]  # 급하락 순서
 
     # 상위 3개의 섹터 데이터를 가져옴
     top_sectors = get_top_sectors()
@@ -541,14 +541,6 @@ def add_favorite_list(request, stock_code):
     else:
         return redirect('mypage')
         # return JsonResponse({'status': 'error'})
-
-from django.contrib import messages
-from django.urls import reverse
-
-# def add_favorite_list_not_logged_in(request):
-#     # If not logged in, redirect to the login page with a message
-#     messages.error(request, '로그인이 필요합니다.')
-#     return redirect(f'{reverse("account_login")}?next={request.path}')
     
 @login_required
 def my_favorite_list(request):
@@ -785,18 +777,27 @@ from django.db import connection
 
 def get_top_sectors():
     query = '''
-        SELECT sector, AVG(UpDownRate) as avg_updownrate
-        FROM (
-            SELECT rt1.sector, rt1.name, MAX(rt1.price_time) as recent_time, AVG(rt1.UpDownRate) as UpDownRate
-            FROM real_time rt1
-            WHERE rt1.sector IS NOT NULL
-            AND rt1.sector != ''
-            AND rt1.UpDownRate IS NOT NULL
-            GROUP BY rt1.sector, rt1.name
-        ) AS recent_data
-        GROUP BY sector
-        ORDER BY avg_updownrate DESC
-        LIMIT 5;
+        WITH RankedData AS (
+        SELECT rt1.sector, 
+               rt1.name, 
+               rt1.price_time, 
+               rt1.UpDownRate,
+               ROW_NUMBER() OVER (PARTITION BY rt1.sector ORDER BY rt1.price_time DESC, rt1.UpDownRate DESC) as row_num
+        FROM real_time rt1
+        WHERE rt1.sector IS NOT NULL
+        AND rt1.sector != ''
+        AND rt1.UpDownRate IS NOT NULL
+    )
+    , FilteredData AS (
+        SELECT sector, UpDownRate
+        FROM RankedData
+        WHERE row_num <= 7
+    )
+    SELECT sector, AVG(UpDownRate) as avg_updownrate
+    FROM FilteredData
+    GROUP BY sector
+    ORDER BY avg_updownrate DESC
+    LIMIT 5;
     '''
 
     with connection.cursor() as cursor:
@@ -870,7 +871,7 @@ def get_sector_details(request, sector_name):
     # 주어진 섹터에 대한 고유한 name과 데이터를 가져옴
     sector_data = list(
         RealTime.objects.filter(sector=sector_name)
-        .order_by('-price_time')[:10]
+        .order_by('-price_time','-UpDownRate')[:7]
         .values('name', 'current_price', 'UpDownRate')
     )
 
@@ -899,7 +900,3 @@ def stock_autocomplete(request):
         cache.set(cache_key, unique_stocks, 60 * 60 * 12)  # 12시간 캐싱
         stocks = unique_stocks
     return JsonResponse(stocks, safe=False) 
-
-
-
-
