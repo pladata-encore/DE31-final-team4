@@ -689,7 +689,8 @@ def stock_detail_page(request, stock_code="005930"):
         'c': data.current_price
     } for data in real_time_data]
     
-    
+
+        
     # 종목 코드를 이용해서 주식 정보를 DB에서 가져오는 코드 (1일 외 기간)
     stock_data = OnceTime.objects.filter(stock_code=stock_code).order_by('date')
     
