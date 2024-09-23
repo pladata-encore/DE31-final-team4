@@ -338,7 +338,12 @@
                                     // UTC+9 한국 시간 변환
                                     const date = new Date(tooltipItem.raw.x);
                                     date.setHours(date.getHours() - 9);  
-                                   
+                                    // 시간을 한국 시간으로 변환해서 time 변수로 저장
+                                    const time = date.toLocaleTimeString('ko-KR', {
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                        hour12: true
+                                    });
                                     return `현재가: ${currentPrice}, 시간: ${time}`;  // 현재가와 시간을 툴팁에 표시
                                 }
                                 return '';  // 다른 차트에 툴팁 비표시
