@@ -9,7 +9,7 @@
 <div class='container'>
     <div class="row justify-content-center" style="margin: 2rem;">
         <!-- KOSPI 그래프 -->
-        <div class="col-md-6 text-center">
+        <div class="col-lg-6 text-center mt-2">
             <div class="card border-left-primary py-2" style="justify-content: center; width: 93%; height: 10rem;">
                 <div class="basket">
                     <div class="basket-in1 kos nowrap">
@@ -34,7 +34,7 @@
         </div>
 
         <!-- KOSDAQ 그래프 -->
-        <div class="col-md-6 text-center">
+        <div class="col-lg-6 text-center mt-2">
             <div class="card border-left-primary py-2" style="justify-content: center; width: 93%; height: 10rem;">
                 <div class="basket">
                     <div class="basket-in1 kos nowrap">
@@ -64,7 +64,7 @@
 <div class='container mt-3' style="font-family: NanumR; padding-inline: 4rem;">
     <h3>이슈 종목</h3>
     <div class="row">
-        <div class="col-8">
+        <div class="col-lg-8">
             <form method="get" action="">
                 <!-- '급상승' 버튼 -->
                 <input type="submit" name="type" class="btn" style="background-color: {% if type == '급상승' %}red{% else %}gray{% endif %}; color: white;" value="급상승" {% if type == '급상승' %}disabled{% endif %}>
@@ -107,7 +107,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="col-4">
+        <div class="col-lg-4 text-center">
             <a href="{% url 'economic_awareness_test' %}">
                 <img src="{% static 'images/test_image.png' %}" alt="투자 성향 테스트" style="max-width: 100%">
             </a>
@@ -120,7 +120,8 @@
     <h3>급상승 카테고리</h3>
     <div class="row">
         <!-- 섹터 리스트 -->
-        <div style="padding: 0; width: 400px; flex: 0 0 20%; max-width: 20%;">
+        {% comment %} <div class="col-lg-3" style="padding: 0; width: 400px; flex: 0 0 20%; max-width: 20%;"> {% endcomment %}
+        <div class="col-lg-3 mt-3">
             <div class="container" style="padding: 0;">
                 <ul class="list-group index-stickers">
                     {% if top_sectors %}
@@ -146,7 +147,7 @@
         </div>
 
         <!-- 오른쪽에 데이터를 표시할 영역 -->
-        <div class="col-9" style="padding: 0;">
+        <div class="col-lg-9 mt-3" style="padding: 0;">
             <!-- <h3>섹터 세부 정보</h3> -->
             <div id="sector-details" class="note-style">
                 <p>섹터 이미지를 클릭하면 세부 정보가 여기에 표시됩니다.</p>
