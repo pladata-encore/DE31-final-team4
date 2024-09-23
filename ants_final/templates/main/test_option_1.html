@@ -24,6 +24,17 @@
             <p class="custom-question-text">당신은 어떤 음식을 선호하시나요?</p> <!-- 질문 텍스트 표시 -->
             <div class="custom-button-wrap"></div> <!-- 답변 버튼이 표시될 영역 -->
         </form>
+
+        <!-- 결과를 표시할 컨테이너 -->
+        <div class="result-container">
+            <div id="resultTitle"></div>
+            <div id="resultDescription"></div>
+        </div>
+
+        <!-- My Page로 이동 버튼을 중앙에 위치 -->
+        <div class="button-container">
+            <button id="myPageButton" class="custom-button" onclick="window.location.href='{% url 'mypage' %}'" style="text-align: center;">My Page로 이동</button>
+        </div>
     </div>
 
     <!-- JavaScript 파일 연결 -->
