@@ -8,6 +8,12 @@
 
     <!-- CSS 파일 추가 -->
     <link rel="stylesheet" href="/static/css/custom_style.css">
+    <style>
+        /* My Page로 이동 버튼 기본 숨김 */
+        #myPageButton {
+            display: none;
+        }
+    </style>
 </head>
 
 <body>
@@ -108,6 +114,10 @@
             const testPage = new TestPage(testData, '/save-test-result-option1/'); // 결과 저장 URL 지정
         });
     </script>
+
+    <!-- My Page로 이동 버튼 (결과가 나오면 보이도록 설정됨) -->
+    <button id="myPageButton" class="custom-button" onclick="window.location.href='{% url 'mypage' %}'">My Page로 이동</button>
+
 </body>
 
 </html>

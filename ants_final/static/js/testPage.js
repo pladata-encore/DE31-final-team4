@@ -64,6 +64,10 @@ class TestPage {
 
         // 결과를 서버로 전송 (AJAX 요청)
         this.saveResult(result.title, result.description);
+
+        // 'My Page로 이동' 버튼 보이기 (수정된 부분)
+        const myPageButton = document.getElementById('myPageButton');
+        myPageButton.style.display = 'inline-block'; // 버튼을 보이게 설정
     }
 
     saveResult(resultTitle, resultDescription) {
