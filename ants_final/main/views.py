@@ -786,8 +786,12 @@ from .models import DividendVolatility, Mbti, News
 # stock_detail_page 브랜치에서 생성
 # localhost:8000/stock으로 들어가면 해당 페이지 리턴
 def stock_detail_page(request, stock_code="005930"):
-    # 종목 코드를 이용해서 주식 정보를 DB에서 가져오는 코드
+    # 종목 코드를 이용해서 주식 정보를 DB에서 가져오는 코드(1일 외 기간)
     stock_data = OnceTime.objects.filter(stock_code=stock_code).order_by('date')
+    
+    #1일 차트에 사용할 RealTime 데이터 (1일 이외의 기간은 사용하지 않음)
+    real_time_data = RealTime.objects.filter(stock_code=stock_code).order_by('price_time')
+
     dividend_data = get_object_or_404(DividendVolatility, stock_code=stock_code)
     
     # 주식 mbti 정보 가져오기
@@ -800,6 +804,23 @@ def stock_detail_page(request, stock_code="005930"):
     dates = [str(x.date) for x in stock_data]
     closing_prices = [x.closing_price for x in stock_data]
     
+    # RealTime 데이터에서 캔들차트용 데이터
+    candle_data = [{
+        'x': data.price_time.strftime('%Y-%m-%dT%H:%M:%SZ'),  # ISO 8601 형식으로 변환
+        'o': data.opening_price,
+        'h': data.high_price,
+        'l': data.low_price,
+        'c': data.current_price
+    } for data in real_time_data]
+
+    
+    # 이동평균 데이터 가져오기
+    ma5 = [x.MA5 for x in stock_data]
+    ma20 = [x.MA20 for x in stock_data]
+    ma60 = [x.MA60 for x in stock_data]
+    ma120 = [x.MA120 for x in stock_data]
+  
+    
     # 사용자가 이 종목을 관심 목록에 추가했는지 확인하는 변수
     try:
         is_favorite = UserStock.objects.filter(user=request.user, stock_code=stock_code).exists()
@@ -810,6 +831,11 @@ def stock_detail_page(request, stock_code="005930"):
         'stock_code': stock_code,
         'dates': json.dumps(dates),  # JSON으로 직렬화
         'closing_prices': json.dumps(closing_prices),  # JSON으로 직렬화
+        'ma5': json.dumps(ma5),  # MA20
+        'ma20': json.dumps(ma20),  # MA20
+        'ma60': json.dumps(ma60),  # MA60
+        'ma120': json.dumps(ma120),  # MA120
+        'candle_data': json.dumps(candle_data),  # RealTime 캔들 데이터
         'name': stock_data.first().name,
         'prev_dividend_rate': dividend_data.prev_dividend_rate ,
         'pred_dividend_rate': dividend_data.pred_dividend_rate ,
@@ -822,6 +848,10 @@ def stock_detail_page(request, stock_code="005930"):
         'favorite_icon': favorite_icon,
     }
     return render(request, 'main/stock_detail.html', context)
+
+
+
+
 
 from django.http import JsonResponse
 

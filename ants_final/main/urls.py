@@ -47,7 +47,8 @@ urlpatterns = [
     # navigation bar 에서 stock을 누르면 해당 페이지로 이동
     path('stock/<str:stock_code>/', views.stock_detail_page, name='stock'),
     path('load-news/', views.load_news, name='load_news'),  # load_news 뷰에 연결
-    
+    # path('get_realtime_data/<str:stock_code>/', views.get_realtime_data, name='get_realtime_data'),
+
     # 주식 검색 결과를 처리할 URL
     path('stock_search/', views.stock_search, name='stock_search'),
 
