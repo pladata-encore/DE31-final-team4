@@ -51,7 +51,7 @@ class TestPage {
 
     showResult() {
         const result = this.data.result.find(result =>
-            this.point >= result.minPoint && this.point <= result.maxPoint
+            this.point >= result.minPoint && this.point < result.maxPoint
         );
 
         const questionElement = document.querySelector('.custom-question');
