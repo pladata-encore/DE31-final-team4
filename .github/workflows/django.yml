@@ -29,16 +29,27 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r ants_final/requirements.txt
 
-    - name: Set up MySQL
-      uses: mirromutth/mysql-action@v1
-      with:
-        mysql_version: '8.0.39'
-        mysql_database: ${{ secrets.DB_NAME }}
-        mysql_user: ${{ secrets.DB_USER }}
-        mysql_password: ${{ secrets.DB_PASSWORD }}
-        mysql_root_password: ${{ secrets.DB_ROOT_PASSWORD }}
-        mysql_port: 13306
-    
+    # - name: Set up MySQL
+    #   uses: mirromutth/mysql-action@v1
+    #   with:
+    #     mysql_version: '8.0.39'
+    #     mysql_database: ${{ secrets.DB_NAME }}
+    #     mysql_user: ${{ secrets.DB_USER }}
+    #     mysql_password: ${{ secrets.DB_PASSWORD }}
+    #     mysql_root_password: ${{ secrets.DB_ROOT_PASSWORD }}
+    #     mysql_port: 13306
+    - name: Start MySQL Container with sudo
+      run: |
+        whoami
+        sudo docker run -d \
+          --name mysql \
+          -e MYSQL_ROOT_PASSWORD=${{ secrets.DB_ROOT_PASSWORD }} \
+          -e MYSQL_DATABASE=${{ secrets.DB_NAME }} \
+          -e MYSQL_USER=${{ secrets.DB_USER }} \
+          -e MYSQL_PASSWORD=${{ secrets.DB_PASSWORD }} \
+          -p 13306:3306 \
+          mysql:8.0.39
+          
     - name: Create .env File
       run: |
         echo "RDS_NAME=${{ secrets.DB_NAME }}" >> .env
