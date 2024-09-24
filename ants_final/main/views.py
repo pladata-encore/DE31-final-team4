@@ -144,8 +144,7 @@ def mypage(request):
         test_result = None
     except TestResult2.DoesNotExist:
         test_result2 = None
-
-    return render(request, 'mypage.html', {'test_result': test_result, 'test_result2': test_result2})
+    return render(request, 'mypage.html', {'test_result1': test_result, 'test_result2': test_result2})
 
 #서칭
 from django.http import JsonResponse
@@ -549,6 +548,9 @@ def my_favorite_list(request):
     # 관심 종목
     user_stocks = UserStock.objects.filter(user=request.user).select_related('stock_id')
     stock_info = {}
+    # 테스트 결과 확인용
+    test_result1 = TestResult.objects.filter(user=request.user).order_by('-id').first()
+    test_result2 = TestResult2.objects.filter(user=request.user).order_by('-id').first()
 
     my_list = []
     mbti_value = ""
@@ -562,7 +564,8 @@ def my_favorite_list(request):
             'mbti_stock': stock_infos_list,
             'mbti': mbti_value,
             'stock_info': stock_info_list,
-            'test_results': test_results,
+            'test_result1': test_result1,
+            'test_result2': test_result2,
             'my_list' : my_list,
         }
         return render(request, 'mypage/mypage.html', context)
@@ -630,9 +633,7 @@ def my_favorite_list(request):
     stock_infos_list = list(stock_info.values())
     
 
-    # 테스트 결과 확인용
-    test_result1 = TestResult.objects.filter(user=request.user).order_by('-id').first()
-    test_result2 = TestResult2.objects.filter(user=request.user).order_by('-id').first()
+    
 
     context = {
         'mbti_stock': stock_infos_list,
