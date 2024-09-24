@@ -27,12 +27,22 @@ jobs:
     - name: Set up MySQL
       uses: mirromutth/mysql-action@v1
       with:
-        mysql version: '8.0.39'
-        mysql database: ${{ secrets.DB_NAME }}
-        mysql user: ${{ secrets.DB_USER }}
-        mysql password: ${{ secrets.DB_PASSWORD }}
-        mysql root password: ${{ secrets.DB_ROOT_PASSWORD }}
-        mysql port: 13306  # 포트 번호 13306으로 설정
+        mysql_version: '8.0.39'
+        mysql_database: ${{ secrets.DB_NAME }}
+        mysql_user: ${{ secrets.DB_USER }}
+        mysql_password: ${{ secrets.DB_PASSWORD }}
+        mysql_root_password: ${{ secrets.DB_ROOT_PASSWORD }}
+        mysql_port: 13306
+
+    - name: Create .env File
+      run: |
+        echo "RDS_NAME=${{ secrets.DB_NAME }}" >> .env
+        echo "RDS_USER=${{ secrets.DB_USER }}" >> .env
+        echo "RDS_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+        echo "RDS_HOST=${{ secrets.DB_HOST }}" >> .env
+        # .env 파일이 생성된 경로 출력
+        echo "The .env file has been created at: $(pwd)/.env"
+
     - name: Apply Django Migrations
       env:
         RDS_HOST: ${{ secrets.DB_HOST }}
@@ -41,16 +51,12 @@ jobs:
         RDS_PASSWORD: ${{ secrets.DB_PASSWORD }}
       run: |
         python ants_final/manage.py migrate
-        
-    - name: Create .env File
-      run: |
-         touch .env
-         echo "RDS_NAME = ${{ secrets.DB_NAME }}" >> .env
-         echo "RDS_USER = ${{ secrets.DB_USER }}" >> .env
-         echo "RDS_PASSWORD = ${{ secrets.DB_PASSWORD }}" >> .env
-         echo "RDS_HOST = ${{ secrets.DB_HOST }}" >> .env
-         # .env 파일이 생성된 경로 출력
-         echo "The .env file has been created at: $(pwd)/.env"
+
     - name: Run Tests
       run: |
+        # 현재 작업 디렉토리 출력
+        echo "Current working directory: $(pwd)"
+        # .env 파일 경로 출력
+        echo "Attempting to load .env file from: $(pwd)/../.env"
+        # 테스트 실행
         python ants_final/manage.py test
