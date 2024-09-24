@@ -44,12 +44,12 @@ jobs:
         
     - name: Create .env File
       run: |
-         touch .env
-         echo "RDS_NAME = 'datawarehouse'" >> .env
-         echo "RDS_USER = 'ants'" >> .env
-         echo "RDS_PASSWORD = '123'" >> .env
-         echo "RDS_HOST = '221.151.189.183'" >> .env
-        
+         touch ../.env
+         echo "RDS_NAME = 'datawarehouse'" >> ../.env
+         echo "RDS_USER = 'ants'" >> ../.env
+         echo "RDS_PASSWORD = '123'" >> ../.env
+         echo "RDS_HOST = '221.151.189.183'" >> ../.env
+         echo ../.env
     - name: Run Tests
       run: |
         python ants_final/manage.py ants_final/test
