@@ -3,7 +3,7 @@
 
 {% load static %}
     
-{% block title %}ANTS-MyPage{% endblock %}
+{% block title %}ANTS | MyPage{% endblock %}
 
 {% block content %}
 <div class="mypage">
@@ -64,7 +64,7 @@
                         <p>테스트 다시하기</p>
                     </a>
                 {% else %}
-                    <p> {{ request.user.username }}님은 아직 테스트 전이시네요! </p>
+                    <p> <h4>{{ request.user.username }}님은 아직 테스트 전이시네요!</h4> </p>
                     <a href="{% url 'test_option_1' %}" class="test-button">
                         <p>나의 투자성향은?<br><span style="font-weight: bold !important;">테스트 하러 가기 >></span></p>
                     </a>
@@ -78,7 +78,7 @@
                         <p>테스트 다시하기</p>
                     </a>
                 {% else %}
-                    <p> {{ request.user.username }}님은 아직 테스트 전이시네요! </p>
+                    <p> <h4>{{ request.user.username }}님은 아직 테스트 전이시네요!</h4> </p>
                     <a href="{% url 'test_option_2' %}" class="test-button">
                         <p>나의 투자지식은 어느정도일까? <br><span style="font-weight: bold !important; ">테스트 하러 가기 >></span></p>
                     </a>

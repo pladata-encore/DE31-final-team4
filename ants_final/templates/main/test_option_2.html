@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="ko">
-
+{% load static %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Option 2</title>
+    <title>ANTS | 투자지식</title>
 
     <!-- CSS 파일 추가 -->
     <link rel="stylesheet" href="/static/css/custom_style.css">
@@ -14,9 +14,10 @@
             display: none;
         }
     </style>
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'images/ants_sprout.ico' %}"> <!-- 파비콘 -->
 </head>
 
-<body>
+<body style="font-family: NanumR !important;">
     <div class="custom-test-container">
         <form id="testForm" method="POST">
             {% csrf_token %} <!-- CSRF 토큰 추가 -->
@@ -42,6 +43,8 @@
     <script>
         // JSON 데이터 (예시)
         const testData = {
+            startPageTitle: "투자지식 테스트",
+            startPageDescription: "테스트를 시작하려면 아래 버튼을 클릭하세요.",
             type: 'point',
             data: [
                 {
