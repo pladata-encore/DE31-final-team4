@@ -5,7 +5,11 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-
+    
+concurrency:
+  group: ${{ github.ref }}  # 같은 브랜치 내에서 실행되는 워크플로우를 그룹화
+  cancel-in-progress: true  # 새 작업이 시작될 때 이전 작업 취소
+  
 jobs:
   build:
 
