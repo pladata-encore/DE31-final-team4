@@ -167,22 +167,28 @@ from .models import DataWarehouse
 from django.db.models import Q
 
 def search_datawarehouse(request):
-    query = request.GET.get('q', '')  # 쿼리 파라미터 'q'를 가져옴
+    query = request.GET.get('q', '').lower()  # 소문자로 변환하여 처리
     results = []
-    
-    # 검색어가 있을 경우 필터링 수행
+
     if query:
-        results = DataWarehouse.objects.filter(
+        # term 또는 details 필드에 대소문자 구분 없이 검색
+        results = list(DataWarehouse.objects.filter(
             Q(term__icontains=query) | Q(details__icontains=query)
-        ).values('term', 'details')  # 검색 결과에서 term과 details만 반환
+        ).values('term', 'details'))
+
+        # Python에서 문자열의 위치를 기반으로 대소문자를 무시하고 정렬
+        results.sort(key=lambda x: (x['term'].lower().find(query) if x['term'].lower().find(query) != -1 else float('inf')))
     
+    # 검색 결과가 없으면 메시지를 설정
     if not results:
-        return JsonResponse({'results': [], 'message': "No results found."})
-
-    return JsonResponse({'results': list(results), 'message': None})
-
-
-
+        message = "No results found."
+    else:
+        message = None
+    
+    return JsonResponse({
+        'results': results,
+        'message': message
+    })
 
 
 
