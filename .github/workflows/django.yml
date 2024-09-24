@@ -35,10 +35,10 @@ jobs:
 
     - name: Apply Django Migrations
       env:
-        DB_HOST: ${{ secrets.DB_HOST }}
-        DB_NAME: ${{ secrets.DB_NAME }}
-        DB_USER: ${{ secrets.DB_USER }}
-        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        RDS_HOST: ${{ secrets.DB_HOST }}
+        RDS_NAME: ${{ secrets.DB_NAME }}
+        RDS_USER: ${{ secrets.DB_USER }}
+        RDS_PASSWORD: ${{ secrets.DB_PASSWORD }}
       run: |
         python ants_final/manage.py migrate
 
