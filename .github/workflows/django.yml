@@ -45,7 +45,7 @@ jobs:
     - name: Create .env File
       run: |
          touch .env
-         echo "RDS_NAME = ${{ secrets.DB_NAME }}" >> ..env
+         echo "RDS_NAME = ${{ secrets.DB_NAME }}" >> .env
          echo "RDS_USER = ${{ secrets.DB_USER }}" >> .env
          echo "RDS_PASSWORD = ${{ secrets.DB_PASSWORD }}" >> .env
          echo "RDS_HOST = ${{ secrets.DB_HOST }}" >> .env
