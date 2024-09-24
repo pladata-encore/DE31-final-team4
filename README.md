@@ -1,4 +1,4 @@
-![ants](ants.png)
+![ants](./readme_images/ants.png))
 # 🐜 ANTS : Asset Navigation Trading Strategy
 ## 주린이 맞춤형 주식 추천 플랫폼
 
