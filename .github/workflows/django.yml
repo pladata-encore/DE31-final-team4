@@ -14,10 +14,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
-    - name: Install MySQL client libraries
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y default-libmysqlclient-dev
+    # - name: Install MySQL client libraries
+    #   run: |
+    #     sudo apt-get update
+    #     sudo apt-get install -y default-libmysqlclient-dev
 
     - name: Set up Python 3.10
       uses: actions/setup-python@v3
