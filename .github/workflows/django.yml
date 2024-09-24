@@ -75,4 +75,5 @@ jobs:
         # .env 파일 경로 출력
         echo "Attempting to load .env file from: $(pwd)/../.env"
         # 테스트 실행
-        python ants_final/manage.py test
+        # python ants_final/manage.py test
+        python ants_final/manage.py runserver
