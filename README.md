@@ -1,4 +1,4 @@
-![ants](./readme_images/ants.png))
+![ants](./readme_images/ants.png)
 # 🐜 ANTS : Asset Navigation Trading Strategy
 ## 주린이 맞춤형 주식 추천 플랫폼
 
@@ -49,7 +49,7 @@ PIR수치가 높은 한국 사회에서 자산의 파이프라인을 생성하�
 
 ## 서비스 주요기능
 
-![ants_service](ants_service.jpg)
+![ants_service](./readme_images/ants_service.jpg)
 
 1. Real-Time 주식데이터 파이프라인
 
@@ -84,7 +84,7 @@ PIR수치가 높은 한국 사회에서 자산의 파이프라인을 생성하�
 
 ## 사용기술
 ---
-![skillset](ants_skillset.jpg)
+![skillset](./readme_images/ants_skillset.jpg)
 
 - language : Python, Javascript, SQL
 - FrontEnd : Chart.js, Plotly.js, HTML/CSS
