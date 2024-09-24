@@ -40,8 +40,8 @@ jobs:
         DB_USER: ${{ secrets.DB_USER }}
         DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       run: |
-        python manage.py migrate
+        python ants_final/manage.py migrate
 
     - name: Run Tests
       run: |
-        python manage.py test
+        python ants_final/manage.py ants_final/test
