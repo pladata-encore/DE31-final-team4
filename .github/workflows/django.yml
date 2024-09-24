@@ -76,4 +76,4 @@ jobs:
         echo "Attempting to load .env file from: $(pwd)/../.env"
         # 테스트 실행
         # python ants_final/manage.py test
-        python ants_final/manage.py runserver
+        python ants_final/manage.py runserver 0.0.0.0:8000
