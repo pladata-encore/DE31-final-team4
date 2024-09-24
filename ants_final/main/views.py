@@ -95,6 +95,7 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from .models import TestResult, TestResult2
+from django.utils import timezone
 import json
 
 @csrf_exempt
@@ -106,7 +107,10 @@ def save_test_result_option1(request):
         result1 = data.get('result1')
         result2 = data.get('result2')
 
-        # TestResult 모델에 결과 저장
+        # 기존 중복된 결과가 있을 경우 삭제
+        TestResult.objects.filter(user=request.user).delete()
+
+        # TestResult 모델에 결과 저장 (중복 방지)
         TestResult.objects.update_or_create(
             user=request.user,
             defaults={'result1': result1, 'result2': result2}
@@ -115,6 +119,7 @@ def save_test_result_option1(request):
         return JsonResponse({'status': 'success'}, status=200)
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
 
 @csrf_exempt
 @login_required
@@ -125,7 +130,10 @@ def save_test_result_option2(request):
         result1 = data.get('result1')
         result2 = data.get('result2')
 
-        # TestResult2 모델에 결과 저장
+        # 기존 중복된 결과가 있을 경우 삭제
+        TestResult2.objects.filter(user=request.user).delete()
+
+        # TestResult2 모델에 결과 저장 (중복 방지)
         TestResult2.objects.update_or_create(
             user=request.user,
             defaults={'result1': result1, 'result2': result2}
@@ -135,16 +143,23 @@ def save_test_result_option2(request):
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
+
 @login_required
 def mypage(request):
     try:
-        test_result = TestResult.objects.filter(user=request.user).first()
-        test_result2 = TestResult2.objects.filter(user=request.user).first()
-    except TestResult.DoesNotExist:
-        test_result = None
-    except TestResult2.DoesNotExist:
-        test_result2 = None
-    return render(request, 'mypage.html', {'test_result1': test_result, 'test_result2': test_result2})
+        # TestResult와 TestResult2에서 최신 결과만 가져오기
+        test_result = TestResult.objects.filter(user=request.user).order_by('-updated_at').first()
+        test_result2 = TestResult2.objects.filter(user=request.user).order_by('-updated_at').first()
+
+    except Exception as e:
+        # 예상치 못한 오류 처리
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+    # 템플릿으로 결과 전달
+    return render(request, 'mypage.html', {
+        'test_result1': test_result,
+        'test_result2': test_result2
+    })
 
 #서칭
 from django.http import JsonResponse
