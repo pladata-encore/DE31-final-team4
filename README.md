@@ -25,7 +25,8 @@
 ## 프로젝트 구성원
 
 Team Name : 개미마을 방범대
-[ants_members](./readme_images/ants_members.png)
+
+![ants_members](./readme_images/ants_members.png)
 | 구성원 | 이메일주소 | 깃허브 주소 | 역할 |
 |--------|----------|-----------|-------------|
 | 원정인 | jeongin323@naver.com | [github](https://github.com/JeonginWon) | 프로젝트 매니저, 데이터 애널리스트, ML, 백엔드 |
