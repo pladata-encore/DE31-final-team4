@@ -14,7 +14,8 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 # load_dotenv('/home/ants/django/.env')
-load_dotenv('../.env') # 윈도우에서 작업시 사용
+# load_dotenv('../.env') # 윈도우에서 작업시 사용
+load_dotenv('/home/runner/work/django/django/.env')
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
