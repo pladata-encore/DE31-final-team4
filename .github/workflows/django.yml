@@ -33,15 +33,23 @@ jobs:
         mysql password: ${{ secrets.DB_PASSWORD }}
         mysql root password: ${{ secrets.DB_ROOT_PASSWORD }}
         mysql port: 13306  # 포트 번호 13306으로 설정
-    # - name: Apply Django Migrations
-    #   env:
-    #     RDS_HOST: ${{ secrets.DB_HOST }}
-    #     RDS_NAME: ${{ secrets.DB_NAME }}
-    #     RDS_USER: ${{ secrets.DB_USER }}
-    #     RDS_PASSWORD: ${{ secrets.DB_PASSWORD }}
-    #   run: |
-    #     python ants_final/manage.py migrate
-
+    - name: Apply Django Migrations
+      env:
+        RDS_HOST: ${{ secrets.DB_HOST }}
+        RDS_NAME: ${{ secrets.DB_NAME }}
+        RDS_USER: ${{ secrets.DB_USER }}
+        RDS_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      run: |
+        python ants_final/manage.py migrate
+        
+    - name: Create .env File
+      run: |
+         touch .env
+         echo "RDS_NAME = 'datawarehouse'" >> .env
+         echo "RDS_USER = 'ants'" >> .env
+         echo "RDS_PASSWORD = '123'" >> .env
+         echo "RDS_HOST = '221.151.189.183'" >> .env
+        
     - name: Run Tests
       run: |
         python ants_final/manage.py ants_final/test
