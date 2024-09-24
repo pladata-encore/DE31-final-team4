@@ -6,49 +6,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ANTS | 투자지식</title>
 
-    <!-- CSS 파일 추가 -->
-    <link rel="stylesheet" href="/static/css/custom_style.css">
+    <link rel="stylesheet" href="/static/css/test.css">
+    <link rel="stylesheet" href="/static/css/style.css">
     <style>
-        /* My Page로 이동 버튼 기본 숨김 */
-        #myPageButton {
-            display: none;
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #fffbe7;
+            font-family: 'NanumR';
         }
+    
     </style>
     <link rel="shortcut icon" type="image/x-icon" href="{% static 'images/ants_sprout.ico' %}"> <!-- 파비콘 -->
 </head>
 
 <body style="font-family: NanumR !important;">
-    <div class="custom-test-container">
-        <form id="testForm" method="POST">
-            {% csrf_token %} <!-- CSRF 토큰 추가 -->
-            <div class="custom-question">Q1.</div> <!-- 질문 번호 표시 -->
-            <p class="custom-question-text">당신은 어떤 음식을 선호하시나요?</p> <!-- 질문 텍스트 표시 -->
-            <div class="custom-button-wrap"></div> <!-- 답변 버튼이 표시될 영역 -->
-        </form>
-
-        <!-- 결과를 표시할 컨테이너 -->
-        <div class="result-container">
-            <div id="resultTitle"></div>
-            <div id="resultDescription"></div>
+    <div class="paper-background">
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progressBar">
+                <img id="progressImage" src="/static/images/개미.png" alt="Progress" class="progress-image">
+            </div>
         </div>
+        <div class="custom-test-container">
+            <form id="testForm" method="POST">
+                {% csrf_token %} <!-- CSRF 토큰 추가 -->
+                <h2 class="custom-question">Q1.</h2> <!-- 질문 번호 표시 -->
+                <h3 class="custom-question-text">당신은 어떤 음식을 선호하시나요?</h3> <!-- 질문 텍스트 표시 -->
+                <div class="custom-button-wrap"></div>
+            </form>
 
-        <!-- My Page로 이동 버튼을 중앙에 위치 -->
-        <div class="button-container">
-            <button id="myPageButton" class="custom-button" onclick="window.location.href='{% url 'mypage' %}'" style="text-align: center;">My Page로 이동</button>
+            <!-- 결과를 표시할 컨테이너 -->
+            <div class="result-container">
+                <div id="resultTitle"></div>
+                <div id="resultDescription"></div>
+            </div>
+
+            <!-- My Page로 이동 버튼을 중앙에 위치 -->
+            <div class="button-container">
+                <button id="myPageButton" class="custom-button" onclick="window.location.href='{% url 'mypage' %}'">My Page로 이동</button>
+            </div>
+        </div>
+        <div>
+
         </div>
     </div>
-
     <!-- JavaScript 파일 연결 -->
     <script src="/static/js/testPage.js"></script>
     <script>
         // JSON 데이터 (예시)
         const testData = {
             startPageTitle: "투자지식 테스트",
-            startPageDescription: "테스트를 시작하려면 아래 버튼을 클릭하세요.",
+            startPageDescription: "나는 투자 상품을 얼마나 알고 있을까?",
             type: 'point',
             data: [
                 {
-                    "question": " ETF 는 무엇을 의미합니까?",
+                    "question": " ETF 는 무엇을 의미할까요?",
                     "answerList": [
                         {
                             "answer": "A) 특정 기업의 주식",
@@ -69,7 +85,7 @@
                     ]
                 },
                 {
-                    "question": " 채권 투자 시 주로 얻을 수 있는 수익은 무엇입니까?",
+                    "question": " 채권 투자 시 얻을 수 있는 수익은 어떤 것일까요?",
                     "answerList": [
                         {
                             "answer": "A) 배당금",
@@ -90,7 +106,7 @@
                     ]
                 },
                 {
-                    "question": " 우량주(Blue Clip)란 무엇을 의미합니까?",
+                    "question": " 우량주(Blue Clip)란 무엇일까요?",
                     "answerList": [
                         {
                             "answer": "A) 시장에서 가격 변동성이 큰 주식",
@@ -111,7 +127,7 @@
                     ]
                 },
                 {
-                    "question": " 시가총액은 무엇을 기준으로 계산됩니까?",
+                    "question": " 시가총액은 무엇을 기준으로 계산될까요?",
                     "answerList": [
                         {
                             "answer": "A) 기업의 순이익",
@@ -132,7 +148,7 @@
                     ]
                 },
                 {
-                    "question": " 대형주는 어떤 기업의 주식을 의미합니까?",
+                    "question": " 대형주는 어떤 기업의 주식을 의미할까요?",
                     "answerList": [
                         {
                             "answer": "A) 시가총액이 큰 기업",
@@ -153,7 +169,7 @@
                     ]
                 },
                 {
-                    "question": " 비중확대 및 비중축소는 투자 포트폴리오와 관련하여 무엇을 의미합니까?",
+                    "question": " 비중확대 및 비중축소는 투자 포트폴리오와 관련하여 무엇을 의미할까요?",
                     "answerList": [
                         {
                             "answer": "A) 주식의 가격 상승과 하락",
@@ -174,7 +190,7 @@
                     ]
                 },
                 {
-                    "question": " 베타란 무엇을 측정하는 지표입니까?",
+                    "question": " 베타란 무엇을 측정하는 지표일까요?",
                     "answerList": [
                         {
                             "answer": "A) 주식의 수익률",
@@ -195,7 +211,7 @@
                     ]
                 },
                 {
-                    "question": " 성장주와 가치주의 차이점은 무엇입니까?",
+                    "question": " 성장주와 가치주의 차이점은 무엇일까요?",
                     "answerList": [
                         {
                             "answer": "A) 성장주는 주가가 비싼 주식, 가치주는 주가가 저렴한 주식",
@@ -216,7 +232,7 @@
                     ]
                 },
                 {
-                    "question": " 경기순환주(경기민감주)는 언제 강세를 보이는 주식입니까?",
+                    "question": " 경기순환주(경기민감주)는 언제 강세를 보이는 주식일까요?",
                     "answerList": [
                         {
                             "answer": "A) 경기 침체 시",
@@ -237,7 +253,7 @@
                     ]
                 },
                 {
-                    "question": " 경기방어주는 어떤 특성을 가지고 있습니까?",
+                    "question": " 경기방어주는 어떤 특성을 가지고 있을까요?",
                     "answerList": [
                         {
                             "answer": "A) 경제 상황에 따라 큰 변동성을 보이는 주식",
@@ -258,7 +274,7 @@
                     ]
                 },
                 {
-                    "question": " IPO는 무엇을 의미합니까?",
+                    "question": " IPO는 무엇을 의미할까요?",
                     "answerList": [
                         {
                             "answer": "A) 기업의 배당금 발표",
@@ -279,7 +295,7 @@
                     ]
                 },
                 {
-                    "question": " 배당이란 무엇입니까?",
+                    "question": " 배당이란 무엇일까요?",
                     "answerList": [
                         {
                             "answer": "A) 기업이 주주에게 분배하는 이익의 일부",
@@ -300,7 +316,7 @@
                     ]
                 },
                 {
-                    "question": " 롱숏전략이란 어떤 투자 전략입니까?",
+                    "question": " 롱숏전략이란 어떤 투자 전략일까요?",
                     "answerList": [
                         {
                             "answer": "A) 주식을 장기간 보유하는 전략",
@@ -321,7 +337,7 @@
                     ]
                 },
                 {
-                    "question": " 변동성이란 무엇을 의미합니까?",
+                    "question": " 변동성이란 무엇을 의미할까요?",
                     "answerList": [
                         {
                             "answer": "A) 주식의 거래량 변화",
@@ -342,7 +358,7 @@
                     ]
                 },
                 {
-                    "question": " PER와 PBR은 각각 무엇을 의미합니까?",
+                    "question": " PER와 PBR은 각각 무엇을 의미할까요?",
                     "answerList": [
                         {
                             "answer": "A) 주가수익비율, 주가순자산비율",
@@ -369,25 +385,25 @@
                     "minPoint": 0,
                     "maxPoint": 2,
                     "title": "주식 초보자",
-                    "description": "투자에 대한 경험이 아직 부족해 보입니다. Ants 플랫폼에서 기본적인 투자 지식과 정보를 탐색해 보세요!"
+                    "description": "이제 막 투자의 길에 발을 들이셨네요. Ants 플랫폼에서 기본적인 투자 지식과 정보를 탐색해 보세요!"
                 },
                 {
                     "minPoint": 3,
                     "maxPoint": 7,
                     "title": "주식 입문자",
-                    "description": "주식과 채권의 차이를 이해할 수 있지만, 금융 상품에 대한 공부가 더 필요합니다. 더 깊이 있는 학습을 통해 투자 실력을 키워보세요!"
+                    "description": "주식과 채권의 차이를 이해할 수 있지만, 다른 금융 상품은 알아가는 중이에요. ANTS와 함께하며 투자 실력을 키워보세요!"
                 },
                 {
                     "minPoint": 8,
                     "maxPoint": 12,
                     "title": "주식 중급자",
-                    "description": "다양한 금융 상품의 차이를 이해하고 있으며, 적극적인 투자를 시작할 준비가 되어 있습니다. 전략적인 투자 계획을 세워보세요!"
+                    "description": "다양한 금융 상품의 차이를 이해하고 있으며, 적극적인 투자를 시작할 준비가 되어있어요. 전략적인 투자 계획을 세워보세요!"
                 },
                 {
                     "minPoint": 13,
                     "maxPoint": 15,
                     "title": "주식 전문가",
-                    "description": "금융 상품에 대한 깊은 이해와 분석 능력을 보유하고 있습니다. 대단하세요! 계속해서 시장의 변화에 주의를 기울이세요!"
+                    "description": "금융 상품에 대한 깊은 이해와 분석 능력을 보유하고 계시네요. 대단하세요! 계속해서 시장의 변화에 주의를 기울이세요!"
                 }
             ]
         };

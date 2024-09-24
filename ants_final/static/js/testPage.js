@@ -20,8 +20,8 @@ class TestPage {
         const buttonWrap = document.querySelector('.custom-button-wrap');
 
         // 시작 페이지의 제목과 설명 설정
-        questionElement.textContent = '테스트에 오신 것을 환영합니다!';
-        questionTextElement.textContent = '테스트를 시작하려면 아래 버튼을 클릭하세요.';
+        questionElement.textContent = testData.startPageTitle;
+        questionTextElement.textContent = testData.startPageDescription;
 
         // 기존 버튼 제거
         buttonWrap.innerHTML = '';
@@ -35,7 +35,6 @@ class TestPage {
         startButton.addEventListener('click', () => {
             this.renderQuestion();
             this.updateProgressBar();
-            const testContainer = document.querySelector('.custom-test-container');
             var progressBarContainer = document.querySelector('.progress-bar-container');
             progressBarContainer.style.visibility = 'visible';
         });
@@ -48,6 +47,9 @@ class TestPage {
         const totalQuestions = this.data.data.length;
         const progressPercentage = ((this.current + 1) / totalQuestions) * 100; // 진행 비율 계산
         progressBar.style.width = `${progressPercentage}%`; // 진행 바의 폭 설정
+
+        const imageLeftPosition = `calc(${progressPercentage}% - 15px)`; // 이미지의 위치를 진행 바의 너비에 맞게 조정
+        progressImage.style.left = imageLeftPosition; // 이미지의 left 속성 업데이트
     }
     
     renderQuestion() {
@@ -110,6 +112,8 @@ class TestPage {
         // 'My Page로 이동' 버튼 보이기 (수정된 부분)
         const myPageButton = document.getElementById('myPageButton');
         myPageButton.style.display = 'inline-block'; // 버튼을 보이게 설정
+        var progressBarContainer = document.querySelector('.progress-bar-container');
+        progressBarContainer.style.visibility = 'hidden';
     }
 
     saveResult(resultTitle, resultDescription) {
