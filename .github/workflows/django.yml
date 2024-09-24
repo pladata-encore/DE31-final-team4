@@ -49,6 +49,8 @@ jobs:
          echo "RDS_USER = ${{ secrets.DB_USER }}" >> .env
          echo "RDS_PASSWORD = ${{ secrets.DB_PASSWORD }}" >> .env
          echo "RDS_HOST = ${{ secrets.DB_HOST }}" >> .env
+         # .env 파일이 생성된 경로 출력
+         echo "The .env file has been created at: $(pwd)/.env"
     - name: Run Tests
       run: |
         python ants_final/manage.py test
