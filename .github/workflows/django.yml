@@ -32,7 +32,7 @@ jobs:
         mysql user: ${{ secrets.DB_USER }}
         mysql password: ${{ secrets.DB_PASSWORD }}
         mysql root password: ${{ secrets.DB_ROOT_PASSWORD }}
-
+        mysql port: 13306  # 포트 번호 13306으로 설정
     - name: Apply Django Migrations
       env:
         RDS_HOST: ${{ secrets.DB_HOST }}
