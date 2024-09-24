@@ -25,7 +25,7 @@
 ## 프로젝트 구성원
 
 Team Name : 개미마을 방범대
-<img src="./readme_images/ants_members.png" alt="ants members" width="100"/>
+<img src="./readme_images/ants_members.png" alt="ants members" width="300"/>
 
 | 구성원 | 이메일주소 | 깃허브 주소 | 역할 |
 |--------|----------|-----------|-------------|
