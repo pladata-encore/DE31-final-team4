@@ -231,8 +231,8 @@
             debounceTimer = setTimeout(() => {
                 // 제안 목록 위치 조정
                 const rect = stockInput.getBoundingClientRect();
-                suggestionBox.style.top = `${rect.bottom + window.scrollY}px`;
-                suggestionBox.style.left = `${rect.left + window.scrollX}px`;
+                suggestionBox.style.top = `${rect.bottom}px`;
+                suggestionBox.style.left = `${rect.left}px`;
     
                 // 서버에서 제안 가져오기
                 fetch(`/stock_autocomplete/?stock_query=${encodeURIComponent(query)}`)
