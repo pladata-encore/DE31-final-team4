@@ -1,201 +1,188 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load humanize %} <!-- 숫자에 , 표시 -->
 
 {% block title %}ANTS{% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
-<section id="section1" style="height: 100vh; background: url('{% static 'images/back.png' %}') no-repeat center center fixed; background-size: cover; display: flex; align-items: center; justify-content: center; color: white;">
-    <div class="text-center">
-        <p style="font-size: 24px; font-weight: 300;">Asset Navigation Trading Strategy</p>
-        <h1 class="display-1" style="font-size: 130px; font-weight: bold;">ANTS</h1>
-        <h1 class="display-1" style="font-size: 50px; font-weight: bold;">The Perfect Stock Investment Platform for Beginners</h1>
-        <a href="#section2" class="btn btn-primary btn-lg mt-4" style="background-color: #007bff; border-color: #007bff;">Let's START</a>
-    </div>
-</section>
 
-
-
-<!-- About Section -->
-<section id="section2" class="py-5 text-center" style="background-color: #f8f9fa; background-attachment: fixed;">
-    <div class="container">
-        <h2 class="display-4">About Us</h2>
-        <p class="lead">주린이를 위한 친절한 투자 가이드, 든든한 경제 파트너</p>
-        <div class="row">
-            <div class="col-md-4">
-                <img src="{% static 'images/chart.png' %}" class="mb-2" style="width: 180px; height: 180px;">
-                <h5>실시간 주식 차트</h5>
-                <p>시장의 흐름을 한눈에</p>
-            </div>
-            <div class="col-md-4">
-                <img src="{% static 'images/recommendation.png' %}" class="mb-2" style="width: 180px; height: 180px;">
-                <h5>스마트 종목 추천</h5>
-                <p>맞춤형 투자 솔루션</p>
-            </div>
-            <div class="col-md-4">
-                <img src="{% static 'images/test.png' %}" class="mb-2" style="width: 180px; height: 180px;">
-                <h5>경제 성향 테스트</h5>
-                <p>당신의 투자 성향을 진단하다</p>
+<div class='container'>
+    <div class="row justify-content-center" style="margin: 2rem;">
+        <!-- KOSPI 그래프 -->
+        <div class="col-lg-6 text-center mt-2">
+            <div class="card border-left-primary py-2" style="justify-content: center; width: 93%; height: 10rem;">
+                <div class="basket">
+                    <div class="basket-in1 kos nowrap">
+                        <p><span style="font-size: 16px;">KOSPI 코스피</span></p>
+                        <p><span style="font-size: 25px;">{{ KOSPI_CurrentPoint }}</span><br>
+                        {% if KOSPI_UpDownPoint|stringformat:"d" < 0 %}
+                            <span style="color: blue;">{{ KOSPI_UpDownPoint }}</span>
+                            <span style="color: blue;">({{ KOSPI_UpDownRate }}%)</span></p>
+                        {% elif KOSPI_UpDownPoint|stringformat:"d" == 0 %}
+                            <span>{{ KOSPI_UpDownPoint }}</span>
+                            <span>({{ KOSPI_UpDownRate }}%)</span></p>
+                        {% else %}
+                            <span style="color: red;">{{ KOSPI_UpDownPoint }}</span>
+                            <span style="color: red;">(+{{ KOSPI_UpDownRate }}%)</span></p>
+                        {% endif %}
+                    </div>
+                    <div class="basket-in2">
+                        <img src="data:image/png;base64,{{ graphic1 }}" alt="KOSPI Graph" class="img-fluid" style="width: 13rem; height: 10rem;">
+                    </div>
+                </div>
             </div>
         </div>
-        
-        <!-- 추가된 섹션 -->
-        <div class="py-5 text-center">
-            <h1 class="display-4" style="font-weight: bold;">Everywhere invest in seoul.</h1>
-            <p class="lead mt-4" style="font-size: 18px;">
-                우리의 서비스는 주식 투자에 열정이 있는 모든 이들을 위해 설계된 혁신적인 플랫폼입니다.<br> 매달 한 번씩 정기 업데이트를 통해 'Welcome to ANTS'로 모든 투자자들이 자유롭게 자신의 투자 전략을 펼칠 수 있도록 지원합니다.
-            </p>
-            <p class="lead" style="font-size: 18px;">
-                투자자들이 다양한 방식으로 금융시장을 탐구하자는 취지로,<br> 어떤 날은 주요 경제 지표를 심층 분석하고,<br> 또 어떤 날은 실시간으로 주식 차트를 탐색하며 시장의 흐름을 파악합니다. <br>'Insightful Hour'라는 이벤트에서는 특정 주식 종목과 분석 방법을 미리 정해두고, <br>이 시간 동안 다양한 투자자들과 아이디어를 교환하며 미래의 투자 기회를 탐색하는 기회를 제공합니다.
-            </p>
-            <p class="lead" style="font-size: 18px;">
-                우리는 글로벌 금융 시장을 탐험하며, 투자자들이 보다 풍부한 경험을 할 수 있도록 돕습니다.
-            </p>
-        </div>
-    </div>
-</section>
 
-
-
-
-
-<!-- Stock Dashboard Section -->
-<section id="section3" class="py-5 text-center" style="min-height: 100vh; background-attachment: fixed;">
-    <div class="container">
-        <h2 class="display-4 mb-5">Stock Dashboard</h2>
-        <div class="row justify-content-center">
-            <div class="col-md-12 text-center">
-                <!-- Streamlit App Embedding -->
-                <iframe
-                    width="960"
-                    height="720"
-                    src="http://54.181.1.178:8501"
-                    frameborder="0"
-                    allowfullscreen="true">
-                </iframe>
-            </div>
-        </div>
-    </div>
-</section>
-
-
-
-<!-- Economic Awareness Test Section -->
-<section id="section4" class="py-5" style="background-color: #f8f9fa; background-attachment: fixed;">
-    <div class="container">
-        <!-- 중앙에 제목 배치 -->
-        <div class="text-center mb-5">
-            <h2 class="display-4">Economic Awareness Test</h2>
-        </div>
-        <div class="row justify-content-center align-items-center">
-            <div class="col-md-5 text-center">
-                <!-- 이미지 부분 -->
-                <img src="{% static 'images/test_image.png' %}" alt="Economic Awareness Test" class="img-fluid">
-            </div>
-            <div class="col-md-7">
-                <!-- 글과 버튼 부분 -->
-                <p class="lead">
-                    "당신의 경제 인식, 과연 어떤 스타일일까?"<br><br>
-                    돈을 모으기 위해 철저한 계획을 세우는 전략가?<br> 아니면 기회를 잡기 위해 과감하게 투자하는 모험가?<br>
-                    혹은 변화에 신속히 대처하는 전략을 취하는 현명한 투자자?<br><br>
-                    스스로의 경제 관념을 돌아보는 것만으로도 당신의 투자 성향을 확인할 수 있습니다!<br><br>
-                    지금 바로 경제 인식 테스트를 통해 당신의 투자 성향을 확인해보세요!<br> 친구와 함께 도전해보면서 서로의 경제 스타일을 비교해보는 것도 흥미로울 거예요!
-                </p>
-                <div class="text-center mt-4">
-                    <a href="{% url 'economic_awareness_test' %}" class="btn btn-primary btn-lg" style="background-color: #f8c6d1; border-color: #f8c6d1;">START</a>
+        <!-- KOSDAQ 그래프 -->
+        <div class="col-lg-6 text-center mt-2">
+            <div class="card border-left-primary py-2" style="justify-content: center; width: 93%; height: 10rem;">
+                <div class="basket">
+                    <div class="basket-in1 kos nowrap">
+                        <p><span style="font-size: 16px; margin-top: 10px;">KOSDAQ 코스닥</span></p>
+                        <p><span style="font-size: 25px;">{{ KOSDAQ_CurrentPoint }}</span><br>
+                        {% if KOSDAQ_UpDownPoint|stringformat:"d" < 0 %}
+                            <span style="color: blue;">{{ KOSDAQ_UpDownPoint }}</span>
+                            <span style="color: blue;">({{ KOSDAQ_UpDownRate }}%)</span></p>
+                        {% elif KOSDAQ_UpDownPoint|stringformat:"d" == 0 %}
+                            <span>{{ KOSDAQ_UpDownPoint }}</span>
+                            <span>({{ KOSDAQ_UpDownRate }}%)</span></p>
+                        {% else %}
+                        <span style="color: red;">{{ KOSDAQ_UpDownPoint }}</span>
+                        <span style="color: red;">(+{{ KOSDAQ_UpDownRate }}%)</span></p>
+                        {% endif %}
+                    </div>
+                    <div class="basket-in2">
+                        <img src="data:image/png;base64,{{ graphic2 }}" alt="KOSDAQ Graph" class="img-fluid" style="width: 13rem; height: 10rem;">
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</section>
+    </div>
+</div>
+
+<div class='container mt-3' style="font-family: NanumR; padding-inline: 4rem;">
+    <h3>이슈 종목</h3>
+    <div class="row">
+        <div class="col-lg-8">
+            <form method="get" action="">
+                <!-- '급상승' 버튼 -->
+                <input type="submit" name="type" class="btn" style="background-color: {% if type == '급상승' %}red{% else %}gray{% endif %}; color: white;" value="급상승" {% if type == '급상승' %}disabled{% endif %}>
+                
+                <!-- '급하락' 버튼 -->
+                <input type="submit" name="type" class="btn" style="background-color: {% if type == '급하락' %}blue{% else %}gray{% endif %}; color: white;" value="급하락" {% if type == '급하락' %}disabled{% endif %}>
+            </form>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>순위</th> 
+                        <th style="text-align: left;">종목</th>
+                        <th style="text-align: right;">현재가</th>
+                        <th style="text-align: right;">등락률</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stock in stocks %}
+                    <tr style="border-bottom: 1.8px solid rgb(167, 167, 167) !important; cursor: pointer;">
+                        <td>{{ forloop.counter }}</td> <!-- 순위를 따로 표시 -->
+                        <td style="text-align: left;">
+                            <!-- 종목명을 클릭할 수 있는 링크로 변환 -->
+                            <a href="{% url 'stock' stock.stock_code %}">{{ stock.name }}</a>
+                        </td>
+                        <td style="text-align: right;">{{ stock.current_price|intcomma }}</td>
+                        <td style="text-align: right;">
+                            {% if stock.UpDownRate > 0 %} 
+                                <span class="text-danger">+{{ stock.UpDownPoint|intcomma }} ({{ stock.UpDownRate }}%)</span>
+                                {% if stock.UpDownRate > 30 %}
+                                    <div class="position-relative" style="display: inline-block; text-align: left;">
+                                        <img src="{% static 'images/questionmark.png' %}" alt="over상한가" width="13" height="13" 
+                                             onmouseover="showInfoPopup1()" onmouseout="hideInfoPopup1()" style="opacity: 0.5;">
+                                        <div id="infoPopup1" class="popup" style="display: none;">
+                                            <div class="nowrap" style="padding: 1.3rem; padding-bottom: .5rem;">
+                                                <h6>어떻게 상한가인 30%를 넘었어요?</h6>
+                                                <p>오늘 상장된 종목이에요.
+                                                    <br>장 시작가격이 공모가보다 높고, 추가로 상승한 종목은 상한가인 30%를 넘는 것처럼 보일 수 있어요.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% else %}
+                                <span class="text-primary">{{ stock.UpDownPoint|intcomma }} ({{ stock.UpDownRate }}%)</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3">데이터가 없습니다.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-lg-4 text-center">
+            <a href="{% url 'economic_awareness_test' %}">
+                <img src="{% static 'images/test_image.png' %}" alt="투자 성향 테스트" style="max-width: 100%">
+            </a>
+        </div>
+    </div>
+</div>
 
 
-
-<!-- Developers Section -->
-<section id="section5" class="py-5 text-center" style="background-color: #ffffff; background-attachment: fixed;">
-    <div class="container mt-5">
-        <h2 class="text-center mb-5 display-4">Meet the Developers</h2>
-
-        <div class="row justify-content-center text-center">
-            <!-- 첫 번째 행 -->
-            <div class="col-md-4 mb-5">
-                <div class="d-flex justify-content-center">
-                    <img src="{% static 'images/developer1.jpg' %}" class="img-fluid rounded-circle" alt="Developer 1" style="width: 200px; height: 200px;">
-                </div>
-                <h3 class="mt-3">차민혁</h3>
-                <p class="text-muted">Data Engineer & System Engineer</p>
-                <p>Expertise: Python, Django, JavaScript</p>
-                <a href="#" class="btn btn-outline-primary">Contact</a>
-            </div>
-
-            <div class="col-md-4 mb-5">
-                <div class="d-flex justify-content-center">
-                    <img src="{% static 'images/developer2.jpg' %}" class="img-fluid rounded-circle" alt="Developer 2" style="width: 200px; height: 200px;">
-                </div>
-                <h3 class="mt-3">김예송</h3>
-                <p class="text-muted">Web Development Manager & System Engineer</p>
-                <p>Expertise: Django, PostgreSQL, Docker</p>
-                <a href="#" class="btn btn-outline-primary">Contact</a>
-            </div>
-
-            <div class="col-md-4 mb-5">
-                <div class="d-flex justify-content-center">
-                    <img src="{% static 'images/developer3.jpg' %}" class="img-fluid rounded-circle" alt="Developer 3" style="width: 200px; height: 200px;">
-                </div>
-                <h3 class="mt-3">원정인</h3>
-                <p class="text-muted">Project Manager & Data Analyst</p>
-                <p>Expertise: HTML, CSS, JavaScript, React</p>
-                <a href="#" class="btn btn-outline-primary">Contact</a>
+<div class="container mt-3 py-4" style="font-family: NanumR; justify-content: center; padding-inline: 4rem;">
+    <h3>급상승 카테고리</h3>
+    <div class="row">
+        <!-- 섹터 리스트 -->
+        {% comment %} <div class="col-lg-3" style="padding: 0; width: 400px; flex: 0 0 20%; max-width: 20%;"> {% endcomment %}
+        <div class="col-lg-3 mt-3">
+            <div class="container" style="padding: 0;">
+                <ul class="list-group index-stickers">
+                    {% if top_sectors %}
+                        {% for sector in top_sectors %}
+                        <div class="d-flex align-items-center py-2 sticker nowrap
+                        {% if forloop.counter == 1 %}yellow{% elif forloop.counter == 2 %}pink{% elif forloop.counter == 3 %}green{% elif forloop.counter == 4 %}blue{% else %}gray{% endif %}"
+                        data-sector="{{ sector.sector }}"
+                        onclick="loadSectorDetails('{{ sector.sector }}', 
+                            '{% if forloop.counter == 1 %}rgb(249, 232, 139){% elif forloop.counter == 2 %}rgb(242, 166, 200){% elif forloop.counter == 3 %}rgb(168, 230, 207){% elif forloop.counter == 4 %}rgb(164, 200, 225){% else %}rgb(211, 211, 211){% endif %}')">
+                            <img src="{% static 'images/icon/'|add:sector.image %}" 
+                                class="sector-icon-size"
+                                alt="{{ sector.sector }}">
+                            <div class="d-flex w-50" style="margin: .5rem;">
+                                <span>{{ forloop.counter }}위: {{ sector.sector }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <li class="list-group-item">데이터가 안나온다.</li>
+                    {% endif %}
+                </ul>
             </div>
         </div>
 
-        <div class="row justify-content-center text-center">
-            <!-- 두 번째 행 -->
-            <div class="col-md-4 mb-5">
-                <div class="d-flex justify-content-center">
-                    <img src="{% static 'images/developer4.jpg' %}" class="img-fluid rounded-circle" alt="Developer 4" style="width: 200px; height: 200px;">
-                </div>
-                <h3 class="mt-3">조명아</h3>
-                <p class="text-muted">Docker Manager & Data Engineer</p>
-                <p>Expertise: Kotlin, Swift, Flutter</p>
-                <a href="#" class="btn btn-outline-primary">Contact</a>
-            </div>
-
-            <div class="col-md-4 mb-5">
-                <div class="d-flex justify-content-center">
-                    <img src="{% static 'images/developer5.jpg' %}" class="img-fluid rounded-circle" alt="Developer 5" style="width: 200px; height: 200px;">
-                </div>
-                <h3 class="mt-3">최태성</h3>
-                <p class="text-muted">AWS Manager & Data Analyst</p>
-                <p>Expertise: AWS, Docker, Kubernetes</p>
-                <a href="#" class="btn btn-outline-primary">Contact</a>
+        <!-- 오른쪽에 데이터를 표시할 영역 -->
+        <div class="col-lg-9 mt-3" style="padding: 0;">
+            <!-- <h3>섹터 세부 정보</h3> -->
+            <div id="sector-details" class="note-style">
+                <p>섹터 이미지를 클릭하면 세부 정보가 여기에 표시됩니다.</p>
             </div>
         </div>
     </div>
-</section>
+</div>
+
+<!-- Static 파일 로드 -->
+<script src="{% static 'js/sectorDetails.js' %}"></script>
+<script>
+    function showInfoPopup1() {
+        const popup = document.getElementById("infoPopup1");
+        popup.style.display = "block"; // 팝업 보이기
+    }
+
+    function hideInfoPopup1() {
+        const popup = document.getElementById("infoPopup1");
+        popup.style.display = "none"; // 팝업 숨기기
+    }
+</script>
+
 {% endblock %}
 
-<script>
-function submitTest() {
-    var score = 0;
-
-    for (var i = 1; i <= 4; i++) {
-        var answer = document.getElementById('q' + i).value;
-        if (answer === "yes") {
-            score += 1;
-        }
-    }
-
-    var resultText = "";
-    if (score <= 2) {
-        resultText = "You have a conservative approach towards money. You value savings and are cautious about spending.";
-    } else if (score <= 3) {
-        resultText = "You have a balanced approach to finances, neither too cautious nor too reckless.";
-    } else {
-        resultText = "You tend to take risks with money and may have a more spontaneous approach to spending and saving.";
-    }
-
-    document.getElementById("testResult").innerText = resultText;
-    document.getElementById("result").style.display = "block";
-}
-</script>

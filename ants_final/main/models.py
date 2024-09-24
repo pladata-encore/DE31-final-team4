@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 # main/models.py
@@ -23,14 +24,20 @@ class Answer(models.Model):
 
     def __str__(self):
         return self.text
+
+# # 결과 저장
+# class TestResult(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     result1 = models.CharField(max_length=100)
+#     result2 = models.CharField(max_length=100)
+
+#     def __str__(self):
+#         return f"{self.user.username}님의 테스트 결과"
+
+#     class Meta:
+#         db_table = 'test_result'
     
-
-
-
-
 #서칭
-from django.db import models
-
 class DataWarehouse(models.Model):
     topic = models.CharField(max_length=100)
     term = models.CharField(max_length=255)
@@ -41,3 +48,119 @@ class DataWarehouse(models.Model):
 
     def __str__(self):
         return self.term
+    
+
+# class RealTime(models.Model):
+# class RealTime(models.Model):
+#     stock_code = models.CharField(max_length=10)
+#     name = models.CharField(max_length=100)
+#     current_price = models.DecimalField(max_digits=15, decimal_places=2)
+#     UpDownRate = models.DecimalField(max_digits=15, decimal_places=2)
+#     UpDownPoint = models.DecimalField(max_digits=15, decimal_places=2)
+#     id = models.AutoField(primary_key=True)
+
+#     class Meta:
+#         db_table = 'real_time'
+#         db_table = 'real_time'
+#         unique_together = ('stock_code', 'id')
+
+# class UserStock(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     stock_code = models.ForeignKey(RealTimeStock, on_delete=models.CASCADE)
+
+#     def __str__(self):
+#         return f'{self.user.username} 관심종목: {self.stock_code.name}'
+    
+#     class Meta:
+#         db_table = 'favorite_list'
+#         unique_together = ('user', 'stock_code')
+
+##################stocks.model로 이사 갔습니다#######################################
+# class RealTimeStock(models.Model):
+#     stock_code = models.CharField(max_length=10)
+#     name = models.CharField(max_length=100)
+#     current_price = models.DecimalField(max_digits=15, decimal_places=2)
+#     UpDownRate = models.DecimalField(max_digits=15, decimal_places=2)
+#     UpDownPoint = models.DecimalField(max_digits=15, decimal_places=2)
+#     id = models.AutoField(primary_key=True)
+
+#     class Meta:
+#         db_table = 'real_time'
+#         unique_together = ('stock_code', 'id')
+##########################################################################################
+
+from stocks.models import RealTime
+
+
+class UserStock(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    stock_id = models.ForeignKey(RealTime, on_delete=models.CASCADE,db_column='stock_id')
+    stock_code = models.CharField(max_length=10, blank=True, null=True)
+    mbti = models.CharField(max_length=10, blank=True, null=True)
+
+    def __str__(self):
+        return f'{self.user.username} 관심종목: {self.stock_code.name}'
+    
+    class Meta:
+        db_table = 'favorite_list'
+        unique_together = ('user', 'stock_code')
+
+#test 결과   
+class TestResult(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    result1 = models.CharField(max_length=100)
+    result2 = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.user.username}님의 테스트 결과"
+    
+    class Meta:
+        db_table = 'test_result'
+
+from django.db import models
+from django.contrib.auth.models import User
+
+class TestResult2(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    result1 = models.CharField(max_length=100)
+    result2 = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.user.username}님의 테스트 결과 2"
+    
+    class Meta:
+        db_table = 'test_result2'
+
+
+class DividendVolatility(models.Model):
+    stock_code = models.CharField(max_length=6, primary_key=True)  # 종목코드는 문자열, 기본적으로 6자리
+    prev_dividend_rate = models.FloatField()  # 전년도 배당률
+    pred_dividend_rate = models.FloatField()  # 예측 배당률
+    dividend_stability = models.CharField(max_length=1)  # 배당성 (A, B, C 같은 문자)
+    volatility = models.CharField(max_length=1)  # 변동성
+    year = models.IntegerField()  # 연도
+    stock_name = models.CharField(max_length=100)  # 종목명
+    
+    def __str__(self):
+        return f"{self.stock_name} ({self.stock_code})"
+    class Meta:
+        db_table = 'dividend_volatility'  # 테이블 이름을 명시적으로 설정
+
+
+class Mbti(models.Model):
+    stock_code = models.CharField(max_length=6, primary_key=True)  # 종목코드는 문자열, 기본적으로 6자리
+    mbti = models.CharField(max_length=10)
+
+    class Meta:
+        db_table = 'mbti'  # 테이블 이름을 명시적으로 설정
+
+class News(models.Model):
+    stock_code = models.CharField(max_length=6)  # 종목코드는 문자열, 기본적으로 6자리
+    name = models.CharField(max_length=100)
+    pubDate = models.DateTimeField(max_length=30)
+    title = models.TextField()
+    description = models.TextField()
+    originallink = models.TextField(primary_key=True)
+
+    class Meta:
+        db_table = 'news'  # 테이블 이름을 명시적으로 설정

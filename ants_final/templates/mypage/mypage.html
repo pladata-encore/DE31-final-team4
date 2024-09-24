@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+{% load humanize %} <!-- 숫자에 , 표시 -->
+
+{% load static %}
+    
+{% block title %}ANTS-MyPage{% endblock %}
+
+{% block content %}
+<div class="mypage">
+    <div class="container-leri">
+        <div class="left">
+            <h2 class="title">My 관심종목</h2>
+            <div class="container-fvl">
+                {% if my_list %}
+                <table class="table-stockinfo">
+                    <thead>
+                        <tr style="border-bottom: 2px solid black;">
+                            <th style="text-align: left;">종목명</th>
+                            <th style="text-align: center;">MBTI</th>
+                            <th style="text-align: right;">현재가</th>
+                            <th style="text-align: right;">등락률</th>
+                            <th style="text-align: center;">관심</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stock in stock_info %}
+                        <tr style="border-bottom: 1.8px solid rgb(100, 100, 100);">
+                            <td style="text-align: left;">{{ stock.name }}</td>
+                            {% if stock.mbti %}
+                                <td>{{ stock.mbti }}</td>
+                            {% else %}
+                                <td>정보없음</td>
+                            {% endif %}
+                            <td style="text-align: right;">{{ stock.current_price|intcomma }}</td>
+                            <td style="text-align: right;">
+                            {% if stock.UpDownRate > 0 %}
+                                <span style="color: red;">{{ stock.UpDownPoint|intcomma }} ({{ stock.UpDownRate }}%)</span>
+                            {% elif stock.UpDownRate == 0 %}
+                                <span>{{ stock.UpDownPoint|intcomma }} ({{ stock.UpDownRate }}%)</span>
+                            {% else %}
+                                <span style="color: blue;">{{ stock.UpDownPoint|intcomma }} ({{ stock.UpDownRate }}%)</span>
+                            {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'remove_stock' stock.stock_code %}">
+                                  <img src="{% static 'images/star.png' %}" alt="Remove" style="width: 25px; margin-top: 5px;"/>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <span style="font-size: 25px; text-align: center;"> <b>아직 관심있게 보고 계신 종목이 없으시군요!<br>별을 눌러 추가해보세요</b> </span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="right">
+            <div class="small-box" style="background-color: rgb(237, 255, 202); font-size: 20px;">
+                {% if test_result1.result1 %}
+                    <h3> {{ request.user.username }}님은 {{ test_result1.result1 }}이시네요! </h3>
+                    <p>{{ test_result1.result2 }}</p>
+                    <a href="{% url 'test_option_1' %}" class="test-button">
+                        <p>테스트 다시하기</p>
+                    </a>
+                {% else %}
+                    <p> {{ request.user.username }}님은 아직 테스트 전이시네요! </p>
+                    <a href="{% url 'test_option_1' %}" class="test-button">
+                        <p>나의 투자성향은?<br><span style="font-weight: bold !important;">테스트 하러 가기 >></span></p>
+                    </a>
+                {% endif %}
+            </div>
+            <div class="small-box" style="background-color: rgb(191, 219, 186); font-size: 20px;">
+                {% if test_result2.result1 %}
+                    <h3> {{ request.user.username }}님은 {{ test_result2.result1 }}이시네요! </h3>
+                    <p>{{ test_result2.result2 }}</p>
+                    <a href="{% url 'test_option_2' %}" class="test-button">
+                        <p>테스트 다시하기</p>
+                    </a>
+                {% else %}
+                    <p> {{ request.user.username }}님은 아직 테스트 전이시네요! </p>
+                    <a href="{% url 'test_option_2' %}" class="test-button">
+                        <p>나의 투자지식은 어느정도일까? <br><span style="font-weight: bold !important; ">테스트 하러 가기 >></span></p>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+</div>
+<div class="bottom">
+    <div class="mbti-stock-rec">
+        {% if my_list|length >= 5 %}
+        <div style="margin: 8px;">
+            <h5>{{ request.user.username }}님이 가장 선호하시는 MBTI는 <strong>{{ mbti }}</strong>네요.</h5>
+            <p>{{ mbti }}의 기업은 ~~ 기능이 있어요 ^^~</p>
+        </div>
+            <div class="mbti-stock">
+                <table class="table-mbtistock">
+                    <thead>
+                        <tr style="border-bottom: 2px solid black;">
+                            <th style="text-align: left;">종목명</th>
+                            <th style="text-align: right;">현재가</th>
+                            <th style="text-align: right;">등락률</th>
+                            <th style="text-align: center;">관심</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stocks in mbti_stock|slice:":5" %}
+                        <tr style="border-bottom: 1.8px solid rgb(100, 100, 100);">
+                            <td style="text-align: left;">{{ stocks.name }}</td>
+                            <td style="text-align: right;">{{ stocks.current_price|intcomma }}</td>
+                            <td style="text-align: right;">
+                            {% if stocks.UpDownRate > 0 %}
+                                <span style="color: red;">{{ stocks.UpDownPoint|intcomma }} ({{ stocks.UpDownRate }}%)</span>
+                            {% elif stocks.UpDownRate == 0 %}
+                                <span>{{ stocks.UpDownPoint|intcomma }} ({{ stocks.UpDownRate }}%)</span>
+                            {% else %}
+                                <span style="color: blue;">{{ stocks.UpDownPoint|intcomma }} ({{ stocks.UpDownRate }}%)</span>
+                            {% endif %}
+                            </td>
+                            <td>
+                                {% if stocks.stock_code in my_list %}
+                                <a href="{% url 'remove_stock' stocks.stock_code %}">
+                                    <img src="{% static 'images/star.png' %}" alt="Remove" style="width: 25px; margin-top: 5px;"/>
+                                </a>
+                                {% else %}
+                                <a href="{% url 'add_favorite_list' stocks.stock_code %}">
+                                    <img src="{% static 'images/empty_star.png' %}" alt="Add" style="width: 25px; margin-top: 5px;"/>
+                                </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <table class="table-mbtistock">
+                    <thead>
+                        <tr style="border-bottom: 2px solid black;">
+                            <th style="text-align: left;">종목명</th>
+                            <th style="text-align: right;">현재가</th>
+                            <th style="text-align: right;">등락률</th>
+                            <th style="text-align: center;">관심</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stocks in mbti_stock|slice:"5:" %}
+                        <tr style="border-bottom: 1.8px solid rgb(100, 100, 100);">
+                            <td style="text-align: left;">{{ stocks.name }}</td>
+                            <td style="text-align: right;">{{ stocks.current_price|intcomma }}</td>
+                            <td style="text-align: right;">
+                            {% if stocks.UpDownRate > 0 %}
+                                <span style="color: red;">{{ stocks.UpDownPoint|intcomma }} ({{ stocks.UpDownRate }}%)</span>
+                            {% elif stocks.UpDownRate == 0 %}
+                                <span>{{ stocks.UpDownPoint|intcomma }} ({{ stocks.UpDownRate }}%)</span>
+                            {% else %}
+                                <span style="color: blue;">{{ stocks.UpDownPoint|intcomma }} ({{ stocks.UpDownRate }}%)</span>
+                            {% endif %}
+                            </td>
+                            <td>
+                                {% if stocks.stock_code in my_list %}
+                                <a href="{% url 'remove_stock' stocks.stock_code %}">
+                                    <img src="{% static 'images/star.png' %}" alt="Remove" style="width: 25px; margin-top: 5px;"/>
+                                </a>
+                                {% else %}
+                                <a href="{% url 'add_favorite_list' stocks.stock_code %}">
+                                    <img src="{% static 'images/empty_star.png' %}" alt="Add" style="width: 25px; margin-top: 5px;"/>
+                                </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+        <span style="font-size: 25px; text-align: center;">관심종목을 5개 이상 추가하시면 내가 선호하는 기업과 비슷한 기업을 보여드려요!</span>
+        {% endif %}
+    </div>
+</div>
+</div>
+{% endblock %}
+</html>

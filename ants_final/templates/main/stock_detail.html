@@ -1,0 +1,623 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %} <!-- 숫자에 , 표시 -->
+
+{% block title %}ANTS{% endblock %}
+
+{% block content %}
+</div>
+<div class="container" style="font-family: NanumR; justify-content: center; display: flex; margin: 3rem auto;">
+    <div class="row" style="width: 90%; display: flex; justify-content: center;">
+        <h5 style="margin-inline-start: 1rem;">{{ name }}({{ stock_code }}) 
+            <img id="favorite-icon" 
+                src="{% static favorite_icon %}" 
+                alt="Favorite Icon" 
+                style="width: 20px; height: 20px; cursor: pointer; margin: .5rem;">
+        </h5>
+        <div style="display: inline-block;  margin-inline-start: 1rem;">
+            <h3 style="display: inline; font-family: NanumB;">
+                {{ stock_info.current_price|intcomma }} 
+            </h3>
+            {% if stock_info.UpDownPoint > 0 %}
+                <h5 style="display: inline; color: red; font-family: NanumB;">
+                    {{ stock_info.UpDownPoint|intcomma }} ({{ stock_info.UpDownRate }}%)
+                </h5>
+            {% elif stock_info.UpDownPoint < 0 %}
+                <h5 style="display: inline; color: blue; font-family: NanumB;">
+                    {{ stock_info.UpDownPoint|intcomma }} ({{ stock_info.UpDownRate }}%)
+                </h5>
+            {% else %}
+                <h5 style="display: inline; color: block; font-family: NanumB;">
+                    {{ stock_info.UpDownPoint|intcomma }} ({{ stock_info.UpDownRate }}%)
+                </h5>
+            {% endif %}
+        </div>
+        <div class="col-lg-8 p-3 justify-content-center">
+            <canvas id="stockChart"></canvas> <!-- 차트를 그릴 캔버스 -->
+        </div>
+        <!-- 버튼 그룹을 차트 오른쪽에 세로로 배치 -->
+        <div class="col-lg-1 p-3">
+            <div class="btn-group-vertical" role="group" aria-label="X축 범위 선택" id="rangeButtons" style="width: 100%;">
+                <button id="range0" class="btn btn-primary active" style="width: 100%; margin-bottom: 10px;">1일</button>
+                <button id="range1" class="btn btn-secondary" style="width: 100%; margin-bottom: 10px;">1년</button>
+                <button id="range5" class="btn btn-secondary" style="width: 100%; margin-bottom: 10px;">5년</button>
+                <button id="range10" class="btn btn-secondary" style="width: 100%; margin-bottom: 10px;">10년</button>
+            </div>
+        </div>
+        <div class="col-lg-3 position-relative" style="display: flex; font-size: 20px; text-align: left; padding: 1rem; flex-direction: column;">
+            <h3>주식 정보</h3>
+            <div style="display: inline-block;">
+                ANTS MBTI : 
+                {% if mbti %}
+                    {{ mbti }}
+                {% else %}
+                    정보 없음
+                {% endif %}
+                <div class="mb-3 position-relative" style="display: inline-block;">
+                    <img src="{% static 'images/questionmark.png' %}" alt="mbti 상세정보" width="13" height="13" 
+                         onmouseover="showInfoPopup1()" onmouseout="hideInfoPopup1()" style="opacity: 0.5;">
+                    <div id="infoPopup1" class="popup" style="display: none;">
+                        <div style="padding: 1.3rem; padding-bottom: .5rem;">
+                            <h6>ANTS MBTI</h6>
+                            <p>4가지의 기준을 바탕으로<br>주식 초보자도 기업을 이해하기 쉽게 만들었어요.</p>
+                        </div>
+                        <div style="padding: 1.3rem; padding-left: 0px; padding-top: 0;">
+                            <ul style="list-style-type: circle;">
+                                <li class="nowrap"><strong>C</strong>: Conservative vs. <strong>R</strong>: Risk-taker</li>
+                                <p class="nowrap">C는 해당 기업의 사업이 안정적으로 유지되고 있다는 의미에요.
+                                    <br>R은 기업이 사업에 적극적으로 투자하며 성장하고 있다는 의미에요.</p>
+                                <li class="nowrap"><strong>H</strong>: High Profitability vs. <strong>L</strong>: Low Profitability</li>
+                                <p class="nowrap">H는 기업이 높은 수익을 내고 있다는 의미에요.
+                                    <br>L은 기업이 낮은 수익을 내고 있다는 의미에요.
+                                    <br>새로운 사업을 시작했거나 사업을 위해 투자중일 수 있어요.</p>
+                                <li class="nowrap"><strong>G</strong>: Growth-oriented vs. <strong>V</strong>: Value-oriented</li>
+                                <p class="nowrap">G는 기업이 단기적으로 성장할 것으로 보이는 상태에요.
+                                    <br>V는 현재 시장가치는 높지 않지만 장기적으로 성장이 예상되는 상태에요.
+                                </p>
+                                <li class="nowrap"><strong>E</strong>: Extroverted vs. <strong>I</strong>: Introverted</li>
+                                <p class="nowrap">E는 기업의 자산이 높은 회전율을 가지고 있다는 의미에요.
+                                    <br>I는 기업의 자산이 낮은 회전율을 가지고 있다는 의미에요.
+                                    <br>보통 기업의 자산 회전율은 높을수록 좋다고 평가돼요.</p>
+                            </ul>
+                        </div>
+                    </div>
+                </div>  
+            </div>            
+            <div style="display: inline-block;">배당성 : {{ dividend_stability }}
+                <div class="mb-3 position-relative" style="display: inline-block;">
+                    <img src="{% static 'images/questionmark.png' %}" alt="배당성" width="13" height="13" 
+                         onmouseover="showInfoPopup2()" onmouseout="hideInfoPopup2()" style="opacity: 0.5;">
+                    <div id="infoPopup2" class="popup" style="display: none;">
+                        <div class="nowrap" style="padding: 1.3rem; padding-bottom: .5rem;">
+                            <h6>배당성</h6>
+                            <p>6년간의 배당률과 배당성향을 기준으로 3가지 등급인 A,B,C로 분류했어요.
+                                <br>배당성이 높은 A 기업은 안정적인 수익을 바탕으로 주주에게 배당을 지급해요.
+                                <br>고정적인 수입을 선호하는 투자자에게 적합해요.
+                                <br>반면 낮은 C 기업은 창출한 수익을 배당보다는 성장에 재투자해요.
+                                <br>시세차익을 얻고 싶은 투자자에게 적합해요.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="display: inline-block;">변동성 : {{ volatility }}
+                <div class="mb-3 position-relative" style="display: inline-block;">
+                    <img src="{% static 'images/questionmark.png' %}" alt="변동성" width="13" height="13" 
+                         onmouseover="showInfoPopup3()" onmouseout="hideInfoPopup3()" style="opacity: 0.5;">
+                    <div id="infoPopup3" class="popup" style="display: none;">
+                        <div class="nowrap" style="padding: 1.3rem; padding-bottom: .5rem;">
+                            <h6>변동성</h6>
+                            <p>52주 최고가, 최저가, 거래량 회전율, 시가총액 등을 고려하여 A,B 등급으로 분류했어요.
+                                <br>변동성이 높은 A 기업은 주가 등락폭이 큰 종목이에요.
+                                <br>단기로 높은 수익을 원하는 투자자에게 적합하지만, 리스크가 크기 때문에 주의가 필요해요.
+                                <br>낮은 B 기업은 주가 변동이 안정적인 편이에요.
+                                <br>장기 투자를 원하는 투자자에게 적합해요.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p>전년도 배당률 : {{ prev_dividend_rate }}</p>
+            <p>예측 배당률 : {{ pred_dividend_rate }}</p>
+        </div>
+        
+    </div>
+</div>
+
+<div class="news-section">
+    <h3 class="text-center">주요 뉴스</h3>
+    <div class="news-carousel">
+        <button id="prevBtn">&lt;</button>
+        <div id="newsWrapper">
+            {% for news in news_list %}
+                <div class="news-item">
+                    <a href="{{ news.originallink }}" style="color: black; text-decoration: none;" target="_blank">
+                        <h4>{{ news.title|safe }}</h4>
+                        <p>{{ news.description|safe }}</p>
+                    </a>
+                    <p>{{ news.pubDate|slice:":16" }}</p>
+                </div>
+            {% endfor %}
+        </div>
+        <button id="nextBtn">&gt;</button>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+<script src="https://cdn.jsdelivr.net/npm/date-fns/locale/ko/index.js"></script> <!-- 한국어 로케일 추가 -->
+<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial@0.2.1/dist/chartjs-chart-financial.min.js"></script>
+
+<script>
+    // MBTI 팝업
+    function showInfoPopup1() {
+        const popup = document.getElementById("infoPopup1");
+        popup.style.display = "block"; // 팝업 보이기
+    }
+
+    function hideInfoPopup1() {
+        const popup = document.getElementById("infoPopup1");
+        popup.style.display = "none"; // 팝업 숨기기
+    }
+
+    function showInfoPopup2() {
+        const popup = document.getElementById("infoPopup2");
+        popup.style.display = "block"; // 팝업 보이기
+    }
+
+    function hideInfoPopup2() {
+        const popup = document.getElementById("infoPopup2");
+        popup.style.display = "none"; // 팝업 숨기기
+    }
+    function showInfoPopup3() {
+        const popup = document.getElementById("infoPopup3");
+        popup.style.display = "block"; // 팝업 보이기
+    }
+
+    function hideInfoPopup3() {
+        const popup = document.getElementById("infoPopup3");
+        popup.style.display = "none"; // 팝업 숨기기
+    }
+
+
+    // Django 템플릿에서 데이터를 받아옴
+    const dates = {{ dates|safe }};  // 현재가의 날짜 배열
+    const closingPrices = {{ closing_prices|safe }};  // 현재가 배열
+    const stock_code = "{{ stock_code }}";  // 주식 코드
+    const ma5 = {{ ma5|safe }};  // 5일 이동평균선 데이터
+    const ma20 = {{ ma20|safe }};  // 20일 이동평균선 데이터
+    const ma60 = {{ ma60|safe }};  // 60일 이동평균선 데이터
+    const ma120 = {{ ma120|safe }};  // 120일 이동평균선 데이터
+    const maxDate = new Date(dates[dates.length - 1]);  // 날짜 배열 중 마지막 날짜
+    const candleData = {{ candle_data|safe }};  // 캔들 차트를 그릴 데이터 (시가, 고가, 저가, 현재가)
+    console.log("초기 렌더링 시 candleData:", candleData);  // 브라우저에서 확인
+
+    
+    // 전역 변수로 차트 객체를 선언
+    let stockChart;
+
+    // 실시간 데이터를 불러와서 1일 캔들 차트를 그리는 함수
+    function fetchRealTimeData() {
+        // 오늘 날짜를 YYYY-MM-DD 형식으로 계산
+        const today = new Date().toISOString().split('T')[0];  
+        let previousClose = null;  // 이전 현재가 값을 저장할 변수
+
+        // candleData 배열에서 오늘 날짜에 해당하는 데이터만 필터링
+        let filteredData = candleData.filter(item => {
+            const itemDate = new Date(item.x);  
+            const itemDateStr = itemDate.toISOString().split('T')[0];  
+            return itemDateStr === today;  // 오늘 날짜의 데이터만 반환
+        });
+
+        // 오늘 날짜 데이터가 없으면 가장 최근 데이터 사용
+        if (filteredData.length === 0) {
+            // candleData에서 가장 최근 날짜 찾기
+            const mostRecentDateStr = candleData.reduce((latest, item) => {
+                const itemDate = new Date(item.x);
+                const latestDate = new Date(latest);
+                return itemDate > latestDate ? item.x : latest;
+            }, candleData[0].x);
+            
+            // 가장 최근 날짜에 해당하는 데이터 필터링
+            filteredData = candleData.filter(item => {
+                const itemDate = new Date(item.x);
+                const recentDateStr = new Date(mostRecentDateStr).toISOString().split('T')[0];
+                return itemDate.toISOString().split('T')[0] === recentDateStr;
+            });
+        }
+
+        // 이전 현재가를 기준으로 시가(open)를 결정하고 데이터 변환
+        const todayData = filteredData.map(item => {
+    
+
+            // 시가를 이전 현재가로 설정 (이전 현재가가 없으면 기본 시가 사용)
+            const open = previousClose !== null ? previousClose : item.o; 
+
+            // 다음 데이터 계산을 위해 이전 현재가를 저장
+            previousClose = item.c;
+
+            return { 
+                x: new Date(item.x),  // 날짜
+                o: open,  // 시가
+                h: Math.max(open, item.c),  // 고가 (시가와 현재가 중 더 큰 값)
+                l: Math.min(open, item.c),  // 저가 (시가와 현재가 중 더 작은 값)
+                c: item.c,  // 현재가
+            };
+        });
+
+        // 라인 차트를 위한 현재가 데이터
+        const lineData = filteredData.map(item => {
+            return { x: new Date(item.x), y: item.c };  // 시간(x)과 현재가(y)
+        });
+
+        // 기존 차트가 있다면 삭제 후 새로 생성
+        if (stockChart) {
+            stockChart.destroy();  // 기존 차트를 제거
+        }
+
+        // 캔들 차트 생성
+        stockChart = new Chart(document.getElementById('stockChart').getContext('2d'), {
+            type: 'candlestick',  // 차트 유형: 캔들스틱
+            data: {
+                datasets: [
+                    {
+                        label: '1일 캔들차트',  // 캔들차트 라벨
+                        data: todayData,  // 캔들 데이터 (오늘 또는 최근 날짜)
+                        barThickness: 'flex',
+                        hoverBackgroundColor: 'rgba(14, 138, 117, 0.3)',
+                        backgroundColors: {
+                            up: 'rgba(246, 8, 8, 0.7)',  // 상승 시 배경색
+                            down: 'rgba(0, 0, 200, 0.7)',  // 하락 시 배경색
+                        },
+                        borderColors: {
+                            up: 'rgb(200, 0, 0)',  // 상승 시 경계선 색
+                            down: 'rgb(0, 0, 200)',  // 하락 시 경계선 색
+                        }
+                    },
+                    {
+                        label: '현재가',  // 라인차트 라벨
+                        type: 'line',  // 라인 차트로 추가
+                        data: lineData,  // 실시간 현재가 데이터
+                        borderColor: 'rgba(14, 138, 117, 1)',  
+                        backgroundColor: 'rgba(14, 138, 117, 0.5)',  
+                        borderWidth: 1,
+                        pointRadius: 0.2,
+                        tension: 0.1,  // 부드러운 곡선 라인
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'time',  // x축을 시간 단위로 설정
+                        time: {
+                            unit: 'minute',  // 데이터가 10분 간격이므로 분 단위로 설정
+                            displayFormats: {
+                                minute: 'HH:mm',  // HH:mm 형식으로 시간 표시
+                            },
+                            tooltipFormat: 'yyyy-MM-dd HH:mm',  // 툴팁 시간 형식
+                        },
+                        title: {
+                            display: true,
+                            text: '시간 (KST)'  // x축 제목
+                        },
+                        ticks: {
+                            source: 'auto',  // 자동으로 tick을 설정
+                            autoSkip: true,  // 자동으로 일부 tick을 생략
+                            maxTicksLimit: 10,  // 최대 10개의 tick만 표시
+                            callback: function(value) {
+                                // tick을 한국 시간(KST)으로 변환하여 표시
+                                const date = new Date(value);
+                                date.setHours(date.getHours() - 9);  // 9시간을 더해 한국 시간으로 변환
+                                return date.toLocaleTimeString('ko-KR', {
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    hour12: true  // 12시간 형식
+                                });
+                            }
+                        }
+                    },
+                    y: {
+                        title: { display: true, text: '가격 (원)' },  // y축 제목
+                        beginAtZero: false  // 0부터 시작하지 않음
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false,  // 범례 비표시
+                    },
+                    tooltip: {
+                        callbacks: {
+                            // 툴팁 상단 제목을 제거
+                            title: function() {
+                                return '';  // 제목 비표시
+                            },
+                            label: function(tooltipItem) {
+                                // 캔들차트에만 툴팁 표시
+                                if (tooltipItem.datasetIndex === 0) {
+                                    const currentPrice = tooltipItem.raw.c.toLocaleString('ko-KR', { style: 'currency', currency: 'KRW' }) || '₩0';
+
+                                    // UTC+9 한국 시간 변환
+                                    const date = new Date(tooltipItem.raw.x);
+                                    date.setHours(date.getHours() - 9);  
+                                    // 시간을 한국 시간으로 변환해서 time 변수로 저장
+                                    const time = date.toLocaleTimeString('ko-KR', {
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                        hour12: true
+                                    });
+                                    return `현재가: ${currentPrice}, 시간: ${time}`;  // 현재가와 시간을 툴팁에 표시
+                                }
+                                return '';  // 다른 차트에 툴팁 비표시
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // 선택한 기간(년)을 기준으로 차트를 그리는 함수
+    function calculateMinDate(years) {
+        const minDate = new Date(maxDate);  // maxDate 기준으로
+        minDate.setFullYear(minDate.getFullYear() - years);  // 해당 년수 만큼 이전 날짜 계산
+        return minDate;
+    }
+
+    // 선택한 기간 동안의 라인 차트 생성 함수
+    function renderLineChart(years) {
+        if (stockChart) {
+            stockChart.destroy();  // 기존 차트를 삭제
+        }
+
+        const minDate = calculateMinDate(years);  // 기간에 맞는 최소 날짜 계산
+        const filteredDates = dates.filter((date) => new Date(date) >= minDate);  // 선택한 기간에 해당하는 날짜 필터링
+        const filteredClosingPrices = closingPrices.slice(dates.length - filteredDates.length);  // 필터링된 날짜에 맞는 현재가 데이터
+
+        // 선택한 기간에 맞는 최고가와 최저가 계산
+        const filteredMinPrice = Math.min(...filteredClosingPrices);
+        const filteredMaxPrice = Math.max(...filteredClosingPrices);
+
+        // 최고가와 최저가의 인덱스 계산
+        const filteredMinPriceIndex = filteredClosingPrices.indexOf(filteredMinPrice);
+        const filteredMaxPriceIndex = filteredClosingPrices.indexOf(filteredMaxPrice);
+
+        // 1년 선택 시 이동평균선을 표시
+        const datasets = [{
+            label: '현재가',
+            data: filteredClosingPrices,
+            borderColor: 'rgba(14, 138, 117, 1)',
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderWidth: 1,
+            pointRadius: 0,
+            tension: 0.1
+        }, {
+            label: '최고가',
+            data: [{x: filteredDates[filteredMaxPriceIndex], y: filteredMaxPrice}],  // 필터링된 최고가에 마커 추가
+            pointRadius: 5,
+            pointBackgroundColor: 'red',  // 마커 색상
+            pointBorderColor: 'red',
+            showLine: false, // 선은 그리지 않고 마커만 표시
+            legend: { display: false } // 범례 숨김
+        }, {
+            label: '최저가',
+            data: [{x: filteredDates[filteredMinPriceIndex], y: filteredMinPrice}],  // 필터링된 최저가에 마커 추가
+            pointRadius: 5,
+            pointBackgroundColor: 'blue',  // 마커 색상
+            pointBorderColor: 'blue',
+            showLine: false,  // 선은 그리지 않고 마커만 표시
+        }];
+
+        // 1년 선택 시 이동평균선 추가
+        if (years === 1) {
+            const filteredMA5 = ma5.slice(dates.length - filteredDates.length);
+            const filteredMA20 = ma20.slice(dates.length - filteredDates.length);
+            const filteredMA60 = ma60.slice(dates.length - filteredDates.length);
+            const filteredMA120 = ma120.slice(dates.length - filteredDates.length);
+
+            datasets.push({
+                label: 'MA5',
+                data: filteredMA5,
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 0.6,
+                pointRadius: 0,
+                tension: 0.1
+            }, {
+                label: 'MA20',
+                data: filteredMA20,
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 0.6,
+                pointRadius: 0,
+                tension: 0.1
+            }, {
+                label: 'MA60',
+                data: filteredMA60,
+                borderColor: 'rgba(255, 206, 86, 1)',
+                borderWidth: 0.6,
+                pointRadius: 0,
+                tension: 0.1
+            }, {
+                label: 'MA120',
+                data: filteredMA120,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 0.6,
+                pointRadius: 0,
+                tension: 0.1
+            });
+        }
+
+            // x축 표시 형식 설정: 10년이면 년도만, 1년 또는 5년이면 년도+월 표시
+    const timeUnit = years === 10 ? 'year' : 'month';  // 10년은 'year', 그 외는 'month'
+    const displayFormat = years === 10 ? { year: 'yyyy' } : { month: 'yyyy-MM' };  // 10년은 'yyyy', 그 외는 'yyyy-MM'
+
+    stockChart = new Chart(document.getElementById('stockChart').getContext('2d'), {
+        type: 'line',
+        data: {
+            labels: filteredDates,  // 필터링된 날짜 사용
+            datasets: datasets  // 데이터셋 추가
+        },
+        options: {
+            scales: {
+                x: {
+                    type: 'time',
+                    time: {
+                        unit: timeUnit,  // 위에서 설정한 단위 적용
+                        displayFormats: displayFormat  // 위에서 설정한 형식 적용
+                    },
+                    min: minDate.toISOString(),  // 해당 기간에 맞는 최소 날짜 설정
+                    max: maxDate.toISOString(),
+                    title: { display: true, text: '날짜' }
+                },
+                y: { 
+                    title: { display: true, text: '가격 (원)' }, 
+                    beginAtZero: false 
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        // 특정 데이터셋을 범례에서 숨기기 위한 필터링
+                        filter: function(legendItem) {
+                            // '최고가'와 '최저가' 항목을 필터링하여 범례에서 숨김
+                            return legendItem.text !== '최고가' && legendItem.text !== '최저가';
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+    // 차트 기간 선택 버튼 이벤트 처리
+    const rangeButtons = document.querySelectorAll('#rangeButtons button');
+    rangeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const years = parseInt(this.id.replace('range', ''));
+            if (years === 0) {
+                fetchRealTimeData();  // 1일 버튼 클릭 시 실시간 데이터를 캔들차트로 업데이트
+            } else {
+                renderLineChart(years);  // 나머지 경우는 라인 차트로 업데이트
+            }
+            updateActiveButton(this);  // 클릭한 버튼을 활성화 상태로 업데이트
+        });
+    });
+
+    // 클릭한 버튼을 활성화 상태로 설정하는 함수
+    function updateActiveButton(clickedButton) {
+        rangeButtons.forEach(button => {
+            button.classList.remove('active', 'btn-primary');
+            button.classList.add('btn-secondary');
+        });
+
+        clickedButton.classList.remove('btn-secondary');
+        clickedButton.classList.add('active', 'btn-primary');
+    }
+
+    // 초기 차트 렌더링 (라인 차트로 10년 기간 보여줌)
+    // renderLineChart(1);
+    let currentPage = 1;
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const newsWrapper = document.getElementById('newsWrapper');
+
+    // 첫 페이지 로드 시 바로 카드형 뉴스 렌더링
+    loadNews(currentPage);
+
+    function loadNews(page) {
+        fetch(`/load-news/?stock_code=${stock_code}&page=${page}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.news_list);  // 뉴스 리스트 데이터를 콘솔에 출력하여 확인
+                newsWrapper.innerHTML = '';  // 기존 뉴스 항목 삭제
+
+                data.news_list.forEach(news => {
+                    const newsItem = document.createElement('div');
+                    newsItem.classList.add('news-card'); // 카드 스타일을 적용할 클래스 추가
+                    newsItem.style.cssText = `
+                        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+                        transition: 0.3s;
+                        width: 330px;
+                        margin: 8px;
+                        padding: 15px;
+                        border-radius: 10px;
+                        background-color: #fff;
+                    `;
+
+                    // pubDate가 undefined로 나오는 문제를 해결하기 위해 데이터 확인
+                    const formattedDate = news.pubDate ? news.pubDate.slice(0, 16) : '날짜 정보 없음';
+
+                    newsItem.innerHTML = `
+                        <div style="padding: 10px;">
+                            <a href="${news.originallink}" style="color: black; text-decoration: none;" target="_blank">
+                                <h4 style="font-size: 1.2rem; font-weight: bold;">
+                                    ${news.title}  <!-- 제목이 생략되지 않고 전체를 표시 -->
+                                </h4>
+                                <p style="margin-top: 10px; font-size: 0.9rem; color: #666; white-space: normal; overflow: hidden; text-overflow: ellipsis;">
+                                    ${news.description}
+                                </p>
+                            </a>
+                            <p style="color: #888; font-size: 0.8rem;">${formattedDate}</p>
+                        </div>
+                    `;
+                    
+                    newsWrapper.appendChild(newsItem);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching news:', error);
+            });
+    }
+
+    // 이전 페이지 버튼 클릭
+    prevBtn.addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            loadNews(currentPage);
+        }
+    });
+
+    // 다음 페이지 버튼 클릭
+    nextBtn.addEventListener('click', () => {
+        currentPage++;
+        loadNews(currentPage);
+    });
+
+
+    // 관심 종목 추가/제거 기능
+    const isAuthenticated = "{{ user.is_authenticated|yesno:'true,false' }}";
+    document.getElementById('favorite-icon').addEventListener('click', function() {
+        const stockCode = "{{ stock_code }}";
+        const isFavorite = this.getAttribute('src').includes('filled_star.png');
+
+        // 로그인이 되어 있지 않으면 로그인 페이지로 리다이렉트
+        if (isAuthenticated === 'false') {
+            alert('로그인이 필요합니다.');
+            window.location.href = "{% url 'account_login' %}?next={{ request.path }}";
+            return;
+        }
+
+        // 관심 종목에 있으면 제거, 없으면 추가
+        const url = isFavorite ? `/remove_stock/${stockCode}/` : `/add_favorite_list/${stockCode}/`;
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                // 로그인 상태에서만 별표 상태 변경
+                if (isFavorite) {
+                    this.setAttribute('src', "{% static 'images/empty_star.png' %}");
+                } else {
+                    this.setAttribute('src', "{% static 'images/filled_star.png' %}");
+                }
+            }
+        });
+    });
+    // 초기 차트 렌더링 (라인 차트로 10년 기간 보여줌)
+    fetchRealTimeData(); 
+</script>
+
+{% endblock %}

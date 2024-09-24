@@ -13,7 +13,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv('/home/ants/django/.env')
+# load_dotenv('/home/ants/django/.env')
+load_dotenv('../.env') # 윈도우에서 작업시 사용
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -47,6 +48,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',  # 구글 로그인 추가
     'rest_framework.authtoken',
     'stocks',  # stocks 앱 추가
+    'django_plotly_dash', # 앱추가
+    'django.contrib.humanize', # 숫자에 , 표시하는 앱
 ]
 
 # 사이트 ID 설정
@@ -58,32 +61,54 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',  # 소셜 인증 추가
 ]
 
+# settings.py
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',  # 로컬 메모리 캐시
+        'LOCATION': 'unique-snowflake',
+    }
+}
+
+
 # 이메일 주소를 필수로 할지 여부
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 
+ACCOUNT_AUTHENTICATION_METHOD = 'email'  # 이메일을 통한 로그인 허용
+ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
+
+
 # 로그인 후 리디렉션될 URL
 LOGIN_REDIRECT_URL = '/'
+# 로그아웃 후 리디렉션될 URL
+LOGOUT_REDIRECT_URL = '/' 
+
+# SOCIALACCOUNT_ADAPTER = 'ants_final.adapters.CustomSocialAccountAdapter'
+
 
 SOCIALACCOUNT_LOGIN_ON_GET = True
+
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'SCOPE': [
-            'profile', 
-            'email', 
+            'profile',
+            'email',
         ],
         'AUTH_PARAMS': {
-            'access_type': 'online'
-        }
+            'access_type': 'online',
+        },
+    
     }
 }
 
-# 브라우저가 닫힐 때 세션을 만료시키는 설정
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
-# 세션 쿠키의 수명을 설정 (기본값: 2주)
-SESSION_COOKIE_AGE = 1209600  # 2 weeks in seconds
+
+
+SESSION_COOKIE_SECURE = False  # 개발 환경에서 False로 설정
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # 브라우저 종료 시 세션 만료 X
+SESSION_COOKIE_AGE = 1209600  # 2주간 유지
+# SESSION_SAVE_EVERY_REQUEST = True  # 매 요청마다 세션 갱신
 
 # 세션 엔진 설정
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
@@ -141,7 +166,7 @@ DATABASES = {
         'USER': os.environ['RDS_USER'],
         'PASSWORD': os.environ['RDS_PASSWORD'],
         'HOST': os.environ['RDS_HOST'],
-        'PORT': '3306',
+        'PORT': '13306',
         'OPTIONS': {
             'charset': 'utf8',
             'use_unicode': True,
@@ -172,11 +197,12 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ko'
 
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
+USE_L10N = True 
 
 USE_TZ = True
 
@@ -192,21 +218,21 @@ STATIC_ROOT = '/home/ants/django/ants_final/staticfiles/'  # 정적 파일 저�
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': '/home/ants/django/ants_final/logs/django.log',
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['file'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-    },
-}
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'file': {
+#             'level': 'DEBUG',
+#             'class': 'logging.FileHandler',
+#             'filename': '/home/ants/django/ants_final/logs/django.log',
+#         },
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['file'],
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
+#     },
+# }

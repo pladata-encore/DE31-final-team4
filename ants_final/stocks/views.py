@@ -38,3 +38,5 @@ def stock_chart(request):
     buffer.seek(0)
     
     return HttpResponse(buffer, content_type='image/png')
+
+

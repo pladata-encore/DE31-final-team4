@@ -1,75 +1,134 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test Option 1</title>
-    <!-- Static 파일 사용을 위한 태그 로드 -->
-    {% load static %}
+
     <!-- CSS 파일 추가 -->
-    <link rel="stylesheet" href="{% static 'css/custom_style.css' %}">
+    <link rel="stylesheet" href="/static/css/custom_style.css">
+    <style>
+        /* My Page로 이동 버튼 기본 숨김 */
+        #myPageButton {
+            display: none;
+        }
+    </style>
 </head>
+
 <body>
     <div class="custom-test-container">
-        <div class="custom-question">Q1.</div>  <!-- 질문 번호 표시 -->
-        <p class="custom-question-text">당신은 어떤 음식을 선호하시나요?</p>  <!-- 질문 텍스트 표시 -->
-        <div class="custom-button-wrap"></div>  <!-- 답변 버튼이 표시될 영역 -->
+        <form id="testForm" method="POST">
+            {% csrf_token %} <!-- CSRF 토큰 추가 -->
+            <div class="custom-question">Q1.</div> <!-- 질문 번호 표시 -->
+            <p class="custom-question-text">당신은 어떤 음식을 선호하시나요?</p> <!-- 질문 텍스트 표시 -->
+            <div class="custom-button-wrap"></div> <!-- 답변 버튼이 표시될 영역 -->
+        </form>
+
+        <!-- 결과를 표시할 컨테이너 -->
+        <div class="result-container">
+            <div id="resultTitle"></div>
+            <div id="resultDescription"></div>
+        </div>
+
+        <!-- My Page로 이동 버튼을 중앙에 위치 -->
+        <div class="button-container">
+            <button id="myPageButton" class="custom-button" onclick="window.location.href='{% url 'mypage' %}'" style="text-align: center;">My Page로 이동</button>
+        </div>
     </div>
 
     <!-- JavaScript 파일 연결 -->
-    <script src="{% static 'js/testPage.js' %}"></script>
+    <script src="/static/js/testPage.js"></script>
     <script>
         // JSON 데이터 (예시)
         const testData = {
             type: 'point',
             data: [
                 {
-                    "question": "당신은 어떤 음식을 선호하시나요?",
+                    "question": "당신의 연령대는 어떻게 됩니까?",
                     "answerList": [
-                        {
-                            "answer": "🥗 신선한 채소와 새콤한 과일",
-                            "point": 1
-                        },
-                        {
-                            "answer": "🍖 품질 좋은 고기",
-                            "point": 2
-                        }
+                        { "answer": "① 19세 이하", "point": 12.5 },
+                        { "answer": "② 20세 ~ 40세", "point": 12.5 },
+                        { "answer": "③ 41세 ~ 50세", "point": 9.3 },
+                        { "answer": "④ 51세 ~ 60세", "point": 6.2 },
+                        { "answer": "⑤ 61세 이상", "point": 3.1 }
                     ]
                 },
                 {
-                    "question": "만약 당신이 동물이라면 어디에 살고 있나요?",
+                    "question": "투자하고자 하는 자금의 투자 가능 기간은 얼마나 됩니까?",
                     "answerList": [
-                        {
-                            "answer": "🌱 푸르른 초원",
-                            "point": 1
-                        },
-                        {
-                            "answer": "🌳 울창한 숲",
-                            "point": 2
-                        }
+                        { "answer": "① 6개월 이내", "point": 3.1 },
+                        { "answer": "② 6개월 이상 ~ 1년 이내", "point": 6.2 },
+                        { "answer": "③ 1년 이상 ~ 2년 이내", "point": 9.3 },
+                        { "answer": "④ 2년 이상 ~ 3년 이내", "point": 12.5 },
+                        { "answer": "⑤ 3년 이상", "point": 15.6 }
+                    ]
+                },
+                {
+                    "question": "다음 중 투자경험과 가장 가까운 것은 어느 것입니까?",
+                    "answerList": [
+                        { "answer": "① 은행의 예·적금, 국채, 지방채, 보증채, MMF, CMA 등", "point": 3.1 },
+                        { "answer": "② 금융채, 신용도가 높은 회사채, 채권형펀드, 원금보존추구형 ELS 등", "point": 6.2 },
+                        { "answer": "③ 신용도 중간 등급의 회사채, 원금의 일부만 보장되는 ELS, 혼합형펀드 등", "point": 9.3 },
+                        { "answer": "④ 신용도가 낮은 회사채, 주식, 원금이 보장되지 않는 ELS, 시장수익률 수준의 수익을 추구하는 주식형펀드 등", "point": 12.5 },
+                        { "answer": "⑤ ELW, 선물옵션, 시장수익률 이상의 수익을 추구하는 주식형펀드, 파생상품에 투자하는 펀드, 주식 신용거래 등", "point": 15.6 }
+                    ]
+                },
+                {
+                    "question": "금융상품 투자에 대한 본인의 지식수준은 어느 정도라고 생각하십니까?",
+                    "answerList": [
+                        { "answer": "① ［매우 낮은 수준］ 투자의사 결정을 스스로 내려본 경험이 없는 정도", "point": 3.1 },
+                        { "answer": "② ［낮은 수준］ 주식과 채권의 차이를 구별할 수 있는 정도", "point": 6.2 },
+                        { "answer": "③ ［높은 수준］ 투자할 수 있는 대부분의 금융상품의 차이를 구별할수 있는 정도", "point": 9.3 },
+                        { "answer": "④ ［매우 높은 수준］ 금융상품을 비롯하여 모든 투자대상 상품의 차이를 이해할 수있는 정도", "point": 12.5 }
+                    ]
+                },
+                {
+                    "question": "내 월급에서 여유자금이 매달 100만 원씩 생긴다면, 매달 이 돈을 적금과 주식에 어느정도로 배분할 것인가?",
+                    "answerList": [
+                        { "answer": "① 적금에 100 주식에 0", "point": 3.1 },
+                        { "answer": "② 적금에 70 주식에 30", "point": 6.2 },
+                        { "answer": "③ 적금에 50 주식에 50", "point": 9.3 },
+                        { "answer": "④ 적금에 30 주식에 70", "point": 12.5 },
+                        { "answer": "⑤ 주식에 100", "point": 15.6 }
+                    ]
+                },
+                {
+                    "question": "다음 중 당신의 수입원을 가장 잘 나타내고 있는 것은 어느 것입니까?",
+                    "answerList": [
+                        { "answer": "① 현재 일정한 수입이 발생하고 있으며, 향후 현재 수준을 유지하거나 증가할 것으로 예상된다.", "point": 9.3 },
+                        { "answer": "② 현재 일정한 수입이 발생하고 있으나, 향후 감소하거나 불안정할 것으로 예상된다.", "point": 6.2 },
+                        { "answer": "③ 현재 일정한 수입이 없으며, 연금이 주수입원이다.", "point": 3.1 }
+                    ]
+                },
+                {
+                    "question": "만약 투자원금에 손실이 발생할 경우 다음 중 감수할 수 있는 손실 수준은 어느 것입니까?",
+                    "answerList": [
+                        { "answer": "① 무슨 일이 있어도 투자원금은 보전되어야 한다.", "point": 6.2 },
+                        { "answer": "② 10% 미만까지는 손실을 감수할 수 있을 것 같다.", "point": 6.2 },
+                        { "answer": "③ 20% 미만까지는 손실을 감수할 수 있을 것 같다.", "point": 12.5 },
+                        { "answer": "④ 기대수익이 높다면 위험이 높아도 상관하지 않겠다.", "point": 18.7 }
                     ]
                 }
             ],
             result: [
-                {
-                    "minPoint": 1,
-                    "maxPoint": 2,
-                    "title": "Result A",
-                    "description": "당신은 초원에서 살고 있습니다."
-                },
-                {
-                    "minPoint": 3,
-                    "maxPoint": 4,
-                    "title": "Result B",
-                    "description": "당신은 숲에서 살고 있습니다."
-                }
+                { "minPoint": 1, "maxPoint": 20, "title": "안정형", "description": "예금이나 적금 수준의 수익률을 기대하는 성향입니다. 원금손실이 발생하지 않는 상품을 위주로 투자하는 것을 추천드려요." },
+                { "minPoint": 20, "maxPoint": 40, "title": "안정추구형", "description": "원금의 손실위험은 최소화하고 이자소득이나 배당소득 수준의 안정적인 투자를 목표로 해야합니다. 수익을 위해 단기적인 손실을 수용할 수 있는 성향입니다. 예적금보다 높은 수익을 위해 자산 중의 일부를 상품에 투자셔도 좋습니다." },
+                { "minPoint": 40, "maxPoint": 60, "title": "위험중립형", "description": "투자에는 그에 상응하는 투자위험이 있음을 인식하고 있는 단계입니다. 예적금보다 높은 수익을 기대하신다면 일정 수준의 손실위험을 감수하고 투자해보세요." },
+                { "minPoint": 60, "maxPoint": 80, "title": "적극투자형", "description": "위험을 감내하더라도 높은 수준의 투자수익을 추구하는 유형입니다. 투자자금의 상당 부분을 주식, 주식형 펀드, 또는 파생상품등의 위험자산에 투자하는 것을 추천합니다." },
+                { "minPoint": 80, "maxPoint": 100, "title": "공격투자형", "description": "시장평균수익률을 훨씬 넘어서는 높은 수준의 투자수익을 추구하는 유형입니다. 손실위험을 적극 수용하고 투자자금 대부분을 주식형 펀드에 투자하시는 것을 선호합니다." }
             ]
         };
 
-        // 테스트 페이지 초기화
-        document.addEventListener('DOMContentLoaded', function() {
-            const testPage = new TestPage(testData);
+        // 테스트 페이지 초기화 및 결과 저장 URL 설정
+        document.addEventListener('DOMContentLoaded', function () {
+            const testPage = new TestPage(testData, '/save-test-result-option1/'); // 결과 저장 URL 지정
         });
     </script>
+
+    <!-- My Page로 이동 버튼 (결과가 나오면 보이도록 설정됨) -->
+    <button id="myPageButton" class="custom-button" onclick="window.location.href='{% url 'mypage' %}'">My Page로 이동</button>
+
 </body>
+
 </html>

@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}ANTS{% endblock %}
+
+{% block content %}
+
+<div class="m-5 text-center">
+    <h2>{{ stock_query }}에 대한 검색 결과가 없습니다.</h2>
+    <a class='btn btn-dark' href="{% url 'home' %}">홈으로 돌아가기</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    
+</script>
+{% endblock %}
