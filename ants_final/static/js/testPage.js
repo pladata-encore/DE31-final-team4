@@ -65,7 +65,7 @@ class TestPage {
         // 결과를 서버로 전송 (AJAX 요청)
         this.saveResult(result.title, result.description);
 
-        // 'My Page로 이동' 버튼 보이기 (수정된 부분)
+        // 'My Page로 이동' 버튼 보이기
         const myPageButton = document.getElementById('myPageButton');
         myPageButton.style.display = 'inline-block'; // 버튼을 보이게 설정
     }
@@ -80,16 +80,35 @@ class TestPage {
                 'X-CSRFToken': csrfToken
             },
             body: JSON.stringify({
-                result1: resultTitle,
-                result2: resultDescription
+                result1: resultTitle,   // 첫 번째 결과
+                result2: resultDescription // 두 번째 결과
             })
         })
             .then(response => response.json())
             .then(data => {
-                console.log('Test result saved successfully:', data);
+                if (data.status === 'success') {
+                    console.log('Test result saved successfully:', data);
+                } else {
+                    console.error('Error saving test result:', data.message);
+                }
             })
             .catch(error => {
                 console.error('Error saving test result:', error);
             });
     }
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    const testData = {
+        // your test data here
+    };
+
+    // 테스트 페이지 초기화 (옵션 1 또는 옵션 2에 맞게 URL 지정)
+    const testPage = new TestPage(testData, '/save-test-result-option1/');
+
+    // MyPage 버튼 클릭 시 MyPage로 이동
+    const myPageButton = document.getElementById('myPageButton');
+    myPageButton.addEventListener('click', function () {
+        window.location.href = '/mypage/';
+    });
+});
