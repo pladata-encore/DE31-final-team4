@@ -38,8 +38,8 @@
         <!-- 버튼 그룹을 차트 오른쪽에 세로로 배치 -->
         <div class="col-lg-1 p-3">
             <div class="btn-group-vertical" role="group" aria-label="X축 범위 선택" id="rangeButtons" style="width: 100%;">
-                <button id="range0" class="btn btn-secondary" style="width: 100%; margin-bottom: 10px;">1일</button>
-                <button id="range1" class="btn btn-primary active" style="width: 100%; margin-bottom: 10px;">1년</button>
+                <button id="range0" class="btn btn-primary active" style="width: 100%; margin-bottom: 10px;">1일</button>
+                <button id="range1" class="btn btn-secondary" style="width: 100%; margin-bottom: 10px;">1년</button>
                 <button id="range5" class="btn btn-secondary" style="width: 100%; margin-bottom: 10px;">5년</button>
                 <button id="range10" class="btn btn-secondary" style="width: 100%; margin-bottom: 10px;">10년</button>
             </div>
@@ -190,6 +190,8 @@
     const ma120 = {{ ma120|safe }};  // 120일 이동평균선 데이터
     const maxDate = new Date(dates[dates.length - 1]);  // 날짜 배열 중 마지막 날짜
     const candleData = {{ candle_data|safe }};  // 캔들 차트를 그릴 데이터 (시가, 고가, 저가, 현재가)
+    console.log("초기 렌더링 시 candleData:", candleData);  // 브라우저에서 확인
+
     
     // 전역 변수로 차트 객체를 선언
     let stockChart;
@@ -511,7 +513,7 @@
     }
 
     // 초기 차트 렌더링 (라인 차트로 10년 기간 보여줌)
-    renderLineChart(1);
+    //renderLineChart(1);
     let currentPage = 1;
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
@@ -594,7 +596,7 @@
         });
     });
     // 초기 차트 렌더링 (라인 차트로 10년 기간 보여줌)
-    {% comment %} renderLineChart(1); {% endcomment %}
+    fetchRealTimeData(); 
 </script>
 
 {% endblock %}
