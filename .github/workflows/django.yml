@@ -51,4 +51,4 @@ jobs:
          echo "RDS_HOST = ${{ secrets.DB_HOST }}" >> .env
     - name: Run Tests
       run: |
-        python ants_final/manage.py ants_final/test
+        python ants_final/manage.py test
