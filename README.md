@@ -22,9 +22,8 @@
 | 09/19 ~ 09/23 | CI/CD, 배포 |
 | 09/23 ~ 09/25 | 최종점검 및 문서화 |
 
-## 프로젝트 구성원
-
-Team Name : 개미마을 방범대
+## Team Name : 개미마을 방범대
+<img src="./readme_images/ants_member_cir.png" alt="ants members" width="300"/>
 
 | 구성원 | 이메일주소 | 깃허브 주소 | 역할 |
 |--------|----------|-----------|-------------|
@@ -142,10 +141,66 @@ PIR수치가 높은 한국 사회에서 자산의 파이프라인을 생성하�
 
 ## 전체 아키텍처
 ---
+![architecture](./readme_images/ants_architecture.jpg)
+
+### 데이터 수집
+Airflow : Docker compose를 이용한 Airflow환경설정
+- API로 주식데이터를 10분 단위로 9시부터 4시까지 스케줄링하여 데이터 수집
+- 네이버 API로 뉴스검색 데이터를 3시간 단위로 매일 수집
+
+### 데이터 저장
+- S3 (Data Lake) : AWS 환경에 실시간 주식 raw데이터 적재(csv)
+- MySQL DB , RDS (DataWarehouse) : lambda(or Airflow)로 전처리가 진행된 데이터 저장, 저장된 데이터로 프론트와 백엔드 구현
+
+### 데이터 전처리, ETL
+lambda : raw데이터가 갱신될 때마다 자동으로 전처리 및 DB에 저장
+
+### 데이터 시각화, 차트구현
+
+작성중
+
+### 데이터 분석 $ Maching Learning
+- Python, Jupyter, VS Code : 로컬 환경에서 진행
+- K-means, Regression
+### 웹 개발 
+- Django
+
+# 엔지니어링 파이프라인
+
+1. 실시간 데이터 파이프라인
+
+한국투자증권 API -> airflow로 전종목 실시간 데이터 수집 -> S3에 csv 저장 -> lambda로 필요한 데이터만 전처리 -> RDS에 적재
+- 평일 9시부터 4시 전까지 10분 간격으로 주가 데이터 갱신
+- 받아온 데이터에 주식코드 추가하여 csv로 S3 저장
+- lambda로 필요한 컬럼만 선별 / rds에 적재
+
+2. 종가 데이터 파이프라인
+
+한국투자증권 API -> airflow로 전종목 종가 데이터 수집 -> S3에 csv 저장, 전처리 후 RDS에 적재, RDS에 있는 데이터로 이동평균 계산 후 업데이트
+- 매일 오후 6시 1번 실행
+- 받아온 데이터에 주식코드 추가하여 csv로 S3 저장
+- 그 후 airflow task로 필요한 컬럼만 선별, RDS 적재
+- RDS에 있는 데이터를 활용해서 이동평균 계산 및 RDS 업데이트
 
 
+# Machine Learning 모델 학습 파이프라인
+
+1. 주식 종목 MBTI 분류 및 투자성향과 매칭 시스템 (K-menas Clustering)
 
 
+2. 배당률 예측 모델 학습 (Regression RandomForest)
+
+
+# CI/CD 파이프라인
+---
+
+
+# WEB 구현 페이지 (백엔드, 프론트엔드)
+
+
+---
+
+# 시연영상
 
 
 
