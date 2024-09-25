@@ -2,7 +2,7 @@
 {% load static %}
 {% load humanize %} <!-- 숫자에 , 표시 -->
 
-{% block title %}ANTS{% endblock %}
+{% block title %}ANTS | {{ name }}{% endblock %}
 
 {% block content %}
 </div>
@@ -32,18 +32,64 @@
                 </h5>
             {% endif %}
         </div>
-        <div class="col-lg-8 p-3 justify-content-center">
+        <div class="col-lg-8 p-3 justify-content-center" style="position: relative;">
             <canvas id="stockChart"></canvas> <!-- 차트를 그릴 캔버스 -->
-        </div>
-        <!-- 버튼 그룹을 차트 오른쪽에 세로로 배치 -->
-        <div class="col-lg-1 p-3">
-            <div class="btn-group-vertical" role="group" aria-label="X축 범위 선택" id="rangeButtons" style="width: 100%;">
-                <button id="range0" class="btn btn-primary active" style="width: 100%; margin-bottom: 10px;">1일</button>
-                <button id="range1" class="btn btn-secondary" style="width: 100%; margin-bottom: 10px;">1년</button>
-                <button id="range5" class="btn btn-secondary" style="width: 100%; margin-bottom: 10px;">5년</button>
-                <button id="range10" class="btn btn-secondary" style="width: 100%; margin-bottom: 10px;">10년</button>
+        
+            <!-- 버튼 그룹을 그래프 위에 가로로 배치 -->
+            <div class="btn-group" role="group" aria-label="X축 범위 선택" id="rangeButtons" 
+                style="position: absolute; top: -25px; right: 10px; display: flex; gap: 10px;">
+                <button id="range0" class="btn btn-primary active custom-btn">1일</button>
+                <button id="range1" class="btn btn-secondary custom-btn">1년</button>
+                <button id="range5" class="btn btn-secondary custom-btn">5년</button>
+                <button id="range10" class="btn btn-secondary custom-btn">10년</button>
             </div>
         </div>
+        
+        <!-- Custom CSS -->
+        <style>
+            /* 공통 버튼 스타일 */
+            .custom-btn {
+                border-radius: 8px; /* 모서리 둥글게 */
+                font-size: 14px;
+                padding: 8px 14px;
+                transition: background-color 0.3s ease, color 0.3s ease;
+                border: none;
+                backdrop-filter: blur(5px); /* 약간의 투명효과 */
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 */
+            }
+        
+            /* 기본 primary 버튼 색상 (옅은 녹색) */
+            .btn-primary {
+                background-color: rgba(144, 238, 144, 0.6); /* 옅은 연두색, 약간 투명 */
+                color: white;
+            }
+        
+            /* 기본 secondary 버튼 색상 (투명한 회색/녹색 계열) */
+            .btn-secondary {
+                background-color: rgba(53, 227, 53, 0.4); /* 연한 옅은 녹색 */
+                color: white;
+            }
+        
+            /* 버튼 hover 시 색상 */
+            .custom-btn:hover {
+                background-color: rgba(60, 179, 113, 0.8); /* hover 시 짙은 녹색 */
+                color: white;
+            }
+        
+            /* active 상태에 대한 스타일 */
+            .btn-primary.active {
+                background-color: rgba(34, 139, 34, 0.8); /* 진한 초록색 */
+                color: white;
+            }
+        
+            .btn-secondary.active {
+                background-color: rgba(46, 139, 87, 0.8); /* 짙은 녹색 */
+                color: white;
+            }
+        </style>
+        
+
+        
         <div class="col-lg-3 position-relative" style="display: flex; font-size: 20px; text-align: left; padding: 1rem; flex-direction: column;">
             <h3>주식 정보</h3>
             <div style="display: inline-block;">

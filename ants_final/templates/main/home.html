@@ -67,12 +67,19 @@
         <div class="col-lg-8">
             <form method="get" action="">
                 <!-- '급상승' 버튼 -->
-                <input type="submit" name="type" class="btn" style="background-color: {% if type == '급상승' %}red{% else %}gray{% endif %}; color: white;" value="급상승" {% if type == '급상승' %}disabled{% endif %}>
+                <input type="submit" name="type" class="btn" 
+                       style="background-color: {% if type == '급상승' %}#ff3333{% else %}#d9d9d9{% endif %}; 
+                              color: {% if type == '급상승' %}white{% else %}#666666{% endif %};" 
+                       value="급상승" 
+                       {% if type == '급상승' %}disabled{% endif %}>
                 
                 <!-- '급하락' 버튼 -->
-                <input type="submit" name="type" class="btn" style="background-color: {% if type == '급하락' %}blue{% else %}gray{% endif %}; color: white;" value="급하락" {% if type == '급하락' %}disabled{% endif %}>
+                <input type="submit" name="type" class="btn" 
+                       style="background-color: {% if type == '급하락' %}#3399ff{% else %}#d9d9d9{% endif %}; 
+                              color: {% if type == '급하락' %}white{% else %}#666666{% endif %};" 
+                       value="급하락" 
+                       {% if type == '급하락' %}disabled{% endif %}>
             </form>
-
             <table class="table">
                 <thead>
                     <tr>
@@ -110,6 +117,20 @@
                                 {% endif %}
                             {% else %}
                                 <span class="text-primary">{{ stock.UpDownPoint|intcomma }} ({{ stock.UpDownRate }}%)</span>
+                                {% if stock.UpDownRate < -30 %}
+                                    <div class="position-relative" style="display: inline-block; text-align: left;">
+                                        <img src="{% static 'images/questionmark.png' %}" alt="over하한가" width="13" height="13" 
+                                             onmouseover="showInfoPopup1()" onmouseout="hideInfoPopup1()" style="opacity: 0.5;">
+                                        <div id="infoPopup1" class="popup" style="display: none;">
+                                            <div class="nowrap" style="padding: 1.3rem; padding-bottom: .5rem;">
+                                                <h6>어떻게 하한가인 30%를 넘었어요?</h6>
+                                                <p>상장폐지되는 종목이에요.
+                                                    <br>더이상 주식 시장에서 거래할 수 없어요.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
                             {% endif %}
                         </td>
                     </tr>
@@ -123,7 +144,7 @@
         </div>
         <div class="col-lg-4 text-center">
             <a href="{% url 'economic_awareness_test' %}">
-                <img src="{% static 'images/test_image.png' %}" alt="투자 성향 테스트" style="max-width: 100%">
+                <img src="{% static 'images/test_image.png' %}" alt="투자 성향 테스트" style="max-width: 100%; width: 90%; height: auto;">
             </a>
         </div>
     </div>

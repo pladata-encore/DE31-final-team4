@@ -1,51 +1,74 @@
 <!DOCTYPE html>
 <html lang="ko">
-
+{% load static %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Option 1</title>
+    <title>ANTS | 투자성향</title>
 
     <!-- CSS 파일 추가 -->
-    <link rel="stylesheet" href="/static/css/custom_style.css">
+    <link rel="stylesheet" href="/static/css/test.css">
+    <link rel="stylesheet" href="/static/css/style.css">
     <style>
-        /* My Page로 이동 버튼 기본 숨김 */
-        #myPageButton {
-            display: none;
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #fffbe7;
+            font-family: 'NanumR';
         }
+    
     </style>
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'images/ants_sprout.ico' %}"> <!-- 파비콘 -->
 </head>
 
 <body>
-    <div class="custom-test-container">
-        <form id="testForm" method="POST">
-            {% csrf_token %} <!-- CSRF 토큰 추가 -->
-            <div class="custom-question">Q1.</div> <!-- 질문 번호 표시 -->
-            <p class="custom-question-text">당신은 어떤 음식을 선호하시나요?</p> <!-- 질문 텍스트 표시 -->
-            <div class="custom-button-wrap"></div> <!-- 답변 버튼이 표시될 영역 -->
-        </form>
-
-        <!-- 결과를 표시할 컨테이너 -->
-        <div class="result-container">
-            <div id="resultTitle"></div>
-            <div id="resultDescription"></div>
+    <div class="paper-background">
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progressBar">
+                <img id="progressImage" src="/static/images/개미.png" alt="Progress" class="progress-image">
+            </div>
         </div>
+        <div class="custom-test-container">
+            <form id="testForm" method="POST">
+                {% csrf_token %} <!-- CSRF 토큰 추가 -->
+                <h2 class="custom-question">Q1.</h2> <!-- 질문 번호 표시 -->
+                <h3 class="custom-question-text">당신은 어떤 음식을 선호하시나요?</h3> <!-- 질문 텍스트 표시 -->
+                <div class="custom-button-wrap"></div>
+            </form>
 
-        <!-- My Page로 이동 버튼을 중앙에 위치 -->
-        <div class="button-container">
-            <button id="myPageButton" class="custom-button" onclick="window.location.href='{% url 'mypage' %}'" style="text-align: center;">My Page로 이동</button>
+            <!-- 결과를 표시할 컨테이너 -->
+            <div class="result-container">
+                <div id="resultTitle"></div>
+                <div id="resultDescription"></div>
+            </div>
+
+            <!-- My Page로 이동 버튼을 중앙에 위치 -->
+            <div class="button-container">
+                <button id="myPageButton" class="custom-button" onclick="window.location.href='{% url 'mypage' %}'">My Page로 이동</button>
+            </div>
+        </div>
+        <div>
+
         </div>
     </div>
+
+  
 
     <!-- JavaScript 파일 연결 -->
     <script src="/static/js/testPage.js"></script>
     <script>
         // JSON 데이터 (예시)
         const testData = {
+            startPageTitle: "ANTS 투자성향 테스트!",
+            startPageDescription: "나는 위험을 얼마나 감수할 수 있을까?",
             type: 'point',
             data: [
                 {
-                    "question": "당신의 연령대는 어떻게 됩니까?",
+                    "question": "당신의 연령대는 어떻게 되나요?",
                     "answerList": [
                         { "answer": "① 19세 이하", "point": 12.5 },
                         { "answer": "② 20세 ~ 40세", "point": 12.5 },
@@ -55,7 +78,7 @@
                     ]
                 },
                 {
-                    "question": "투자하고자 하는 자금의 투자 가능 기간은 얼마나 됩니까?",
+                    "question": "자금의 투자 가능 기간은 얼마나 되나요?",
                     "answerList": [
                         { "answer": "① 6개월 이내", "point": 3.1 },
                         { "answer": "② 6개월 이상 ~ 1년 이내", "point": 6.2 },
@@ -65,26 +88,26 @@
                     ]
                 },
                 {
-                    "question": "다음 중 투자경험과 가장 가까운 것은 어느 것입니까?",
+                    "question": "설문자가 경험한 투자와 가장 비슷한 것은 무엇인가요?",
                     "answerList": [
                         { "answer": "① 은행의 예·적금, 국채, 지방채, 보증채, MMF, CMA 등", "point": 3.1 },
-                        { "answer": "② 금융채, 신용도가 높은 회사채, 채권형펀드, 원금보존추구형 ELS 등", "point": 6.2 },
-                        { "answer": "③ 신용도 중간 등급의 회사채, 원금의 일부만 보장되는 ELS, 혼합형펀드 등", "point": 9.3 },
-                        { "answer": "④ 신용도가 낮은 회사채, 주식, 원금이 보장되지 않는 ELS, 시장수익률 수준의 수익을 추구하는 주식형펀드 등", "point": 12.5 },
-                        { "answer": "⑤ ELW, 선물옵션, 시장수익률 이상의 수익을 추구하는 주식형펀드, 파생상품에 투자하는 펀드, 주식 신용거래 등", "point": 15.6 }
+                        { "answer": "② 금융채, 신용도가 높은 회사채, 채권형 펀드, 원금보존추구형 ELS 등", "point": 6.2 },
+                        { "answer": "③ 신용도 중간 등급의 회사채, 원금의 일부만 보장되는 ELS, 혼합형 펀드 등", "point": 9.3 },
+                        { "answer": "④ 신용도가 낮은 회사채, 주식, 원금이 보장되지 않는 ELS, 시장수익률 수준의 수익을 추구하는 주식형 펀드 등", "point": 12.5 },
+                        { "answer": "⑤ ELW, 선물옵션, 시장수익률 이상의 수익을 추구하는 주식형 펀드, 파생상품에 투자하는 펀드, 주식 신용거래 등", "point": 15.6 }
                     ]
                 },
                 {
-                    "question": "금융상품 투자에 대한 본인의 지식수준은 어느 정도라고 생각하십니까?",
+                    "question": "금융상품 투자에 대해 얼마나 알고 계신가요?",
                     "answerList": [
-                        { "answer": "① ［매우 낮은 수준］ 투자의사 결정을 스스로 내려본 경험이 없는 정도", "point": 3.1 },
-                        { "answer": "② ［낮은 수준］ 주식과 채권의 차이를 구별할 수 있는 정도", "point": 6.2 },
-                        { "answer": "③ ［높은 수준］ 투자할 수 있는 대부분의 금융상품의 차이를 구별할수 있는 정도", "point": 9.3 },
-                        { "answer": "④ ［매우 높은 수준］ 금융상품을 비롯하여 모든 투자대상 상품의 차이를 이해할 수있는 정도", "point": 12.5 }
+                        { "answer": "① ［매우 낮은 수준］투자의사 결정을 스스로 내려본 경험이 없는 정도", "point": 3.1 },
+                        { "answer": "② ［낮은 수준］주식과 채권의 차이를 구별할 수 있는 정도", "point": 6.2 },
+                        { "answer": "③ ［높은 수준］투자할 수 있는 대부분의 금융상품의 차이를 구별할수 있는 정도", "point": 9.3 },
+                        { "answer": "④ ［매우 높은 수준］금융상품을 비롯하여 모든 투자대상 상품의 차이를 이해할 수있는 정도", "point": 12.5 }
                     ]
                 },
                 {
-                    "question": "내 월급에서 여유자금이 매달 100만 원씩 생긴다면, 매달 이 돈을 적금과 주식에 어느정도로 배분할 것인가?",
+                    "question": "월급에서 여유자금이 매달 100만 원씩 생긴다면, 매달 이 돈을 적금과 주식에 어느정도로 배분하고 싶으신가요?",
                     "answerList": [
                         { "answer": "① 적금에 100 주식에 0", "point": 3.1 },
                         { "answer": "② 적금에 70 주식에 30", "point": 6.2 },
@@ -94,20 +117,20 @@
                     ]
                 },
                 {
-                    "question": "다음 중 당신의 수입원을 가장 잘 나타내고 있는 것은 어느 것입니까?",
+                    "question": "설문자의 수입을 가장 잘 나타내는 선택지를 골라주세요",
                     "answerList": [
-                        { "answer": "① 현재 일정한 수입이 발생하고 있으며, 향후 현재 수준을 유지하거나 증가할 것으로 예상된다.", "point": 9.3 },
-                        { "answer": "② 현재 일정한 수입이 발생하고 있으나, 향후 감소하거나 불안정할 것으로 예상된다.", "point": 6.2 },
+                        { "answer": "① 현재 일정한 수입이 있으며, 앞으로 현재 수준을 유지하거나 증가할 것으로 예상돼요.", "point": 9.3 },
+                        { "answer": "② 현재 일정한 수입이 있으나, 앞으로 감소하거나 불안정할 것으로 예상돼요.", "point": 6.2 },
                         { "answer": "③ 현재 일정한 수입이 없으며, 연금이 주수입원이다.", "point": 3.1 }
                     ]
                 },
                 {
-                    "question": "만약 투자원금에 손실이 발생할 경우 다음 중 감수할 수 있는 손실 수준은 어느 것입니까?",
+                    "question": "만약 투자원금에 손실이 발생한다면, 어느 정도까지 감수하실 수 있나요?",
                     "answerList": [
-                        { "answer": "① 무슨 일이 있어도 투자원금은 보전되어야 한다.", "point": 6.2 },
-                        { "answer": "② 10% 미만까지는 손실을 감수할 수 있을 것 같다.", "point": 6.2 },
-                        { "answer": "③ 20% 미만까지는 손실을 감수할 수 있을 것 같다.", "point": 12.5 },
-                        { "answer": "④ 기대수익이 높다면 위험이 높아도 상관하지 않겠다.", "point": 18.7 }
+                        { "answer": "① 무슨 일이 있어도 투자원금은 잃을 수 없어요.", "point": 6.2 },
+                        { "answer": "② 10% 미만까지는 손실을 감수할 수 있어요.", "point": 6.2 },
+                        { "answer": "③ 20% 미만까지는 손실을 감수할 수 있어요.", "point": 12.5 },
+                        { "answer": "④ 기대수익이 높다면 위험이 높아도 괜찮아요.", "point": 18.7 }
                     ]
                 }
             ],
