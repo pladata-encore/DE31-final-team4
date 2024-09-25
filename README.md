@@ -217,7 +217,21 @@ lambda : raw데이터가 갱신될 때마다 자동으로 전처리 및 DB에 �
 
 
 # WEB 구현 페이지 (백엔드, 프론트엔드)
+![alt text](readme_images/homepage.png)
 
+![alt text](readme_images/dictpage.png)
+
+![alt text](readme_images/aboutpage.png)
+
+![alt text](readme_images/chartpage.png)
+
+![alt text](readme_images/detailpage.png)
+
+![alt text](readme_images/testpage.png)
+
+![alt text](readme_images/loginpage.png)
+
+![alt text](readme_images/mypage.png)
 
 ---
 
