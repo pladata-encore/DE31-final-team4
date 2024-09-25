@@ -23,7 +23,7 @@
 | 09/23 ~ 09/25 | 최종점검 및 문서화 |
 
 ## Team Name : 개미마을 방범대
-<img src="./readme_images/ants_member_cir.png" alt="ants members" width="300"/>
+<img src="./readme_images/ping.png" alt="ants members" width="400"/>
 
 | 구성원 | 이메일주소 | 깃허브 주소 | 역할 |
 |--------|----------|-----------|-------------|
@@ -185,7 +185,8 @@ lambda : raw데이터가 갱신될 때마다 자동으로 전처리 및 DB에 �
 - Github Actions을 사용해 지속적인 통합 및 배포(CI/CD) 자동화 구현
 
 # 엔지니어링 파이프라인
-
+![Engineering Pipeline](./readme_images/engineer_pipeline.jpg)
+![Airflow Schedule]()
 1. 실시간 데이터 파이프라인
 
 한국투자증권 API -> airflow로 전종목 실시간 데이터 수집 -> S3에 csv 저장 -> lambda로 필요한 데이터만 전처리 -> RDS에 적재
