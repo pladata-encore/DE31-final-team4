@@ -1,0 +1,112 @@
+.paper-background {
+    width: 500px; /* 너비 500px 설정 */
+    height: 100%; /* 높이를 100%로 설정 */
+    background: url('/static/images/paper-texture.jpg') repeat; /* 종이 질감 이미지 설정 */
+    background-size: cover; /* 배경 이미지 크기 조정 */
+    /* box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); 그림자 효과 */
+    border-radius: 8px; /* 모서리 둥글게 */
+    padding: 20px; /* 내부 여백 */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0.8;
+}
+
+.custom-button {
+    background-color: black; /* 배경 색상 */
+    color: white; /* 글씨 색상 */
+    border: none; /* 테두리 제거 */
+    padding: 10px 20px; /* 패딩 조정 */
+    font-size: 16px; /* 글씨 크기 */
+    cursor: pointer; /* 커서 포인터 변경 */
+    transition: background-color 0.3s; /* 호버 효과 전환 */
+    border-radius: 20px;
+}
+.custom-button:hover {
+    background-color: rgb(70, 70, 70); /* 호버 시 색상 변경 */
+}
+
+.custom-question {
+    text-align: center;
+}
+.custom-question-text{
+    margin-bottom: 4rem;
+    text-align: center;
+}
+
+#myPageButton {
+    display: none;
+}
+
+.progress-bar-container {
+    width: 25%; /* 전체 폭을 차지 */
+    background-color: #e6fdff; /* 배경색 */
+    height: 20px; /* 높이 */
+    border-radius: 5px; /* 모서리 둥글게 */
+    margin-bottom: 20px; /* 진행 바와 질문 간의 여백 */
+    position: fixed;
+    top: 20px;
+    visibility: hidden;
+}
+
+.progress-bar {
+    width: 0%; /* 초기 폭 */
+    height: 100%; /* 높이 */
+    background-color: #4caf50; /* 진행 색상 */
+    border-radius: 5px; /* 모서리 둥글게 */
+    transition: width 0.3s ease; /* 진행 시 애니메이션 효과 */
+}
+.progress-image {
+    position: absolute;
+    top: -10px; /* 이미지의 위치 조정 */
+    right: 0; /* 오른쪽 끝에 위치 */
+    width: 30px; /* 이미지 크기 */
+    height: auto; /* 비율 유지 */
+    transition: left 0.3s ease; /* 이동 시 부드럽게 전환 */
+}
+
+.start-page {
+    text-align: center; /* 중앙 정렬 */
+    margin: 20px; /* 여백 */
+}
+
+.start-page h2 {
+    font-size: 24px; /* 제목 크기 */
+}
+
+.start-page p {
+    font-size: 18px; /* 설명 텍스트 크기 */
+}
+
+#testForm {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    padding: 1rem;
+}
+
+
+.custom-button-wrap {
+    display: flex;
+    flex-direction: column; /* 버튼을 세로로 배치 */
+    gap: 10px; /* 버튼 사이의 간격 */
+    width: 100%;
+}
+
+.custom-button {
+    margin: 5px 0; /* 버튼 상하 간격 조정 */
+    text-align: center;
+    font-size: 20px;
+    font-family: "NanumB";
+}
+
+.button-container {
+    justify-content: center;
+    display: flex;
+}
+
+.result-container {
+    justify-content: center;
+    display: flex;
+}

@@ -453,7 +453,6 @@ def load_stock_data(selected_market, selected_time_period):
     # 코스닥 선택 시 시가총액 상위 500개 종목만 필터링
     if selected_market == 'KOSDAQ':
         df = df.nlargest(500, 'market_cap')
-        # print(f"Top 500 stocks by market cap for KOSDAQ: {df.head()}")  # 코스닥 시가총액 상위 500개 종목 확인
 
     # 섹터별로 그룹화하여 시가총액 상위 10개 종목만 남기기
     df = df.groupby('sector').apply(lambda x: x.nlargest(10, 'market_cap')).reset_index(drop=True)
@@ -494,8 +493,6 @@ def treemap_view(request):
     )
     fig.update_traces(
         textposition='middle center',
-        # hovertemplate에서 %{customdata[0]} 부분을 제거하여 불필요한 항목을 숨김
-        # hovertemplate='<b>%{label}</b><br>변동률: %{customdata[1]:.2f}%<br>시가총액: %{value:,.0f} 원<br>',
         hovertemplate='<b>%{label}</b><br>변동률: %{customdata[1]:.2f}%<br>시가총액: %{customdata[2]:,.0f}<br>',
         texttemplate='<b>%{label}<br>%{customdata[1]:.2f}%</b>',  # 트리맵 내에서도 변동률 표시
         marker=dict(line=dict(width=0.2, color='rgb(255, 255, 255)')), 
@@ -536,12 +533,13 @@ def treemap_view(request):
     })
 
 
-# 관심종목
+# MyPage
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import UserStock, Mbti, TestResult
 from stocks.models import RealTime
 from django.db.models import Count
+from django.db.models import F, FloatField, ExpressionWrapper
 
 @login_required
 def add_favorite_list(request, stock_code):
@@ -628,9 +626,8 @@ def my_favorite_list(request):
 
     # 3. RealTime에서 해당 stock_code에 대한 주식 정보를 pbr과 -id 기준으로 정렬 후 상위 10개 가져오기
     latest_stocks = RealTime.objects.filter(stock_code__in=mbti_stocks) \
-        .order_by('-id', 'pbr')[:10]
-
-    stock_info = {}
+        .annotate(total_value=ExpressionWrapper(F('current_price') * F('stockcount'), output_field=FloatField())) \
+        .order_by('-price_time','-total_value')[:10]
 
     for latest_stock in latest_stocks:
         stock_code = latest_stock.stock_code

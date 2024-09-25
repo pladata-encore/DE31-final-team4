@@ -4,13 +4,54 @@ class TestPage {
         this.saveUrl = saveUrl; // 저장할 URL을 전달받음
         this.current = 0;
         this.point = 0;
-        this.init();
+
+        this.init(); // 초기화 호출
     }
 
     init() {
-        this.renderQuestion();
+        this.renderStartPage(); // 시작 페이지 렌더링
+        this.updateProgressBar();
     }
 
+    // 시작 페이지 렌더링
+    renderStartPage() {
+        const questionElement = document.querySelector('.custom-question');
+        const questionTextElement = document.querySelector('.custom-question-text');
+        const buttonWrap = document.querySelector('.custom-button-wrap');
+
+        // 시작 페이지의 제목과 설명 설정
+        questionElement.textContent = testData.startPageTitle;
+        questionTextElement.textContent = testData.startPageDescription;
+
+        // 기존 버튼 제거
+        buttonWrap.innerHTML = '';
+
+        // "테스트하러 가기" 버튼 생성
+        const startButton = document.createElement('button');
+        startButton.textContent = '테스트하러 가기';
+        startButton.classList.add('custom-button');
+
+        // 버튼 클릭 시 첫 번째 질문을 렌더링
+        startButton.addEventListener('click', () => {
+            this.renderQuestion();
+            this.updateProgressBar();
+            var progressBarContainer = document.querySelector('.progress-bar-container');
+            progressBarContainer.style.visibility = 'visible';
+        });
+
+        buttonWrap.appendChild(startButton);
+    }
+
+    updateProgressBar() {
+        const progressBar = document.getElementById('progressBar');
+        const totalQuestions = this.data.data.length;
+        const progressPercentage = ((this.current + 1) / totalQuestions) * 100; // 진행 비율 계산
+        progressBar.style.width = `${progressPercentage}%`; // 진행 바의 폭 설정
+
+        const imageLeftPosition = `calc(${progressPercentage}% - 15px)`; // 이미지의 위치를 진행 바의 너비에 맞게 조정
+        progressImage.style.left = imageLeftPosition; // 이미지의 left 속성 업데이트
+    }
+    
     renderQuestion() {
         const questionData = this.data.data[this.current];
         const questionElement = document.querySelector('.custom-question');
@@ -25,7 +66,7 @@ class TestPage {
         buttonWrap.innerHTML = '';
 
         // 선택지 버튼 생성하여 추가
-        questionData.answerList.forEach((answer, index) => {
+        questionData.answerList.forEach((answer) => {
             const button = document.createElement('button');
             button.textContent = answer.answer;
             button.classList.add('custom-button');
@@ -38,6 +79,9 @@ class TestPage {
 
             buttonWrap.appendChild(button);
         });
+
+        // 진행 바 업데이트
+        this.updateProgressBar();
     }
 
     nextQuestion() {
@@ -68,6 +112,8 @@ class TestPage {
         // 'My Page로 이동' 버튼 보이기
         const myPageButton = document.getElementById('myPageButton');
         myPageButton.style.display = 'inline-block'; // 버튼을 보이게 설정
+        var progressBarContainer = document.querySelector('.progress-bar-container');
+        progressBarContainer.style.visibility = 'hidden';
     }
 
     saveResult(resultTitle, resultDescription) {
@@ -97,18 +143,3 @@ class TestPage {
             });
     }
 }
-
-document.addEventListener('DOMContentLoaded', function () {
-    const testData = {
-        // your test data here
-    };
-
-    // 테스트 페이지 초기화 (옵션 1 또는 옵션 2에 맞게 URL 지정)
-    const testPage = new TestPage(testData, '/save-test-result-option1/');
-
-    // MyPage 버튼 클릭 시 MyPage로 이동
-    const myPageButton = document.getElementById('myPageButton');
-    myPageButton.addEventListener('click', function () {
-        window.location.href = '/mypage/';
-    });
-});
