@@ -133,7 +133,7 @@ PIR수치가 높은 한국 사회에서 자산의 파이프라인을 생성하�
 - 한국 투자증권 api
 - koscom datamall - 일별 주가지수 
 - 기획재정부_시사경제용어 정보데이터
-
+- KRX 정보데이터시스템 - 상장된 종목명 및 종목코드, 종목 배당 정보
 
 ## ERD
 ![alt text](readme_images/ERD.png)
@@ -204,11 +204,11 @@ lambda : raw데이터가 갱신될 때마다 자동으로 전처리 및 DB에 �
 
 # Machine Learning 모델 학습 파이프라인
 
-1. 주식 종목 MBTI 분류 및 투자성향과 매칭 시스템 (K-menas Clustering)
+1. 주식 종목 MBTI 분류 및 투자성향과 매칭 시스템 (K-means Clustering)
 
 
 2. 배당률 예측 모델 학습 (Regression RandomForest)
-
+   - 참고문헌 : Jae Kwon Bae. (2019). A Study on the Predictability of Dividend Policy Using Artificial Intelligence Techniques. The e-Business Studies, Volume 20, Number 7, December, 201-216.
 
 # CI/CD 파이프라인
 ---
