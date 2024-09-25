@@ -15,7 +15,8 @@ from dotenv import load_dotenv
 import os 
 
 # load_dotenv('/home/ants/django/.env')
-load_dotenv('../.env') # 윈도우에서 작업시 사용
+# load_dotenv('../.env') # 윈도우에서 작업시 사용
+load_dotenv('/home/ants/actions-runner/_work/django/django/.env')
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -29,7 +30,7 @@ SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['54.181.1.178', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['54.181.1.178', 'localhost', '127.0.0.1', '192.168.0.158']
 
 
 # Application definition

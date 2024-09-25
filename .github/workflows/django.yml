@@ -1,0 +1,87 @@
+name: Django CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+    
+concurrency:
+  group: ${{ github.ref }}  # 같은 브랜치 내에서 실행되는 워크플로우를 그룹화
+  cancel-in-progress: true  # 새 작업이 시작될 때 이전 작업 취소
+  
+jobs:
+  build:
+
+    runs-on: self-hosted
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    # - name: Install MySQL client libraries
+    #   run: |
+    #     sudo apt-get update
+    #     sudo apt-get install -y default-libmysqlclient-dev
+
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.10'
+
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r ants_final/requirements.txt
+
+    # - name: Set up MySQL
+    #   uses: mirromutth/mysql-action@v1
+    #   with:
+    #     mysql_version: '8.0.39'
+    #     mysql_database: ${{ secrets.DB_NAME }}
+    #     mysql_user: ${{ secrets.DB_USER }}
+    #     mysql_password: ${{ secrets.DB_PASSWORD }}
+    #     mysql_root_password: ${{ secrets.DB_ROOT_PASSWORD }}
+    #     mysql_port: 13306
+    # - name: Start MySQL Container with sudo
+    #   run: |
+    #     whoami
+    #     sudo docker run -d \
+    #       --name mysql \
+    #       -e MYSQL_ROOT_PASSWORD=${{ secrets.DB_ROOT_PASSWORD }} \
+    #       -e MYSQL_DATABASE=${{ secrets.DB_NAME }} \
+    #       -e MYSQL_USER=${{ secrets.DB_USER }} \
+    #       -e MYSQL_PASSWORD=${{ secrets.DB_PASSWORD }} \
+    #       -p 13306:3306 \
+    #       mysql:8.0.39
+          
+    - name: Create .env File
+      run: |
+        echo "RDS_NAME=${{ secrets.DB_NAME }}" >> .env
+        echo "RDS_USER=${{ secrets.DB_USER }}" >> .env
+        echo "RDS_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+        echo "RDS_HOST=${{ secrets.DB_HOST }}" >> .env
+        echo "DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}" >> .env
+        # .env 파일이 생성된 경로 출력
+        echo "The .env file has been created at: $(pwd)/.env"
+
+    - name: Apply Django Migrations
+      env:
+        RDS_HOST: ${{ secrets.DB_HOST }}
+        RDS_NAME: ${{ secrets.DB_NAME }}
+        RDS_USER: ${{ secrets.DB_USER }}
+        RDS_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+      run: |
+        python ants_final/manage.py migrate
+
+    - name: Run Tests
+      run: |
+        # 현재 작업 디렉토리 출력
+        echo "Current working directory: $(pwd)"
+        # .env 파일 경로 출력
+        echo "Attempting to load .env file from: $(pwd)/../.env"
+        # 테스트 실행
+        # python ants_final/manage.py test
+        python ants_final/manage.py runserver 0.0.0.0:8000 &
+        # 무한 대기 상태로 유지
+        tail -f /dev/null
