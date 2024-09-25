@@ -205,6 +205,8 @@ lambda : raw데이터가 갱신될 때마다 자동으로 전처리 및 DB에 �
 
 # CI/CD 파이프라인
 ---
+# WEB 프로토타입
+![alt text](readme_images/web_prototype.png)
 
 
 # WEB 구현 페이지 (백엔드, 프론트엔드)
