@@ -626,30 +626,31 @@ def my_favorite_list(request):
     mbti_stocks = Mbti.objects.filter(mbti=mbti_value).values_list('stock_code', flat=True)
 
     # 3. RealTime에서 해당 stock_code에 대한 주식 정보를 pbr과 -id 기준으로 정렬 후 상위 10개 가져오기
-    latest_stocks = RealTime.objects.filter(stock_code__in=mbti_stocks) \
-        .annotate(total_value=ExpressionWrapper(F('current_price') * F('stockcount'), output_field=FloatField())) \
-        .order_by('-price_time','-total_value')[:10]
+    # RealTime에서 해당 stock_code에 대한 주식 정보 가져오기
+    stock_infos = {}
+    latest_stocks = RealTime.objects.filter(
+        stock_code__in=mbti_stocks
+    ).exclude(
+        opening_price=0  # opening_price가 0이 아닌 조건
+    ).annotate(
+        total_value=ExpressionWrapper(F('current_price') * F('stockcount'), output_field=FloatField())
+    ).order_by('-price_time', '-total_value')[:10]
 
-    for latest_stock in latest_stocks:
-        stock_code = latest_stock.stock_code
-
-        # Mbti 모델에서 해당 stock_code에 대한 MBTI 값을 가져옵니다.
-        stock_mbti = Mbti.objects.filter(stock_code=stock_code).first()
-        mbti_value = stock_mbti.mbti if stock_mbti else None
-
+    for latest_stock in latest_stocks:        
         # stock_info 딕셔너리에 주식 정보를 추가합니다.
-        stock_info[stock_code] = {
+        stock_code = latest_stock.stock_code
+        
+        stock_infos[stock_code] = {
             'stock_code': latest_stock.stock_code,
             'name': latest_stock.name,
             'current_price': latest_stock.current_price,
             'UpDownRate': latest_stock.UpDownRate,
             'UpDownPoint': latest_stock.UpDownPoint,
             'id': latest_stock.id,
-            # 'mbti': mbti_value
         }
 
     # 데이터를 리스트로 변환
-    stock_infos_list = list(stock_info.values())
+    stock_infos_list = list(stock_infos.values())
     
 
     
