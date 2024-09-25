@@ -245,7 +245,7 @@ lambda : raw데이터가 갱신될 때마다 자동으로 전처리 및 DB에 �
 ![alt text](readme_images/testpage2.png)
 - 로그인 페이지
 ![alt text](readme_images/loginpage.png)
-
+- 마이 페이지
 ![alt text](readme_images/mypage.png)
 
 ---
