@@ -67,12 +67,19 @@
         <div class="col-lg-8">
             <form method="get" action="">
                 <!-- '급상승' 버튼 -->
-                <input type="submit" name="type" class="btn" style="background-color: {% if type == '급상승' %}red{% else %}gray{% endif %}; color: white;" value="급상승" {% if type == '급상승' %}disabled{% endif %}>
+                <input type="submit" name="type" class="btn" 
+                       style="background-color: {% if type == '급상승' %}#ff3333{% else %}#d9d9d9{% endif %}; 
+                              color: {% if type == '급상승' %}white{% else %}#666666{% endif %};" 
+                       value="급상승" 
+                       {% if type == '급상승' %}disabled{% endif %}>
                 
                 <!-- '급하락' 버튼 -->
-                <input type="submit" name="type" class="btn" style="background-color: {% if type == '급하락' %}blue{% else %}gray{% endif %}; color: white;" value="급하락" {% if type == '급하락' %}disabled{% endif %}>
+                <input type="submit" name="type" class="btn" 
+                       style="background-color: {% if type == '급하락' %}#3399ff{% else %}#d9d9d9{% endif %}; 
+                              color: {% if type == '급하락' %}white{% else %}#666666{% endif %};" 
+                       value="급하락" 
+                       {% if type == '급하락' %}disabled{% endif %}>
             </form>
-
             <table class="table">
                 <thead>
                     <tr>
