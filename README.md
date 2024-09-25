@@ -187,7 +187,7 @@ lambda : raw데이터가 갱신될 때마다 자동으로 전처리 및 DB에 �
 
 # 엔지니어링 파이프라인
 ![Engineering Pipeline](./readme_images/engineer_pipeline.jpg)
-![Airflow Schedule](./readme_images/airflow_schedule.jpg)
+![Airflow Schedule](./readme_images/airflow.jpg)
 1. 실시간 데이터 파이프라인
 
 한국투자증권 API -> airflow로 전종목 실시간 데이터 수집 -> S3에 csv 저장 -> lambda로 필요한 데이터만 전처리 -> RDS에 적재
