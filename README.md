@@ -132,7 +132,7 @@ PIR수치가 높은 한국 사회에서 자산의 파이프라인을 생성하�
 ---
 - 한국 투자증권 api
 - koscom datamall - 일별 주가지수 
--
+- 기획재정부_시사경제용어 정보데이터
 
 
 ## ERD
@@ -156,14 +156,21 @@ Airflow : Docker compose를 이용한 Airflow환경설정
 lambda : raw데이터가 갱신될 때마다 자동으로 전처리 및 DB에 저장
 
 ### 데이터 시각화, 차트구현
-
-작성중
+- Chart.js: 실시간 주식 데이터의 가격 변동을 선, 막대 차트, 캔들스틱 차트 등 다양한 형태로 시각화
+- Plotly.js: 인터랙티브한 차트를 제공하여, 사용자 경험을 높이고, 데이터 분석을 시각적으로 쉽게 이해할 수 있도록 지원
 
 ### 데이터 분석 $ Maching Learning
 - Python, Jupyter, VS Code : 로컬 환경에서 진행
 - K-means, Regression
+
 ### 웹 개발 
-- Django
+- Django : 제공 인증 시스템을 사용하여, 로그인/로그아웃 기능 및 사용자별 권한 관리
+- OAuth를 통해 Google 계정으로 로그인할 수 있도록 소셜 로그인 기능 추가
+- ORM(Object-Relational Mapping)을 사용하여 MySQL 데이터베이스와의 효율적인 통신 구현
+- 네이버 뉴스 API를 사용하여 주식과 관련된 최신 뉴스를 실시간으로 사용자에게 제공
+- 사용자가 클릭할 수 있는 뉴스 목록과 링크를 동적으로 로딩
+- Gunicorn과 NGINX를 함께 사용하여, 요청 처리의 안정성 및 성능을 향상
+- Github Actions을 사용해 지속적인 통합 및 배포(CI/CD) 자동화 구현
 
 # 엔지니어링 파이프라인
 
