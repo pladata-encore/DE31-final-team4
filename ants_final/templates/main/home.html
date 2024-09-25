@@ -15,15 +15,15 @@
                     <div class="basket-in1 kos nowrap">
                         <p><span style="font-size: 16px;">KOSPI 코스피</span></p>
                         <p><span style="font-size: 25px;">{{ KOSPI_CurrentPoint }}</span><br>
-                        {% if KOSPI_UpDownPoint|stringformat:"d" < 0 %}
+                        {% if KOSPI_UpDownPoint < 0 %}
                             <span style="color: blue;">{{ KOSPI_UpDownPoint }}</span>
                             <span style="color: blue;">({{ KOSPI_UpDownRate }}%)</span></p>
-                        {% elif KOSPI_UpDownPoint|stringformat:"d" == 0 %}
+                        {% elif KOSPI_UpDownPoint == 0 %}
                             <span>{{ KOSPI_UpDownPoint }}</span>
                             <span>({{ KOSPI_UpDownRate }}%)</span></p>
                         {% else %}
                             <span style="color: red;">{{ KOSPI_UpDownPoint }}</span>
-                            <span style="color: red;">(+{{ KOSPI_UpDownRate }}%)</span></p>
+                            <span style="color: red;">({{ KOSPI_UpDownRate }}%)</span></p>
                         {% endif %}
                     </div>
                     <div class="basket-in2">
@@ -40,15 +40,15 @@
                     <div class="basket-in1 kos nowrap">
                         <p><span style="font-size: 16px; margin-top: 10px;">KOSDAQ 코스닥</span></p>
                         <p><span style="font-size: 25px;">{{ KOSDAQ_CurrentPoint }}</span><br>
-                        {% if KOSDAQ_UpDownPoint|stringformat:"d" < 0 %}
+                        {% if KOSDAQ_UpDownPoint < 0 %}
                             <span style="color: blue;">{{ KOSDAQ_UpDownPoint }}</span>
                             <span style="color: blue;">({{ KOSDAQ_UpDownRate }}%)</span></p>
-                        {% elif KOSDAQ_UpDownPoint|stringformat:"d" == 0 %}
+                        {% elif KOSDAQ_UpDownPoint == 0 %}
                             <span>{{ KOSDAQ_UpDownPoint }}</span>
                             <span>({{ KOSDAQ_UpDownRate }}%)</span></p>
                         {% else %}
                         <span style="color: red;">{{ KOSDAQ_UpDownPoint }}</span>
-                        <span style="color: red;">(+{{ KOSDAQ_UpDownRate }}%)</span></p>
+                        <span style="color: red;">({{ KOSDAQ_UpDownRate }}%)</span></p>
                         {% endif %}
                     </div>
                     <div class="basket-in2">
