@@ -224,8 +224,8 @@ def add_graphs():
         kosdaq_data = Market.objects.filter(StockName="KOSDAQ").order_by('-price_time')[:10]
 
     # 데이터를 pandas DataFrame으로 변환 (시간 순으로 정렬)
-    kospi_df = pd.DataFrame(list(kospi_data.values('price_time', 'CurrentPoint')))
-    kosdaq_df = pd.DataFrame(list(kosdaq_data.values('price_time', 'CurrentPoint')))
+    kospi_df = pd.DataFrame(list(kospi_data.values('price_time', 'CurrentPoint','UpDownPoint')))
+    kosdaq_df = pd.DataFrame(list(kosdaq_data.values('price_time', 'CurrentPoint','UpDownPoint')))
 
     # 쉼표 제거 후 숫자로 변환
     kospi_df['CurrentPoint'] = kospi_df['CurrentPoint'].str.replace(',', '')
@@ -247,19 +247,19 @@ def add_graphs():
     # KOSPI 그래프 생성
     fig1, ax1 = plt.subplots(figsize=(8, 6))
     
-    # 가장 최근의 KOSPI CurrentPoint 가져오기
-    latest_kospi_point = kospi_df['CurrentPoint'].iloc[-1]  # 마지막 값
+    # 가장 최근의 KOSPI UpDownPoint 가져오기
+    latest_kospi_point = float(kospi_df['UpDownPoint'].iloc[-1])  # 마지막 값
     
     # 차트 색상 결정
     if latest_kospi_point > 0:
-        color = "red"
+        kospi_color = "red"
     elif latest_kospi_point < 0:
-        color = "blue"
+        kospi_color = "blue"
     else:
-        color = "gray"
+        kospi_color = "gray"
     
     # 그래프 그리기
-    ax1.plot(kospi_df['price_time'], kospi_df['CurrentPoint'], label="KOSPI", color=color)
+    ax1.plot(kospi_df['price_time'], kospi_df['CurrentPoint'], label="KOSPI", color=kospi_color)
     ax1.spines['top'].set_visible(False)
     ax1.spines['right'].set_visible(False)
     ax1.spines['left'].set_visible(False)
@@ -271,18 +271,18 @@ def add_graphs():
     fig2, ax2 = plt.subplots(figsize=(8, 6))
     
     # 가장 최근의 KOSDAQ CurrentPoint 가져오기
-    latest_kosdaq_point = kosdaq_df['CurrentPoint'].iloc[-1]  # 마지막 값
+    latest_kosdaq_point = float(kosdaq_df['UpDownPoint'].iloc[-1])  # 마지막 값
     
     # 차트 색상 결정
     if latest_kosdaq_point > 0:
-        color = "red"
+        kosdaq_color = "red"
     elif latest_kosdaq_point < 0:
-        color = "blue"
+        kosdaq_color = "blue"
     else:
-        color = "gray"
+       kosdaq_color = "gray"
     
     # 그래프 그리기
-    ax2.plot(kosdaq_df['price_time'], kosdaq_df['CurrentPoint'], label="KOSDAQ", color=color)
+    ax2.plot(kosdaq_df['price_time'], kosdaq_df['CurrentPoint'], label="KOSDAQ", color=kosdaq_color)
     ax2.spines['top'].set_visible(False)
     ax2.spines['right'].set_visible(False)
     ax2.spines['left'].set_visible(False)
@@ -331,15 +331,16 @@ def home(request):
 
     # 상위 3개의 섹터 데이터를 가져옴
     top_sectors = get_top_sectors()
-    
+    KOSPI_UpDownPoint = float(kospi.UpDownPoint)
+    KOSDAQ_UpDownPoint = float(kosdaq.UpDownPoint)
     # 템플릿에 전달할 값 설정
     context = {
         'graphic1': graphic1,
         'graphic2': graphic2,
-        'KOSPI_UpDownPoint': kospi.UpDownPoint if kospi else 'N/A',
+        'KOSPI_UpDownPoint': KOSPI_UpDownPoint if kospi else 'N/A',
         'KOSPI_UpDownRate': kospi.UpDownRate if kospi else 'N/A',
         'KOSPI_CurrentPoint' : kospi.CurrentPoint if kospi else 'N/A',
-        'KOSDAQ_UpDownPoint': kosdaq.UpDownPoint if kosdaq else 'N/A',
+        'KOSDAQ_UpDownPoint': KOSDAQ_UpDownPoint if kosdaq else 'N/A',
         'KOSDAQ_UpDownRate': kosdaq.UpDownRate if kosdaq else 'N/A',
         'KOSDAQ_CurrentPoint' : kosdaq.CurrentPoint if kosdaq else 'N/A',
         'stocks': stocks,
