@@ -134,6 +134,7 @@ PIR수치가 높은 한국 사회에서 자산의 파이프라인을 생성하�
 - koscom datamall - 일별 주가지수 
 - 기획재정부_시사경제용어 정보데이터
 - KRX 정보데이터시스템 - 상장된 종목명 및 종목코드, 종목 배당 정보
+- FNGudie 재무재표, 재무비율 크롤링
 
 ## ERD
 ![alt text](readme_images/ERD.png)
@@ -171,7 +172,7 @@ lambda : raw데이터가 갱신될 때마다 자동으로 전처리 및 DB에 �
 - 주식 섹터별 그룹화와 상승/하락 종목을 색상으로 구분하여 한눈에 변동성을 파악할 수 있도록 함.
 - 사용자는 1일, 1주, 1개월, 3개월, 6개월, 1년 기간 중 선택해 트리맵을 조회할 수 있음.
 
-### 데이터 분석 $ Maching Learning
+### 데이터 분석 $ Machine Learning
 - Python, Jupyter, VS Code : 로컬 환경에서 진행
 - K-means, Regression
 
@@ -186,7 +187,7 @@ lambda : raw데이터가 갱신될 때마다 자동으로 전처리 및 DB에 �
 
 # 엔지니어링 파이프라인
 ![Engineering Pipeline](./readme_images/engineer_pipeline.jpg)
-![Airflow Schedule]()
+![Airflow Schedule](./readme_images/airflow.jpg)
 1. 실시간 데이터 파이프라인
 
 한국투자증권 API -> airflow로 전종목 실시간 데이터 수집 -> S3에 csv 저장 -> lambda로 필요한 데이터만 전처리 -> RDS에 적재
@@ -206,39 +207,56 @@ lambda : raw데이터가 갱신될 때마다 자동으로 전처리 및 DB에 �
 # Machine Learning 모델 학습 파이프라인
 
 1. 주식 종목 MBTI 분류 및 투자성향과 매칭 시스템 (K-means Clustering)
+![mbti data](readme_images/mbti_pipeline1.jpg)
+![mbti ML](readme_images/mbti_pipeline2.jpg)
 
+목적: 주식의 안정성, 수익성, 성장성, 활동성이라는 4가지 요인을 바탕으로 주식을 MBTI 성격 유형처럼 분류하여 투자자들에게 맞춤형 투자 정보를 제공하고, 주식 선택의 다양성과 이해도를 높이는 것을 목표로 합니다.
+- 주식을 4가지 핵심 요인을 기준으로 분석하여 유형화.
+- 투자자들에게 주식의 성격을 직관적으로 이해할 수 있는 도구 제공.
+- 투자 스타일과 주식 성격의 매칭 시스템 개발.
 
 2. 배당률 예측 모델 학습 (Regression RandomForest)
+![alt text](readme_images/ml_pipeline1.jpg)
+![alt text](readme_images/ml_pipeline2.jpg)
+
    - 참고문헌 : Jae Kwon Bae. (2019). A Study on the Predictability of Dividend Policy Using Artificial Intelligence Techniques. The e-Business Studies, Volume 20, Number 7, December, 201-216.
 
-# CI/CD 파이프라인
+
 ---
 # WEB 프로토타입
 ![alt text](readme_images/web_prototype.png)
 
 
+
 # WEB 구현 페이지 (백엔드, 프론트엔드)
+- 메인 페이지
 ![alt text](readme_images/homepage.png)
-
+- 경제 용어 사전 검색 기능
 ![alt text](readme_images/dictpage.png)
-
+- about 페이지
 ![alt text](readme_images/aboutpage.png)
-
+- 트리맵 페이지
 ![alt text](readme_images/chartpage.png)
-
+- 주식 종목 개별 페이지
 ![alt text](readme_images/detailpage.png)
-
+- 테스트 시작 페이지
 ![alt text](readme_images/testpage.png)
-
+- 테스트 페이지
+![alt text](readme_images/testpage2.png)
+- 로그인 페이지
 ![alt text](readme_images/loginpage.png)
-
+- 마이 페이지
 ![alt text](readme_images/mypage.png)
 
 ---
 
 # 시연영상
+추가예정
 
+# 요구사항 명세서
+[요구사항 명세서](https://docs.google.com/spreadsheets/d/1SnQLOL8U4jyd8TX5Kd-K9cMWcNk-OtMJ/edit?gid=1993544325#gid=1993544325)
 
-
+# WBS
+[WBS](https://docs.google.com/spreadsheets/d/1Q2K3BLbZAF3vxTPlImWbszM_Kf0bg2SI/edit?gid=730338524#gid=730338524)
 
 
