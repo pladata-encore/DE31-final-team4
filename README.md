@@ -261,8 +261,3 @@ lambda : raw데이터가 갱신될 때마다 자동으로 전처리 및 DB에 �
 [WBS](개미마을방범대_documents/개미마을방범대_WBS.xlsx)
 [WBS](https://docs.google.com/spreadsheets/d/1Q2K3BLbZAF3vxTPlImWbszM_Kf0bg2SI/edit?gid=730338524#gid=730338524)
 
-# 발표PPT
-[발표자료_ppt](개미마을방범대_documents/개미마을방범대_ppt-20240926T012833Z-001.zip)
-[발표자료_pdf](개미마을방범대_documents/개미마을방범대_PPT최종.pdf)
-
-
